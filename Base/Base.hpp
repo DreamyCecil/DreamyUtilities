@@ -4,6 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_BASE_H
 #define _DREAMYUTILITIES_INCL_BASE_H
 
+// Current version of Dreamy Utilities
+#define _DREAMY_UTIL_VER 0L
+
 // Platform switch
 #if defined(_WIN32) || defined(_MSC_VER)
   #define _DREAMY_UNIX 0 // Building for Windows
