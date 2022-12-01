@@ -15,7 +15,7 @@ namespace dreamy
   class CFileDevice : public IReadWriteDevice {
     protected:
       FILE *_pFile;
-      Str_t _strFilename;
+      CPath _strFilename;
 
     public:
       // Default constructor
