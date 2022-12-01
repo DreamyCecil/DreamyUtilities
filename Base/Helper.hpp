@@ -27,9 +27,18 @@ namespace dreamy
 
   // Ask yes-or-no question in the console and wait for user input
   inline bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault) {
+    Str_t strInput;
+
     // Ask a question and wait for input
     std::cout << strQuestion << (bYesByDefault ? " [Y/n]: " : " [y/N]: ");
-    c8 chAnswer = (c8)toupper(getchar());
+    std::getline(std::cin, strInput);
+
+    // No answer by default
+    c8 chAnswer = 0;
+
+    if (!strInput.empty()) {
+      chAnswer = (c8)toupper(strInput[0]);
+    }
 
     if (!bYesByDefault) {
       // Anything but Y is false
