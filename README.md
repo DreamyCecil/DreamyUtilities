@@ -28,7 +28,7 @@ There are a few macros that can be defined before including any of the **Dreamy 
 | Macro | Description | Default behavior |
 | --- | --- | --- |
 | `_DREAMY_CPP11` | Allow using features from `C++11`. | Set to `0` or `1`, depending on the compiler used (e.g. `0` if using `MSVC 6.0`). |
-| `_DREAMY_ENABLE_ASSERT_` | Allows run-time errors upon assertion failure in non-Debug mode. | Assertion are disabled in non-Debug mode. |
+| `_DREAMY_NDEBUG_ASSERT` | Allows run-time errors upon assertion failure in non-Debug mode. | Assertions are disabled in non-Debug mode. |
 | `_DREAMY_BYTE_ORDER` | Sets default endianness for the current architecture. | Set to `0` (little endian) instead of `1` (big endian). |
 | `_DREAMY_BOOST_RANDOM_DEVICE` | Allows usage of Boost's non-deterministic randomization algorithms in MarkovChain library (doesn't work with `MSVC 6.0`). | Uses STL's non-deterministic randomization algorithms (in `C++11`) or simplistic `rand()` randomization (in `C++98`). |
 | `_DREAMY_STL_EXCEPTION` | Allows `dreamy::CException` class to be derived from STL's exception class. | Isn't derived from the STL's exception class. |

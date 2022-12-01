@@ -7,7 +7,7 @@
 #include "PlatformSpecific.hpp"
 
 // Ignore assertions in non-debug mode
-#if defined(NDEBUG) && !defined(_DREAMY_ENABLE_ASSERT_)
+#if defined(NDEBUG) && !defined(_DREAMY_NDEBUG_ASSERT)
   // Assert about unexpected behavior if the expression check doesn't pass
   #define D_ASSERT(_Expression) ((void)0)
 
