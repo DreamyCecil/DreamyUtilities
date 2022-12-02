@@ -6,12 +6,20 @@
 
 #include "../Base/Base.hpp"
 
+#include "../Data/ByteArray.hpp"
+
 namespace dreamy
 {
   class IHasher {
-    protected:
-      // Hash an array of bytes
-      virtual void Hash(const c8 *pData, size_t iSize) = 0;
+    public:
+      // Reset hasher state
+      virtual void Reset(void) = 0;
+
+      // Hash an array of bytes (adds up to the current hash)
+      virtual void AddData(const c8 *pData, size_t iSize) = 0;
+
+      // Get hash value as a sequence of bytes
+      virtual CByteArray GetBytes(void) const = 0;
   };
 
 };

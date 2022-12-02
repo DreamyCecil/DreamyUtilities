@@ -51,8 +51,19 @@ namespace dreamy
     protected:
       u32 _result;
 
-      // Hash an array of bytes
-      virtual void Hash(const c8 *pData, size_t iSize)
+    public:
+      // Default constructor
+      CCRC32Hasher() {
+        Reset();
+      };
+
+      // Reset hasher state
+      virtual void Reset(void) {
+        _result = 0;
+      };
+
+      // Hash an array of bytes (adds up to the current hash)
+      virtual void AddData(const c8 *pData, size_t iSize)
       {
         for (size_t i = 0; i < iSize; ++i)
         {
@@ -61,10 +72,10 @@ namespace dreamy
         }
       };
 
-    public:
-      // Default constructor
-      CCRC32Hasher() : _result(0)
+      // Get hash value as a sequence of bytes
+      virtual CByteArray GetBytes(void) const
       {
+        return CByteArray(reinterpret_cast<const c8 *>(&_result), sizeof(_result));
       };
 
       // Get resulting hash
@@ -76,7 +87,7 @@ namespace dreamy
       // Get CRC32 value of an array of bytes
       inline u32 operator()(const c8 *pData, size_t iSize) {
         Begin();
-        Hash(pData, iSize);
+        AddData(pData, iSize);
         Finish();
 
         return _result;
