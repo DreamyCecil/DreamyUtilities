@@ -85,7 +85,7 @@ namespace dreamy
       #if _DREAMY_BYTE_ORDER == _DREAMY_LITTLE_ENDIAN
         return fSrc;
       #else
-        u32* piSrc = reinterpret_cast<u32 *>(&fSrc);
+        u32 *piSrc = reinterpret_cast<u32 *>(&fSrc);
         *piSrc = ByteSwap32(*piSrc);
         return fSrc;
       #endif
@@ -96,7 +96,7 @@ namespace dreamy
       #if _DREAMY_BYTE_ORDER == _DREAMY_LITTLE_ENDIAN
         return fSrc;
       #else
-        u64* piSrc = reinterpret_cast<u64 *>(&fSrc);
+        u64 *piSrc = reinterpret_cast<u64 *>(&fSrc);
         *piSrc = ByteSwap64(*piSrc);
         return fSrc;
       #endif
