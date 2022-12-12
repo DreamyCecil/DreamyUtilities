@@ -86,16 +86,16 @@ namespace dreamy
     public:
       // Get CRC32 value of an array of bytes
       inline u32 operator()(const c8 *pData, size_t iSize) {
-        Begin();
+        Begin(0);
         AddData(pData, iSize);
         Finish();
 
         return _result;
       };
 
-      // Begin CRC32 calculation
-      inline void Begin(void) {
-        _result = 0xFFFFFFFF;
+      // Begin CRC32 calculation from an existing hash value
+      inline void Begin(u32 iHash = 0) {
+        _result = iHash ^ 0xFFFFFFFF;
       };
 
       // Finish CRC32 calculation
