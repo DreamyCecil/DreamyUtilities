@@ -345,13 +345,13 @@ namespace dreamy
 
       // Swap data with another byte array
       void Swap(CByteArray &baOther) {
-        size_t temp_size = Size();
+        size_t iTempSize = Size();
         c8 *pTempData = Data();
 
         _iSize = baOther.Size();
         _pBuffer = baOther.Data();
 
-        baOther._iSize = temp_size;
+        baOther._iSize = iTempSize;
         baOther._pBuffer = pTempData;
       };
 
@@ -486,7 +486,7 @@ namespace dreamy
         return NULL_POS;
       };
 
-      // Return HEX-encoded copy of array
+      // Return HEX-encoded copy of the array
       CByteArray ToHex(const c8 chDelimiter = '\0') const {
         static const c8 *strDigits = "0123456789ABCDEF";
 
