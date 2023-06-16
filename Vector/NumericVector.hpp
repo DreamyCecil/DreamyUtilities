@@ -82,12 +82,12 @@ namespace dreamy
       };
 
       // Access value in the array
-      __forceinline Type &operator[](const s32 i) {
+      __forceinline Type &operator[](s32 i) {
         return _values[i];
       };
 
       // Access value in the array (read-only)
-      __forceinline const Type &operator[](const s32 i) const {
+      __forceinline const Type &operator[](s32 i) const {
         return _values[i];
       };
 
@@ -332,12 +332,12 @@ namespace dreamy
     u8 _z : 2;
 
     // Default constructor
-    VecAxes(void) : _x(0), _y(1), _z(2)
+    VecAxes() : _x(0), _y(1), _z(2)
     {
     };
 
     // Order constructor
-    VecAxes(const u8 setX, const u8 setY, const u8 setZ)
+    VecAxes(u8 setX, u8 setY, u8 setZ)
     : _x(setX & 3), _y(setY & 3), _z(setZ & 3)
     {
     };

@@ -22,7 +22,7 @@ namespace dreamy
 
     public:
       // Default constructor
-      __forceinline CUniqueOrder(const s32 iSize) : aValues(iSize)
+      __forceinline CUniqueOrder(s32 iSize) : aValues(iSize)
       {
       };
 
@@ -73,7 +73,7 @@ namespace dreamy
 
     public:
       // Default constructor
-      __forceinline CUniqueOrderContext(const u32 iSize) : moc_order(iSize), moc_abObserved(iSize, false)
+      __forceinline CUniqueOrderContext(u32 iSize) : moc_order(iSize), moc_abObserved(iSize, false)
       {
       };
 

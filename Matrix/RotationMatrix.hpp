@@ -90,32 +90,32 @@ namespace dreamy
       };
 
       // Access matrix value
-      __forceinline Type &operator()(const s32 iRow, const s32 iCol) {
+      __forceinline Type &operator()(s32 iRow, s32 iCol) {
         return _matrix[iRow][iCol];
       };
 
       // Access matrix value (read-only)
-      __forceinline const Type &operator()(const s32 iRow, const s32 iCol) const {
+      __forceinline const Type &operator()(s32 iRow, s32 iCol) const {
         return _matrix[iRow][iCol];
       };
 
       // Access matrix row
-      __forceinline MatrixColumn &operator[](const s32 iRow) {
+      __forceinline MatrixColumn &operator[](s32 iRow) {
         return _matrix[iRow];
       };
 
       // Access matrix row (read-only)
-      __forceinline const MatrixColumn &operator[](const s32 iRow) const {
+      __forceinline const MatrixColumn &operator[](s32 iRow) const {
         return _matrix[iRow];
       };
 
       // Get matrix row
-      __forceinline MatrixColumn Row(const s32 iRow) const {
+      __forceinline MatrixColumn Row(s32 iRow) const {
         return _matrix[iRow];
       };
 
       // Get matrix column
-      __forceinline MatrixRow Column(const s32 iCol) const {
+      __forceinline MatrixRow Column(s32 iCol) const {
         MatrixRow vRow;
 
         s32 i = iRows;

@@ -115,12 +115,12 @@ namespace dreamy
       };
 
       // Get value type
-      inline const EType GetType(void) const {
+      inline EType GetType(void) const {
         return _type;
       };
 
       // Custom assignment
-      inline void Set(const s32 iType, const CAny &valSet) {
+      inline void Set(s32 iType, const CAny &valSet) {
         _type = (EType)iType;
         _val = valSet;
       };

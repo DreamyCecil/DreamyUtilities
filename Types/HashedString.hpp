@@ -18,7 +18,7 @@ namespace dreamy
 
     public:
       // Default constructor
-      __forceinline CHashedString(void) : _hash(0), _string("")
+      __forceinline CHashedString() : _hash(0), _string("")
       {
       };
 
@@ -50,7 +50,7 @@ namespace dreamy
       };
 
       // Get hash value
-      inline const u64 GetHash(void) const {
+      inline u64 GetHash(void) const {
         return _hash;
       };
 

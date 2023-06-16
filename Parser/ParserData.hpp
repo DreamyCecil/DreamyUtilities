@@ -58,7 +58,7 @@ namespace dreamy
       };
 
       // Advance character index in either direction
-      inline void Advance(const u32 i) {
+      inline void Advance(u32 i) {
         pos.iLast += i;
       };
 
@@ -81,7 +81,7 @@ namespace dreamy
       };
 
       // Set line and character position based on a character index
-      inline void SetPosition(const u32 iPos) {
+      inline void SetPosition(u32 iPos) {
         pos.FormatPos(iPos, iLineCur, iLineBeg);
       };
 

@@ -91,7 +91,7 @@ namespace dreamy
       CVariant _val;  // Token value
 
       // Make sure that it's an appropriate token type
-      inline void AssertType(const u32 iCheckType) const {
+      inline void AssertType(u32 iCheckType) const {
         if (iCheckType != _type) {
           CTokenException::Throw(GetTokenPos(), "Expected token under ID '%d' but got '%d'", iCheckType, _type);
         }
@@ -99,19 +99,19 @@ namespace dreamy
 
     public:
       // Default constructor
-      CParserToken(const u32 iSetType = TKN_INVALID) :
+      CParserToken(u32 iSetType = TKN_INVALID) :
         _type(iSetType), _pos(), _val()
       {
       };
 
       // Constructor with a value
-      CParserToken(const u32 iSetType, const CTokenPos posSet, const CVariant &valSet)
+      CParserToken(u32 iSetType, CTokenPos posSet, const CVariant &valSet)
         : _type(iSetType), _pos(posSet), _val(valSet)
       {
       };
 
       // Get token type
-      inline const u32 GetType(void) const {
+      inline u32 GetType(void) const {
         return _type;
       };
 
@@ -148,7 +148,7 @@ namespace dreamy
       };
 
       // Only return this token if it matches the desired type
-      const CParserToken &operator()(const u32 iCheckType) const {
+      const CParserToken &operator()(u32 iCheckType) const {
         AssertType(iCheckType);
         return *this;
       };
@@ -171,14 +171,14 @@ namespace dreamy
   typedef std::vector<CParserToken> CTokenList;
 
   // Add one parser token
-  inline void AddToken(CTokenList &aTokens, const u32 iType,
+  inline void AddToken(CTokenList &aTokens, u32 iType,
                        const CTokenPos &pos, const CVariant &val = CVariant()) {
     aTokens.push_back(CParserToken(iType, pos, val));
   };
 
   // Add one integer parser token
-  inline void AddIntegerToken(CTokenList &aTokens, const u32 iType,
-                              const CTokenPos &pos, const s64 iNumber) {
+  inline void AddIntegerToken(CTokenList &aTokens, u32 iType,
+                              const CTokenPos &pos, s64 iNumber) {
     CVariant val;
     val.FromS64(iNumber);
 
@@ -186,8 +186,8 @@ namespace dreamy
   };
 
   // Add one real number parser token
-  inline void AddRealToken(CTokenList &aTokens, const u32 iType,
-                           const CTokenPos &pos, const f64 fNumber) {
+  inline void AddRealToken(CTokenList &aTokens, u32 iType,
+                           const CTokenPos &pos, f64 fNumber) {
     CVariant val;
     val.FromF64(fNumber);
 
@@ -195,7 +195,7 @@ namespace dreamy
   };
 
   // Add one string parser token
-  inline void AddStringToken(CTokenList &aTokens, const u32 iType,
+  inline void AddStringToken(CTokenList &aTokens, u32 iType,
                              const CTokenPos &pos, const Str_t &str) {
     CVariant val;
     val.FromString(str);

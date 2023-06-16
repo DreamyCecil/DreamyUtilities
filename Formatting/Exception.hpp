@@ -24,7 +24,7 @@ namespace dreamy
       };
 
       // Get character position
-      inline const size_t GetCharacter(void) const {
+      inline size_t GetCharacter(void) const {
         return _char;
       };
   };

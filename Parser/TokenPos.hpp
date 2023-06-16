@@ -27,7 +27,7 @@ namespace dreamy
       };
 
       // Constructor with positions
-      CTokenPos(const u32 iSetFirst, const u32 iSetLast, const u32 iSetFormatted) :
+      CTokenPos(u32 iSetFirst, u32 iSetLast, u32 iSetFormatted) :
         iFirst(iSetFirst), iLast(iSetLast), iFormatted(iSetFormatted)
       {
       };
@@ -38,18 +38,18 @@ namespace dreamy
       };
 
       // Get token length
-      inline const u32 Length(void) const {
+      inline u32 Length(void) const {
         return iLast - iFirst;
       };
 
       // Shift token position (doesn't affect formatted position)
-      inline void ShiftPos(const s32 iOffset) {
+      inline void ShiftPos(s32 iOffset) {
         iFirst += iOffset;
         iLast += iOffset;
       };
 
       // Format token position relative to the line
-      inline void FormatPos(const u32 iCurrentPos, const u32 iCurrentLine, const u32 iLineBeginning) {
+      inline void FormatPos(u32 iCurrentPos, u32 iCurrentLine, u32 iLineBeginning) {
         iFormatted = iCurrentLine * CHARS_PER_LINE + math::Min(iCurrentPos - iLineBeginning, u32(CHARS_PER_LINE - 1));
       };
 
