@@ -10,40 +10,40 @@
 #include "../Parser/ParserData.hpp"
 #include "../Parser/Token.hpp"
 
-namespace dreamy
-{
-  // General tokenization of a string
-  inline void TokenizeString(CTokenList &aTokens, const Str_t &str, bool bTokenizeComments = false) {
-    CParserData data(str);
+namespace dreamy {
 
-    while (data.CanParse()) {
-      switch (*data.pchCur) {
-        // Skip spaces
-        case ' ': case '\t': case '\r': break;
+// General tokenization of a string
+inline void TokenizeString(CTokenList &aTokens, const Str_t &str, bool bTokenizeComments = false) {
+  CParserData data(str);
 
-        // Line break
-        case '\n': data.CountLine(); break;
+  while (data.CanParse()) {
+    switch (*data.pchCur) {
+      // Skip spaces
+      case ' ': case '\t': case '\r': break;
 
-        default: {
-          // Special tokenizers
-          bool bTokenized = data.ParseComments(aTokens, bTokenizeComments)
-            || data.ParseIdentifiers(aTokens)
-            || data.ParseNumbers(aTokens)
-            || data.ParseOperators(aTokens)
-            || data.ParseCharSequences(aTokens, '"', '\'');
+      // Line break
+      case '\n': data.CountLine(); break;
 
-          if (!bTokenized) {
-            // Tokenize every other character
-            u32 iCharType = (u32)*data.pchCur;
-            AddIntegerToken(aTokens, iCharType, data.pos, *data.pchCur);
-          }
-        } break;
-      }
+      default: {
+        // Special tokenizers
+        bool bTokenized = data.ParseComments(aTokens, bTokenizeComments)
+          || data.ParseIdentifiers(aTokens)
+          || data.ParseNumbers(aTokens)
+          || data.ParseOperators(aTokens)
+          || data.ParseCharSequences(aTokens, '"', '\'');
+
+        if (!bTokenized) {
+          // Tokenize every other character
+          u32 iCharType = (u32)*data.pchCur;
+          AddIntegerToken(aTokens, iCharType, data.pos, *data.pchCur);
+        }
+      } break;
     }
+  }
 
-    // String end
-    data.AddEOF(aTokens);
-  };
+  // String end
+  data.AddEOF(aTokens);
+};
 
 };
 

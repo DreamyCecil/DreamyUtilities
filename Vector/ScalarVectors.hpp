@@ -10,60 +10,60 @@
 
 #include <vector>
 
-namespace dreamy
-{
-  #define NUMVEC_CLASS TNumVec
+namespace dreamy {
 
-  // 32-bit integer vectors
-  typedef TNumVec<s32, 2> Vec2I; // 2 integers
-  typedef TNumVec<s32, 3> Vec3I; // 3 integers
-  typedef TNumVec<s32, 4> Vec4I; // 4 integers
+#define NUMVEC_CLASS TNumVec
 
-  // Define arithmetic operators
-  #define VECTOR_TYPE s32
-  #define NUMVEC_OPS_FOR 2
-  #include "Operations/DefineOps.inl"
-  #define NUMVEC_OPS_FOR 3
-  #include "Operations/DefineOps.inl"
-  #define NUMVEC_OPS_FOR 4
-  #include "Operations/DefineOps.inl"
-  #undef VECTOR_TYPE
+// 32-bit integer vectors
+typedef TNumVec<s32, 2> Vec2I; // 2 integers
+typedef TNumVec<s32, 3> Vec3I; // 3 integers
+typedef TNumVec<s32, 4> Vec4I; // 4 integers
 
-  // Single precision vectors
-  typedef TNumVec<f32, 2> Vec2F; // 2D single precision vector
-  typedef TNumVec<f32, 3> Vec3F; // 3D single precision vector
-  typedef TNumVec<f32, 4> Vec4F; // 4D single precision vector
+// Define arithmetic operators
+#define VECTOR_TYPE s32
+#define NUMVEC_OPS_FOR 2
+#include "Operations/DefineOps.inl"
+#define NUMVEC_OPS_FOR 3
+#include "Operations/DefineOps.inl"
+#define NUMVEC_OPS_FOR 4
+#include "Operations/DefineOps.inl"
+#undef VECTOR_TYPE
 
-  // Define arithmetic operators
-  #define VECTOR_TYPE f32
-  #define NUMVEC_OPS_FOR 2
-  #include "Operations/DefineOps.inl"
-  #define NUMVEC_OPS_FOR 3
-  #include "Operations/DefineOps.inl"
-  #define NUMVEC_OPS_FOR 4
-  #include "Operations/DefineOps.inl"
-  #undef VECTOR_TYPE
+// Single precision vectors
+typedef TNumVec<f32, 2> Vec2F; // 2D single precision vector
+typedef TNumVec<f32, 3> Vec3F; // 3D single precision vector
+typedef TNumVec<f32, 4> Vec4F; // 4D single precision vector
 
-  // Double precision vectors
-  typedef TNumVec<f64, 2> Vec2D; // 2D double precision vector
-  typedef TNumVec<f64, 3> Vec3D; // 3D double precision vector
-  typedef TNumVec<f64, 4> Vec4D; // 4D double precision vector
+// Define arithmetic operators
+#define VECTOR_TYPE f32
+#define NUMVEC_OPS_FOR 2
+#include "Operations/DefineOps.inl"
+#define NUMVEC_OPS_FOR 3
+#include "Operations/DefineOps.inl"
+#define NUMVEC_OPS_FOR 4
+#include "Operations/DefineOps.inl"
+#undef VECTOR_TYPE
 
-  // Define arithmetic operators
-  #define VECTOR_TYPE f64
-  #define NUMVEC_OPS_FOR 2
-  #include "Operations/DefineOps.inl"
-  #define NUMVEC_OPS_FOR 3
-  #include "Operations/DefineOps.inl"
-  #define NUMVEC_OPS_FOR 4
-  #include "Operations/DefineOps.inl"
-  #undef VECTOR_TYPE
+// Double precision vectors
+typedef TNumVec<f64, 2> Vec2D; // 2D double precision vector
+typedef TNumVec<f64, 3> Vec3D; // 3D double precision vector
+typedef TNumVec<f64, 4> Vec4D; // 4D double precision vector
 
-  #undef NUMVEC_CLASS
+// Define arithmetic operators
+#define VECTOR_TYPE f64
+#define NUMVEC_OPS_FOR 2
+#include "Operations/DefineOps.inl"
+#define NUMVEC_OPS_FOR 3
+#include "Operations/DefineOps.inl"
+#define NUMVEC_OPS_FOR 4
+#include "Operations/DefineOps.inl"
+#undef VECTOR_TYPE
 
-  // Array types
-  typedef std::vector<Vec2D> CVec2Array; // Array of 2D vectors
-  typedef std::vector<Vec3D> CVec3Array; // Array of 3D vectors
+#undef NUMVEC_CLASS
+
+// Array types
+typedef std::vector<Vec2D> CVec2Array; // Array of 2D vectors
+typedef std::vector<Vec3D> CVec3Array; // Array of 3D vectors
 
 };
 

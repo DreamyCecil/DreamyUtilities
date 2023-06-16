@@ -13,47 +13,47 @@
   #define vswprintf _vsnwprintf
 #endif
 
-namespace dreamy
-{
-  // Format a string using a list of arguments
-  inline void VPrintF(Str_t &strOut, const c8 *strFormat, va_list arg) {
-    // Allocate new buffer
-    size_t iBufferSize = 256;
-    c8 *pchBuffer = new c8[iBufferSize];
+namespace dreamy {
 
-    // Repeat
-    s32 iLength;
+// Format a string using a list of arguments
+inline void VPrintF(Str_t &strOut, const c8 *strFormat, va_list arg) {
+  // Allocate new buffer
+  size_t iBufferSize = 256;
+  c8 *pchBuffer = new c8[iBufferSize];
 
-    while (true) {
-      // Print to the buffer
-      iLength = vsnprintf(pchBuffer, iBufferSize, strFormat, arg);
+  // Repeat
+  s32 iLength;
 
-      // Stop if printed ok
-      if (iLength != -1) {
-        break;
-      }
+  while (true) {
+    // Print to the buffer
+    iLength = vsnprintf(pchBuffer, iBufferSize, strFormat, arg);
 
-      // Increase the buffer size
-      ResizeBuffer<c8>(&pchBuffer, iBufferSize, iBufferSize + 256);
-      iBufferSize += 256;
+    // Stop if printed ok
+    if (iLength != -1) {
+      break;
     }
 
-    strOut = pchBuffer;
-    delete[] pchBuffer;
-  };
-
-  // Reusable inline formatting
-  #define DREAMY_PRINTF_INLINE(StringOut, StringFormat) { \
-    va_list arg; \
-    va_start(arg, StringFormat); \
-    VPrintF(StringOut, StringFormat, arg); \
-    va_end(arg); \
+    // Increase the buffer size
+    ResizeBuffer<c8>(&pchBuffer, iBufferSize, iBufferSize + 256);
+    iBufferSize += 256;
   }
 
-  // Custom string formatting
-  inline void PrintF(Str_t &strOut, const c8 *strFormat, ...) {
-    DREAMY_PRINTF_INLINE(strOut, strFormat);
-  };
+  strOut = pchBuffer;
+  delete[] pchBuffer;
+};
+
+// Reusable inline formatting
+#define DREAMY_PRINTF_INLINE(StringOut, StringFormat) { \
+  va_list arg; \
+  va_start(arg, StringFormat); \
+  VPrintF(StringOut, StringFormat, arg); \
+  va_end(arg); \
+}
+
+// Custom string formatting
+inline void PrintF(Str_t &strOut, const c8 *strFormat, ...) {
+  DREAMY_PRINTF_INLINE(strOut, strFormat);
+};
 
 };
 

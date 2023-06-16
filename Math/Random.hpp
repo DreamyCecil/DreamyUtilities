@@ -8,18 +8,18 @@
 
 #include <cstdlib>
 
-namespace dreamy
-{
-  // Get random number between 0 and 1 (inclusive)
-  inline f64 RandRatio(void) {
-    return static_cast<f64>(rand()) / static_cast<f64>(RAND_MAX);
-  };
+namespace dreamy {
 
-  // Get random number between min and max (inclusive)
-  // Use more efficient "min + rand() % (max + 1)" for integers!
-  inline f64 RandRange(const f64 min, const f64 max) {
-    return min + static_cast<f64>(rand()) / (static_cast<f64>(RAND_MAX) / (max - min));
-  };
+// Get random number between 0 and 1 (inclusive)
+inline f64 RandRatio(void) {
+  return static_cast<f64>(rand()) / static_cast<f64>(RAND_MAX);
+};
+
+// Get random number between min and max (inclusive)
+// Use more efficient "min + rand() % (max + 1)" for integers!
+inline f64 RandRange(const f64 min, const f64 max) {
+  return min + static_cast<f64>(rand()) / (static_cast<f64>(RAND_MAX) / (max - min));
+};
 
 };
 

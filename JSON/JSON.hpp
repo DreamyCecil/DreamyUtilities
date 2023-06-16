@@ -10,22 +10,22 @@
 #include "../JSON/Builder.hpp"
 #include "../JSON/Tokenizer.hpp"
 
-namespace dreamy
-{
-  // Parse JSON string and output it in a variant with optional token list
-  inline void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const Str_t &strJSON, const CValObject &oConstants = _jsonConstants.list) {
-    static CTokenList aTokenList;
+namespace dreamy {
 
-    // Supply local token list if none specified
-    if (paTokens == nullptr) {
-      aTokenList.clear();
-      paTokens = &aTokenList;
-    }
+// Parse JSON string and output it in a variant with optional token list
+inline void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const Str_t &strJSON, const CValObject &oConstants = _jsonConstants.list) {
+  static CTokenList aTokenList;
 
-    // Tokenize JSON string and build a value out of it
-    TokenizeJSON(*paTokens, strJSON, oConstants);
-    BuildJSON(valJSON, *paTokens);
-  };
+  // Supply local token list if none specified
+  if (paTokens == nullptr) {
+    aTokenList.clear();
+    paTokens = &aTokenList;
+  }
+
+  // Tokenize JSON string and build a value out of it
+  TokenizeJSON(*paTokens, strJSON, oConstants);
+  BuildJSON(valJSON, *paTokens);
+};
 
 };
 

@@ -10,149 +10,150 @@
 #include "../Vector/NumericVector.hpp"
 #include "../Math/Trigonometry.hpp"
 
-namespace dreamy
-{
-  // Vector template and type
-  #define ANGLES_TEMP template<typename Type, const u32 iDimensions>
-  #define ANGLES TAngles<Type, iDimensions>
+namespace dreamy {
 
-  // Fixed array of rotation angles
-  ANGLES_TEMP
-  class TAngles : public TNumVec<Type, iDimensions> {
-    public:
-      // Default constructor
-      __forceinline TAngles(void) {
-        this->Clear();
-      };
+// Vector template and type
+#define ANGLES_TEMP template<typename Type, const u32 iDimensions>
+#define ANGLES TAngles<Type, iDimensions>
 
-      // 1-value constructor
-      __forceinline TAngles(const Type val1) {
-        this->_values[0] = val1;
-      };
+// Fixed array of rotation angles
+ANGLES_TEMP
+class TAngles : public TNumVec<Type, iDimensions> {
 
-      // 2-value constructor
-      __forceinline TAngles(const Type val1, const Type val2) {
-        this->_values[0] = val1; this->_values[1] = val2;
-      };
+public:
+  // Default constructor
+  __forceinline TAngles(void) {
+    this->Clear();
+  };
 
-      // 3-value constructor
-      __forceinline TAngles(const Type val1, const Type val2, const Type val3) {
-        this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
-      };
+  // 1-value constructor
+  __forceinline TAngles(const Type val1) {
+    this->_values[0] = val1;
+  };
 
-      // 4-value constructor
-      __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4) {
-        this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3; this->_values[3] = val4;
-      };
+  // 2-value constructor
+  __forceinline TAngles(const Type val1, const Type val2) {
+    this->_values[0] = val1; this->_values[1] = val2;
+  };
 
-      // 5-value constructor
-      __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4, const Type val5) {
-        this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
-        this->_values[3] = val4; this->_values[4] = val5;
-      };
+  // 3-value constructor
+  __forceinline TAngles(const Type val1, const Type val2, const Type val3) {
+    this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
+  };
 
-      // 6-value constructor
-      __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4, const Type val5, const Type val6) {
-        this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
-        this->_values[3] = val4; this->_values[4] = val5; this->_values[5] = val6;
-      };
+  // 4-value constructor
+  __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4) {
+    this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3; this->_values[3] = val4;
+  };
 
-    public:
-      // Calculate direction vector from euler angles
-      inline void AnglesToDir(TNumVec<Type, 3> &vDirection) const {
-        // Make rotation matrix from the angles
-        TMatrix<Type, 3, 3> mDirection;
-        Mat3DFromAngles(mDirection, *this);
+  // 5-value constructor
+  __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4, const Type val5) {
+    this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
+    this->_values[3] = val4; this->_values[4] = val5;
+  };
 
-        // Rotate a front-facing vector by the matrix
-        vDirection = TNumVec<Type, 3>((Type)0.0, (Type)0.0, (Type)-1.0) * mDirection;
-      };
+  // 6-value constructor
+  __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4, const Type val5, const Type val6) {
+    this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
+    this->_values[3] = val4; this->_values[4] = val5; this->_values[5] = val6;
+  };
 
-      // Calculate euler angles from a direction vector (without banking)
-      inline void DirToAngles(TNumVec<Type, 3> &vAngles) const {
-        Type &h = vAngles[0];
-        Type &p = vAngles[1];
-        Type &b = vAngles[2];
+public:
+  // Calculate direction vector from euler angles
+  inline void AnglesToDir(TNumVec<Type, 3> &vDirection) const {
+    // Make rotation matrix from the angles
+    TMatrix<Type, 3, 3> mDirection;
+    Mat3DFromAngles(mDirection, *this);
 
-        const Type &x = (*this)[0];
-        const Type &y = (*this)[1];
-        const Type &z = (*this)[2];
+    // Rotate a front-facing vector by the matrix
+    vDirection = TNumVec<Type, 3>((Type)0.0, (Type)0.0, (Type)-1.0) * mDirection;
+  };
 
-        b = 0; // Banking is irrelevant
-        p = (Type)asin(y); // Calculate pitch
+  // Calculate euler angles from a direction vector (without banking)
+  inline void DirToAngles(TNumVec<Type, 3> &vAngles) const {
+    Type &h = vAngles[0];
+    Type &p = vAngles[1];
+    Type &b = vAngles[2];
 
-        // If pointing upwards or downwards
-        if ((f64)y > 0.99 || (f64)y < -0.99) {
-          // Heading is irrelevant
-          h = 0;
+    const Type &x = (*this)[0];
+    const Type &y = (*this)[1];
+    const Type &z = (*this)[2];
 
-        } else {
-          // Calculate heading
-          h = (Type)atan2(-x, -z);
-        }
-      };
+    b = 0; // Banking is irrelevant
+    p = (Type)asin(y); // Calculate pitch
 
-      // Rotate euler angles in radians using the trackball method
-      void RotateTrackball(const TNumVec<Type, 3> &vRotation) {
-        TMatrix<Type, 3, 3> mRotation;
-        TMatrix<Type, 3, 3> mOriginal;
+    // If pointing upwards or downwards
+    if ((f64)y > 0.99 || (f64)y < -0.99) {
+      // Heading is irrelevant
+      h = 0;
 
-        // Create matrices from angles
-        Mat3DFromAngles(mRotation, vRotation);
-        Mat3DFromAngles(mOriginal, *this);
+    } else {
+      // Calculate heading
+      h = (Type)atan2(-x, -z);
+    }
+  };
 
-        // Recreate angles from the composed matrix
-        mOriginal = mRotation * mOriginal; // Rotate first by original, then by rotation angles
-        Mat3DToAngles(mOriginal, *this);
-      };
+  // Rotate euler angles in radians using the trackball method
+  void RotateTrackball(const TNumVec<Type, 3> &vRotation) {
+    TMatrix<Type, 3, 3> mRotation;
+    TMatrix<Type, 3, 3> mOriginal;
 
-      // Rotate euler angles in radians using the airplane method
-      void RotateAirplane(const TNumVec<Type, 3> &vRotation) {
-        TMatrix<Type, 3, 3> mRotation;
-        TMatrix<Type, 3, 3> mOriginal;
+    // Create matrices from angles
+    Mat3DFromAngles(mRotation, vRotation);
+    Mat3DFromAngles(mOriginal, *this);
 
-        // Create matrices from angles
-        Mat3DFromAngles(mRotation, vRotation);
-        Mat3DFromAngles(mOriginal, *this);
+    // Recreate angles from the composed matrix
+    mOriginal = mRotation * mOriginal; // Rotate first by original, then by rotation angles
+    Mat3DToAngles(mOriginal, *this);
+  };
 
-        // Recreate angles from the composed matrix
-        mOriginal = mOriginal * mRotation; // Rotate first by rotation, then by original angles
-        Mat3DToAngles(mOriginal, *this);
-      };
+  // Rotate euler angles in radians using the airplane method
+  void RotateAirplane(const TNumVec<Type, 3> &vRotation) {
+    TMatrix<Type, 3, 3> mRotation;
+    TMatrix<Type, 3, 3> mOriginal;
 
-      // Convert values from degrees to radians
-      ANGLES DegToRad(void) const;
+    // Create matrices from angles
+    Mat3DFromAngles(mRotation, vRotation);
+    Mat3DFromAngles(mOriginal, *this);
 
-      // Convert values from radians to degrees
-      ANGLES RadToDeg(void) const;
+    // Recreate angles from the composed matrix
+    mOriginal = mOriginal * mRotation; // Rotate first by rotation, then by original angles
+    Mat3DToAngles(mOriginal, *this);
   };
 
   // Convert values from degrees to radians
-  ANGLES_TEMP inline
-  ANGLES ANGLES::DegToRad(void) const {
-    ANGLES v(*this);
-
-    s32 i = iDimensions;
-    while (--i >= 0) {
-      v[i] = dreamy::DegToRad(this->_values[i]);
-    }
-    return v;
-  };
+  ANGLES DegToRad(void) const;
 
   // Convert values from radians to degrees
-  ANGLES_TEMP inline
-  ANGLES ANGLES::RadToDeg(void) const {
-    ANGLES v(*this);
+  ANGLES RadToDeg(void) const;
+};
 
-    s32 i = iDimensions;
-    while (--i >= 0) {
-      v[i] = dreamy::RadToDeg(this->_values[i]);
-    }
-    return v;
-  };
+// Convert values from degrees to radians
+ANGLES_TEMP inline
+ANGLES ANGLES::DegToRad(void) const {
+  ANGLES v(*this);
 
-  #undef ANGLES
-  #undef ANGLES_TEMP
+  s32 i = iDimensions;
+  while (--i >= 0) {
+    v[i] = dreamy::DegToRad(this->_values[i]);
+  }
+  return v;
+};
+
+// Convert values from radians to degrees
+ANGLES_TEMP inline
+ANGLES ANGLES::RadToDeg(void) const {
+  ANGLES v(*this);
+
+  s32 i = iDimensions;
+  while (--i >= 0) {
+    v[i] = dreamy::RadToDeg(this->_values[i]);
+  }
+  return v;
+};
+
+#undef ANGLES
+#undef ANGLES_TEMP
 
 };
 

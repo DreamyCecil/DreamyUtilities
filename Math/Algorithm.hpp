@@ -6,30 +6,30 @@
 
 #include "../Base/Base.hpp"
 
-namespace dreamy
-{
-  namespace math
-  {
-    #define MATH_TEMP template<typename Type>
+namespace dreamy {
 
-    // Return smaller of two values
-    MATH_TEMP inline Type Min(Type x, Type y) {
-      return (x < y) ? x : y;
-    };
+namespace math {
 
-    // Return larger of two values
-    MATH_TEMP inline Type Max(Type x, Type y) {
-      return (x < y) ? y : x;
-    };
+#define MATH_TEMP template<typename Type>
 
-    // Clamp value between certain boundaries
-    MATH_TEMP inline Type Clamp(Type x, Type min, Type max) {
-      return (x < min) ? min : (max < x) ? max : x;
-    };
+// Return smaller of two values
+MATH_TEMP inline Type Min(Type x, Type y) {
+  return (x < y) ? x : y;
+};
 
-    #undef MATH_TEMP
+// Return larger of two values
+MATH_TEMP inline Type Max(Type x, Type y) {
+  return (x < y) ? y : x;
+};
 
-  };
+// Clamp value between certain boundaries
+MATH_TEMP inline Type Clamp(Type x, Type min, Type max) {
+  return (x < min) ? min : (max < x) ? max : x;
+};
+
+#undef MATH_TEMP
+
+};
 
 };
 

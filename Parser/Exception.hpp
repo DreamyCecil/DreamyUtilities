@@ -8,36 +8,37 @@
 
 #include "../Parser/TokenPos.hpp"
 
-namespace dreamy
-{
-  // Exception that a tokenizer may throw
-  class CTokenException : public CMessageException {
-    protected:
-      CTokenPos _pos;
+namespace dreamy {
 
-    public:
-      // Default constructor
-      CTokenException(const CTokenPos &pos, const c8 *strError = "") : _pos(pos)
-      {
-        u32 iLine, iCol;
-        _pos.GetPos(iLine, iCol);
+// Exception that a tokenizer may throw
+class CTokenException : public CMessageException {
 
-        PrintF("%s at line %u, col %u", strError, iLine, iCol);
-      };
+protected:
+  CTokenPos _pos;
 
-      // Get error position
-      const CTokenPos GetPos(void) const {
-        return _pos;
-      };
+public:
+  // Default constructor
+  CTokenException(const CTokenPos &pos, const c8 *strError = "") : _pos(pos)
+  {
+    u32 iLine, iCol;
+    _pos.GetPos(iLine, iCol);
 
-      // Quick function for throwing token exceptions
-      static void Throw(const CTokenPos &pos, const c8 *strFormat, ...) {
-        CTokenException ex(pos);
-        DREAMY_PRINTF_INLINE(ex._message, strFormat);
-
-        throw ex;
-      };
+    PrintF("%s at line %u, col %u", strError, iLine, iCol);
   };
+
+  // Get error position
+  const CTokenPos GetPos(void) const {
+    return _pos;
+  };
+
+  // Quick function for throwing token exceptions
+  static void Throw(const CTokenPos &pos, const c8 *strFormat, ...) {
+    CTokenException ex(pos);
+    DREAMY_PRINTF_INLINE(ex._message, strFormat);
+
+    throw ex;
+  };
+};
 
 };
 

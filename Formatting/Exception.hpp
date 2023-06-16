@@ -9,25 +9,26 @@
 #include "../Types/Exception.hpp"
 #include "../Formatting/Printing.hpp"
 
-namespace dreamy
-{
-  // Exception that formatting may throw
-  class CFormattingException : public CMessageException {
-    private:
-      size_t _char;
+namespace dreamy {
 
-    public:
-      // Default constructor
-      CFormattingException(size_t iSetChar) : _char(iSetChar)
-      {
-        PrintF("Formatting exception at %ull", _char);
-      };
+// Exception that formatting may throw
+class CFormattingException : public CMessageException {
 
-      // Get character position
-      inline size_t GetCharacter(void) const {
-        return _char;
-      };
+private:
+  size_t _char;
+
+public:
+  // Default constructor
+  CFormattingException(size_t iSetChar) : _char(iSetChar)
+  {
+    PrintF("Formatting exception at %ull", _char);
   };
+
+  // Get character position
+  inline size_t GetCharacter(void) const {
+    return _char;
+  };
+};
 
 };
 
