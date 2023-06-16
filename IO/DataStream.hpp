@@ -411,7 +411,7 @@ namespace dreamy
         *this << ulDataLength;
 
         // Write bytes if there are any
-        if (ulDataLength > 0 && Write(baData.ConstData(), ulDataLength) != ulDataLength) {
+        if (ulDataLength != 0 && Write(baData.ConstData(), ulDataLength) != ulDataLength) {
           SetStatus(STATUS_WRITEFAILED);
         }
 
@@ -427,7 +427,7 @@ namespace dreamy
         baData.Resize(ulDataLength);
 
         // Read bytes if there are any written
-        if (ulDataLength > 0 && Read(baData.Data(), ulDataLength) != ulDataLength) {
+        if (ulDataLength != 0 && Read(baData.Data(), ulDataLength) != ulDataLength) {
           memset(baData.Data(), 0, ulDataLength);
         }
 

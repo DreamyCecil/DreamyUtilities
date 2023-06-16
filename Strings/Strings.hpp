@@ -125,7 +125,7 @@ namespace dreamy
     memcpy(&str[0], &strLiteral[0], iSize);
 
     // Nullify last characters
-    if (iSize > 0) {
+    if (iSize != 0) {
       memset(&str[iSize], '\0', 8 - iSize);
     }
 

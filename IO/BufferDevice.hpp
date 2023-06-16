@@ -111,7 +111,7 @@ namespace dreamy
 
       // Put bytes into the device
       virtual size_t Write(const c8 *pData, size_t iMaxSize) {
-        if (pData == NULL || _pData == nullptr || !IsWritable()) {
+        if (pData == nullptr || _pData == nullptr || !IsWritable()) {
           return NULL_POS;
         }
 

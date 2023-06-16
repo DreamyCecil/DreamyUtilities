@@ -35,7 +35,7 @@ namespace dreamy
           iSize = strlen(pData);
         }
 
-        if (iSize > 0) {
+        if (iSize != 0) {
           Resize(iSize);
           memcpy(_pBuffer, pData, iSize);
         }
@@ -44,7 +44,7 @@ namespace dreamy
       // Constructor with a specific size
       CByteArray(c8 chByte, size_t iSize) : _pBuffer(nullptr), _iSize(0)
       {
-        if (iSize > 0) {
+        if (iSize != 0) {
           Resize(iSize);
           memset(_pBuffer, chByte, iSize);
         }
@@ -59,7 +59,7 @@ namespace dreamy
       void Copy(const CByteArray &baOther) {
         Clear();
 
-        if (!baOther.IsNull() && baOther.Size() > 0) {
+        if (!baOther.IsNull() && baOther.Size() != 0) {
           Resize(baOther.Size());
           memcpy(_pBuffer, baOther.ConstData(), baOther.Size());
         }
@@ -84,7 +84,7 @@ namespace dreamy
       // Insert array of specified size into specified position
       CByteArray &Insert(size_t iPos, const c8 *pData, size_t iSize = NULL_POS) {
         // Nothing to add
-        if (pData == NULL) {
+        if (pData == nullptr) {
           return *this;
         }
 
@@ -103,7 +103,7 @@ namespace dreamy
         pNewData[iNewSize] = '\0';
 
         // Copy first part of the source array
-        if (iPos > 0) {
+        if (iPos != 0) {
           memcpy(&pNewData[0], Data(), iPos);
         }
 
@@ -136,7 +136,7 @@ namespace dreamy
         pNewData[iNewSize] = '\0';
 
         // Copy first part of source array
-        if (iPos > 0) {
+        if (iPos != 0) {
           memcpy(&pNewData[0], Data(), iPos);
         }
 
@@ -167,7 +167,7 @@ namespace dreamy
         size_t iNewSize = Size() - iSize;
         size_t iRightSize = Size() - iSize - iPos;
 
-        if (iRightSize > 0) {
+        if (iRightSize != 0) {
           memcpy(&Data()[iPos], &Data()[iPos + iSize], iRightSize);
         }
 
@@ -188,13 +188,13 @@ namespace dreamy
         if (Data()) {
           // Copy old data if enough space
           if (iNewSize > Size()) {
-            if (_iSize > 0) {
+            if (_iSize != 0) {
               memcpy(&pNewData[0], _pBuffer, _iSize);
             }
 
           // Copy reduced data
           } else {
-            if (iNewSize > 0) {
+            if (iNewSize != 0) {
               memcpy(&pNewData[0], _pBuffer, iNewSize);
             }
           }
@@ -273,7 +273,7 @@ namespace dreamy
       CByteArray &operator=(const CByteArray &baOther) {
         Clear();
 
-        if (baOther.Size() > 0) {
+        if (baOther.Size() != 0) {
           Resize(baOther.Size());
           memcpy(Data(), baOther.ConstData(), baOther.Size());
         }
