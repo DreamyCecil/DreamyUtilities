@@ -42,12 +42,7 @@ namespace dreamy
     }
 
     // String end
-    const u32 iEndPos = (u32)data.str.length();
-
-    data.pos = CTokenPos(iEndPos, iEndPos, 0);
-    data.SetPosition(data.pos.iLast);
-
-    AddToken(aTokens, CParserToken::TKN_EOF, data.pos);
+    data.AddEOF(aTokens);
   };
 
 };

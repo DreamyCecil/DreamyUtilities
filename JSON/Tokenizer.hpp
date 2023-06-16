@@ -32,7 +32,7 @@ namespace dreamy
     CParserData data(strJSON);
 
     while (data.CanParse()) {
-      const c8 &ch = *data.pchCur;
+      const c8 ch = *data.pchCur;
 
       switch (ch) {
         // Skip spaces

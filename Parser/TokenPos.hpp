@@ -18,17 +18,19 @@ namespace dreamy
     public:
       u32 iFirst; // First character index
       u32 iLast; // Last character index
-      u32 iFormatted; // Line and column indices combined
+
+      u32 iLine; // Line index (from 0)
+      u32 iCol; // Column index (from 0)
 
     public:
       // Default constructor
-      CTokenPos(void) : iFirst(-1), iLast(-1), iFormatted(-1)
+      CTokenPos() : iFirst(-1), iLast(-1), iLine(-1), iCol(-1)
       {
       };
 
       // Constructor with positions
-      CTokenPos(u32 iSetFirst, u32 iSetLast, u32 iSetFormatted) :
-        iFirst(iSetFirst), iLast(iSetLast), iFormatted(iSetFormatted)
+      CTokenPos(u32 iSetFirst, u32 iSetLast, u32 iSetLine, u32 iSetCol) :
+        iFirst(iSetFirst), iLast(iSetLast), iLine(iSetLine), iCol(iSetCol)
       {
       };
 
@@ -50,14 +52,16 @@ namespace dreamy
 
       // Format token position relative to the line
       inline void FormatPos(u32 iCurrentPos, u32 iCurrentLine, u32 iLineBeginning) {
-        iFormatted = iCurrentLine * CHARS_PER_LINE + math::Min(iCurrentPos - iLineBeginning, u32(CHARS_PER_LINE - 1));
+        iLine = iCurrentLine;
+        iCol = iCurrentPos - iLineBeginning;
       };
 
       // Assignment
       inline CTokenPos &operator=(const CTokenPos &posOther) {
         iFirst = posOther.iFirst;
         iLast = posOther.iLast;
-        iFormatted = posOther.iFormatted;
+        iLine = posOther.iLine;
+        iCol = posOther.iCol;
 
         return *this;
       };
@@ -66,14 +70,15 @@ namespace dreamy
       inline bool operator==(const CTokenPos &posOther) const {
         return (iFirst == posOther.iFirst
              && iLast == posOther.iLast
-             && iFormatted == posOther.iFormatted);
+             && iLine == posOther.iLine
+             && iCol == posOther.iCol);
       };
 
       // Retrieve token line and column
-      inline void GetPos(u32 &iLine, u32 &iCol) const {
-        iCol = iFormatted % CHARS_PER_LINE; // Character in a line
-        iLine = (iFormatted - iCol) / CHARS_PER_LINE; // Line
-        ++iCol; // Start from 1
+      inline void GetPos(u32 &iGetLine, u32 &iGetCol) const {
+        // Start from 1
+        iGetLine = iLine + 1;
+        iGetCol = iCol + 1;
       };
   };
 

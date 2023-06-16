@@ -142,7 +142,7 @@ namespace dreamy
 
         // Print a line and a column
         Str_t str;
-        dreamy::PrintF(str, "line %u, col %u", iLine, iCol + 1);
+        dreamy::PrintF(str, "line %u, col %u", iLine, iCol);
 
         return str;
       };

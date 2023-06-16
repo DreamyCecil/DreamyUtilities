@@ -23,7 +23,7 @@ namespace dreamy
       const c8 *pchNext; // Next character
 
       // Parser position
-      u32 iLineCur; // Current line
+      u32 iLineCur; // Current line (from 0)
       u32 iLineBeg; // Line start position character-wise
 
       CTokenPos pos; // Token beginning and end positions
@@ -31,7 +31,7 @@ namespace dreamy
     public:
       // Default constructor
       CParserData(const Str_t &strSet) : str(strSet), pchCur(&strSet[0]), pchNext(&strSet[1]),
-        iLineCur(1), iLineBeg(0), pos(0, 0, 0)
+        iLineCur(0), iLineBeg(0), pos(0, 0, 0, 0)
       {
       };
 
@@ -94,7 +94,17 @@ namespace dreamy
     // Parsing from the current character one time
     public:
 
-      // Tokenize comments
+      // Add end-of-file token at the very end
+      inline void AddEOF(CTokenList &aTokens) {
+        const u32 iEndPos = (u32)str.length();
+
+        pos = CTokenPos(iEndPos, iEndPos, -1, -1);
+        SetPosition(pos.iLast);
+
+        AddToken(aTokens, CParserToken::TKN_EOF, pos);
+      };
+
+      // Tokenize C/C++ styled comments
       bool ParseComments(CTokenList &aTokens, bool bTokenize) {
         if (*pchCur != '/') {
           return false;
