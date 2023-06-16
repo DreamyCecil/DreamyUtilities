@@ -95,16 +95,13 @@ namespace dreamy
         VAL_LAST,
       };
 
-      #define VARIANT_NUMBERMASK 0x03 // Covers real number types (00000011)
-      #define VARIANT_SCALARMASK 0x0F // Covers all scalar types  (00001111)
-
     protected:
       EType _type; // Value type index
       CAny _val; // Actual value
 
     public:
       // Default constructor
-      CAbstractValue(void) : _type(VAL_INVALID), _val(s32(0))
+      CAbstractValue() : _type(VAL_INVALID), _val(s32(0))
       {
       };
 
@@ -117,6 +114,11 @@ namespace dreamy
       // Get value type
       inline EType GetType(void) const {
         return _type;
+      };
+
+      // Get actual value
+      inline const CAny &GetValue(void) const {
+        return _val;
       };
 
       // Custom assignment
@@ -139,22 +141,22 @@ namespace dreamy
   class CVariant : public CAbstractValue {
     public:
       // Default constructor
-      CVariant(void) : CAbstractValue()
+      CVariant() : CAbstractValue()
       {
       };
 
       // Type-specific methods
-      VARIANT_TYPE_METHODS(const f32,  f32,  VAL_F32, F32);
-      VARIANT_TYPE_METHODS(const f64,  f64,  VAL_F64, F64);
-      VARIANT_TYPE_METHODS(const bool, bool, VAL_BIT, Bit);
-      VARIANT_TYPE_METHODS(const u8,   u8,   VAL_U8,  U8);
-      VARIANT_TYPE_METHODS(const s8,   s8,   VAL_S8,  S8);
-      VARIANT_TYPE_METHODS(const u16,  u16,  VAL_U16, U16);
-      VARIANT_TYPE_METHODS(const s16,  s16,  VAL_S16, S16);
-      VARIANT_TYPE_METHODS(const u32,  u32,  VAL_U32, U32);
-      VARIANT_TYPE_METHODS(const s32,  s32,  VAL_S32, S32);
-      VARIANT_TYPE_METHODS(const u64,  u64,  VAL_U64, U64);
-      VARIANT_TYPE_METHODS(const s64,  s64,  VAL_S64, S64);
+      VARIANT_TYPE_METHODS(f32,  f32,  VAL_F32, F32);
+      VARIANT_TYPE_METHODS(f64,  f64,  VAL_F64, F64);
+      VARIANT_TYPE_METHODS(bool, bool, VAL_BIT, Bit);
+      VARIANT_TYPE_METHODS(u8,   u8,   VAL_U8,  U8);
+      VARIANT_TYPE_METHODS(s8,   s8,   VAL_S8,  S8);
+      VARIANT_TYPE_METHODS(u16,  u16,  VAL_U16, U16);
+      VARIANT_TYPE_METHODS(s16,  s16,  VAL_S16, S16);
+      VARIANT_TYPE_METHODS(u32,  u32,  VAL_U32, U32);
+      VARIANT_TYPE_METHODS(s32,  s32,  VAL_S32, S32);
+      VARIANT_TYPE_METHODS(u64,  u64,  VAL_U64, U64);
+      VARIANT_TYPE_METHODS(s64,  s64,  VAL_S64, S64);
 
       VARIANT_TYPE_METHODS(const Str_t      &, Str_t,      VAL_STR, String);
       VARIANT_TYPE_METHODS(const CValObject &, CValObject, VAL_OBJ, Object);
@@ -174,6 +176,19 @@ namespace dreamy
       VARIANT_TYPE_METHODS(const CVec2Array &, CVec2Array, VAL_ARR_VEC2, Vec2Array);
       VARIANT_TYPE_METHODS(const CVec3Array &, CVec3Array, VAL_ARR_VEC3, Vec3Array);
 
+      // Check for a distinctive number type (float, integer or invalid)
+      inline EType GetNumberType(void) const {
+        const EType eType = GetType();
+
+        if (eType > VAL_INVALID && eType < VAL_STR) {
+          // Real number or integer
+          return (eType < VAL_BIT) ? VAL_F64 : VAL_S64;
+        }
+
+        // Not a number
+        return VAL_INVALID;
+      };
+
       // Comparison
       inline bool operator==(const CVariant &valOther) const;
 
@@ -183,7 +198,7 @@ namespace dreamy
       };
   };
 
-  // Type array conversion methods
+  // Methods for converting typed arrays into variant arrays
   VARIANT_CONVERT_ARRAY_METHOD(Bits_t,     Bit);
   VARIANT_CONVERT_ARRAY_METHOD(Bytes_t,    U8);
   VARIANT_CONVERT_ARRAY_METHOD(Ints_t,     S64);

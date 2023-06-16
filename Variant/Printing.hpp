@@ -13,7 +13,7 @@
 
 namespace dreamy
 {
-  // Define method for printing a variant with specific function arguments
+  // Define method for printing a variant into a stream with specific function arguments
   #define DEFINE_VARIANT_PRINT(FuncName, ArgVal, ArgStrm, ArgOpts, ArgUndefined) \
     void FuncName(const CVariant &ArgVal, CStringStream &ArgStrm, const ValPrintOpts &ArgOpts, const c8 *ArgUndefined)
 
