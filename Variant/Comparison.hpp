@@ -57,48 +57,51 @@ VARIANT_COMPARE_METHOD(StrArray);
 VARIANT_COMPARE_METHOD(Vec2Array);
 VARIANT_COMPARE_METHOD(Vec3Array);
 
-// Variant comparison methods per type
-typedef std::vector<CVariantCompareFunc> CVariantComparators;
+// Compare main types directly
+bool CVariant::Compare(const CVariant &valOther) const {
+  const EType eThis = GetType();
+  const EType eOther = valOther.GetType();
 
-// Comparator for main types
-static const struct VariantComparator {
-  CVariantComparators aMethods;
+  // Mismatching type
+  if (eThis != eOther) return false;
 
-  VariantComparator(void) {
-    aMethods.resize(CVariant::VAL_LAST);
-    aMethods[CVariant::VAL_INVALID] = &CompareInvalid;
+  // Comparators for custom types should be called directly instead of using CVariant methods
+  D_ASSERT(eThis >= VAL_INVALID && eThis < VAL_LAST);
 
-    aMethods[CVariant::VAL_F32] = &CompareF32;
-    aMethods[CVariant::VAL_F64] = &CompareF64;
-    aMethods[CVariant::VAL_BIT] = &CompareBit;
-    aMethods[CVariant::VAL_U8]  = &CompareU8;
-    aMethods[CVariant::VAL_S8]  = &CompareS8;
-    aMethods[CVariant::VAL_U16] = &CompareU16;
-    aMethods[CVariant::VAL_S16] = &CompareS16;
-    aMethods[CVariant::VAL_U32] = &CompareU32;
-    aMethods[CVariant::VAL_S32] = &CompareS32;
-    aMethods[CVariant::VAL_U64] = &CompareU64;
-    aMethods[CVariant::VAL_S64] = &CompareS64;
-
-    aMethods[CVariant::VAL_STR] = &CompareString;
-    aMethods[CVariant::VAL_OBJ] = &CompareObject;
-    aMethods[CVariant::VAL_PTR] = &ComparePtr;
-
-    aMethods[CVariant::VAL_VEC2] = &CompareVec2;
-    aMethods[CVariant::VAL_VEC3] = &CompareVec3;
-    aMethods[CVariant::VAL_MAT2] = &CompareMat2;
-    aMethods[CVariant::VAL_MAT3] = &CompareMat3;
-
-    aMethods[CVariant::VAL_ARR]      = &CompareArray;
-    aMethods[CVariant::VAL_ARR_BIT]  = &CompareBitArray;
-    aMethods[CVariant::VAL_ARR_U8]   = &CompareByteArray;
-    aMethods[CVariant::VAL_ARR_S64]  = &CompareIntArray;
-    aMethods[CVariant::VAL_ARR_F64]  = &CompareNumArray;
-    aMethods[CVariant::VAL_ARR_STR]  = &CompareStrArray;
-    aMethods[CVariant::VAL_ARR_VEC2] = &CompareVec2Array;
-    aMethods[CVariant::VAL_ARR_VEC3] = &CompareVec3Array;
+  // Variant comparison methods per type
+  CVariantCompareFunc aMethods[CVariant::VAL_LAST] = {
+    &CompareInvalid,
+    &CompareF32,
+    &CompareF64,
+    &CompareBit,
+    &CompareU8,
+    &CompareS8,
+    &CompareU16,
+    &CompareS16,
+    &CompareU32,
+    &CompareS32,
+    &CompareU64,
+    &CompareS64,
+    &CompareString,
+    &CompareObject,
+    &ComparePtr,
+    &CompareVec2,
+    &CompareVec3,
+    &CompareMat2,
+    &CompareMat3,
+    &CompareArray,
+    &CompareBitArray,
+    &CompareByteArray,
+    &CompareIntArray,
+    &CompareNumArray,
+    &CompareStrArray,
+    &CompareVec2Array,
+    &CompareVec3Array,
   };
-} _variantComparator;
+
+  // Compare values of the same type
+  return aMethods[eThis](*this, valOther);
+};
 
 // Comparison
 bool CVariant::operator==(const CVariant &valOther) const {
@@ -116,15 +119,8 @@ bool CVariant::operator==(const CVariant &valOther) const {
     return GetNumber<s64>(*this) == GetNumber<s64>(valOther);
   }
 
-  // Mismatching type
-  if (GetType() != valOther.GetType()) return false;
-
-  // Comparators for custom types should be called directly instead of using the '==' operator
-  D_ASSERT(GetType() >= VAL_INVALID && GetType() < VAL_LAST);
-
-  // Compare values of the same type
-  CVariantCompareFunc pComparator = _variantComparator.aMethods[GetType()];
-  return pComparator(*this, valOther);
+  // Compare values of the same main type
+  return Compare(valOther);
 };
 
 };

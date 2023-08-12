@@ -191,6 +191,9 @@ public:
     return VAL_INVALID;
   };
 
+  // Compare vanilla types directly
+  inline bool Compare(const CVariant &valOther) const;
+
   // Comparison
   inline bool operator==(const CVariant &valOther) const;
 
