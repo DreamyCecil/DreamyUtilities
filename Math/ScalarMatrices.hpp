@@ -6,7 +6,7 @@
 
 #include "../Base/Base.hpp"
 
-#include "RotationMatrix.hpp"
+#include "../Math/Matrix.hpp"
 
 namespace dreamy {
 
@@ -16,8 +16,8 @@ typedef TMatrix<f32, 3, 3> Mat3F; // 3x3 single precision matrix
 
 // Define operators
 #define MATRIX_TYPE f32
-#include "Operations/DefineOps2D.inl"
-#include "Operations/DefineOps3D.inl"
+#include "../Math/MatrixOps/Matrix2D.inl"
+#include "../Math/MatrixOps/Matrix3D.inl"
 #undef MATRIX_TYPE
 
 // Double precision matrices
@@ -26,8 +26,8 @@ typedef TMatrix<f64, 3, 3> Mat3D; // 3x3 double precision matrix
 
 // Define operators
 #define MATRIX_TYPE f64
-#include "Operations/DefineOps2D.inl"
-#include "Operations/DefineOps3D.inl"
+#include "../Math/MatrixOps/Matrix2D.inl"
+#include "../Math/MatrixOps/Matrix3D.inl"
 #undef MATRIX_TYPE
 
 };

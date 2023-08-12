@@ -6,8 +6,8 @@
 
 #include "../Base/Base.hpp"
 
-#include "../Matrix/RotationMatrix.hpp"
-#include "../Vector/NumericVector.hpp"
+#include "../Math/Matrix.hpp"
+#include "../Math/Vector.hpp"
 #include "../Math/Trigonometry.hpp"
 
 namespace dreamy {

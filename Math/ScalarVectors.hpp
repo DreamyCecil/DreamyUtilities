@@ -6,7 +6,7 @@
 
 #include "../Base/Base.hpp"
 
-#include "NumericVector.hpp"
+#include "../Math/Vector.hpp"
 
 #include <vector>
 
@@ -22,11 +22,11 @@ typedef TNumVec<s32, 4> Vec4I; // 4 integers
 // Define arithmetic operators
 #define VECTOR_TYPE s32
 #define NUMVEC_OPS_FOR 2
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #undef VECTOR_TYPE
 
 // Single precision vectors
@@ -37,11 +37,11 @@ typedef TNumVec<f32, 4> Vec4F; // 4D single precision vector
 // Define arithmetic operators
 #define VECTOR_TYPE f32
 #define NUMVEC_OPS_FOR 2
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #undef VECTOR_TYPE
 
 // Double precision vectors
@@ -52,11 +52,11 @@ typedef TNumVec<f64, 4> Vec4D; // 4D double precision vector
 // Define arithmetic operators
 #define VECTOR_TYPE f64
 #define NUMVEC_OPS_FOR 2
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "Operations/DefineOps.inl"
+#include "../Math/VectorOps/VectorOps.inl"
 #undef VECTOR_TYPE
 
 #undef NUMVEC_CLASS

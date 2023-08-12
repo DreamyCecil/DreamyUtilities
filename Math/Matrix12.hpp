@@ -6,7 +6,7 @@
 
 #include "../Base/Base.hpp"
 
-#include "RotationMatrix.hpp"
+#include "../Math/Matrix.hpp"
 
 namespace dreamy {
 
@@ -16,11 +16,11 @@ typedef TMatrix<f64, 3, 4> Mat12D;
 
 // Define operators
 #define MATRIX_TYPE f32
-#include "Operations/DefineOps12.inl"
+#include "../Math/MatrixOps/Matrix12.inl"
 #undef MATRIX_TYPE
 
 #define MATRIX_TYPE f64
-#include "Operations/DefineOps12.inl"
+#include "../Math/MatrixOps/Matrix12.inl"
 #undef MATRIX_TYPE
 
 // Matrix template and types

@@ -6,9 +6,9 @@
 
 #include "../Base/Base.hpp"
 
-#include "Quaternion.hpp"
-#include "../Vector/NumericVector.hpp"
-#include "../Matrix/Matrix12.hpp"
+#include "../Math/Quaternion.hpp"
+#include "../Math/Vector.hpp"
+#include "../Math/Matrix12.hpp"
 
 namespace dreamy {
 

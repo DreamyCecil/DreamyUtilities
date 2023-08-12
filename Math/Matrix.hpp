@@ -6,7 +6,7 @@
 
 #include "../Base/Base.hpp"
 
-#include "../Vector/NumericVector.hpp"
+#include "../Math/Vector.hpp"
 #include "../Math/Trigonometry.hpp"
 
 namespace dreamy {

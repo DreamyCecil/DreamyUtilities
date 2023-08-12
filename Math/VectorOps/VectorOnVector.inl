@@ -3,7 +3,7 @@
 
 // Define operations for vectors with vectors
 #define DO_DIMENSION_OPERATION(VecIndex, ThisVec, Operation, Other) ThisVec[VecIndex] Operation Other[VecIndex];
-#include "DefineVectorOps.inl"
+#include "../Math/VectorOps/OpsDefine.inl"
 
 // Add another vector
 template<> inline
@@ -69,4 +69,4 @@ NUMVEC NUMVEC::operator-(void) const {
   return v;
 };
 
-#include "UndefVectorOps.inl"
+#include "../Math/VectorOps/OpsUndef.inl"

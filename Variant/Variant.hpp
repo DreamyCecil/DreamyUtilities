@@ -14,8 +14,8 @@
 
 // Extra types
 #include "../Types/Arrays.hpp"
-#include "../Matrix/ScalarMatrices.hpp"
-#include "../Vector/ScalarVectors.hpp"
+#include "../Math/ScalarMatrices.hpp"
+#include "../Math/ScalarVectors.hpp"
 
 // Value containers
 #include <vector>
