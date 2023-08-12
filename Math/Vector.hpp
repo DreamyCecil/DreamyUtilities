@@ -14,7 +14,7 @@ namespace dreamy {
 
 // Vector template and type
 #define NUMVEC_TEMP template<typename Type, const u32 iDimensions>
-#define NUMVEC TNumVec<Type, iDimensions>
+#define NUMVEC TVector<Type, iDimensions>
 
 // Set all dimensions in the vector to a certain value
 #define NUMVEC_SET_ALL(VecValue) { \
@@ -23,7 +23,7 @@ namespace dreamy {
 }
 
 // Fixed array of a certain number type
-NUMVEC_TEMP class TNumVec {
+NUMVEC_TEMP class TVector {
 
 public:
   typedef Type T; // Template type
@@ -33,37 +33,37 @@ protected:
 
 public:
   // Default constructor
-  __forceinline TNumVec(void) {
+  __forceinline TVector(void) {
     Clear();
   };
 
   // 1-value constructor
-  __forceinline TNumVec(const Type val1) {
+  __forceinline TVector(const Type val1) {
     _values[0] = val1;
   };
 
   // 2-value constructor
-  __forceinline TNumVec(const Type val1, const Type val2) {
+  __forceinline TVector(const Type val1, const Type val2) {
     _values[0] = val1; _values[1] = val2;
   };
 
   // 3-value constructor
-  __forceinline TNumVec(const Type val1, const Type val2, const Type val3) {
+  __forceinline TVector(const Type val1, const Type val2, const Type val3) {
     _values[0] = val1; _values[1] = val2; _values[2] = val3;
   };
 
   // 4-value constructor
-  __forceinline TNumVec(const Type val1, const Type val2, const Type val3, const Type val4) {
+  __forceinline TVector(const Type val1, const Type val2, const Type val3, const Type val4) {
     _values[0] = val1; _values[1] = val2; _values[2] = val3; _values[3] = val4;
   };
 
   // Array constructor
-  __forceinline TNumVec(const Type *aValues) {
+  __forceinline TVector(const Type *aValues) {
     NUMVEC_SET_ALL(aValues[i]);
   };
 
   // Copy constructor
-  __forceinline TNumVec(const NUMVEC &vOther) {
+  __forceinline TVector(const NUMVEC &vOther) {
     NUMVEC_SET_ALL(vOther[i]);
   };
 

@@ -18,7 +18,7 @@ template<typename Type> class TQuaternion {
 
 public:
   typedef Type T; // Template type
-  typedef TNumVec<Type, 4> QuatVector;
+  typedef TVector<Type, 4> Vector;
 
 public:
   union {
@@ -39,18 +39,18 @@ public:
   };
 
   // Vector constructor
-  __forceinline TQuaternion(const QuatVector &v) :
+  __forceinline TQuaternion(const Vector &v) :
     _w(v[0]), _x(v[1]), _y(v[2]), _z(v[3])
   {
   };
 
   // Convert into a vector
-  __forceinline QuatVector ToVector(void) const {
-    return QuatVector(_w, _x, _y, _z);
+  __forceinline Vector ToVector(void) const {
+    return Vector(_w, _x, _y, _z);
   };
 
   // Convert from euler angles (H, P, B) in radians
-  void FromEuler(const TNumVec<Type, 3> &vAngles, const VecAxes axes = _DREAMY_DEFAULT_AXES) {
+  void FromEuler(const TVector<Type, 3> &vAngles, const VecAxes axes = _DREAMY_DEFAULT_AXES) {
     Type cosH = cos(vAngles[0] * Type(0.5));
     Type sinH = sin(vAngles[0] * Type(0.5));
     Type cosP = cos(vAngles[1] * Type(0.5));
@@ -72,7 +72,7 @@ public:
   };
 
   // Convert to euler angles (H, P, B) in radians
-  void ToEuler(TNumVec<Type, 3> &vAngles, const VecAxes axes = _DREAMY_DEFAULT_AXES) {
+  void ToEuler(TVector<Type, 3> &vAngles, const VecAxes axes = _DREAMY_DEFAULT_AXES) {
     // From Wikipedia, offsetted for 3D space with upward Z axis
     //Type axisValue[3] = { _x, _y, _z };
 
@@ -172,7 +172,7 @@ public:
   };
 
   // Convert from axis angle (in radians)
-  void FromAxisAngle(const TNumVec<Type, 3> &vAngles, const Type angle, const VecAxes axes = VecAxes()) {
+  void FromAxisAngle(const TVector<Type, 3> &vAngles, const Type angle, const VecAxes axes = VecAxes()) {
     Type sinAngle = sin(angle / 2);
 
     _w = cos(angle / 2);
@@ -182,7 +182,7 @@ public:
   };
 
   // Convert to axis angle (in radians)
-  void ToAxisAngle(TNumVec<Type, 3> &vAngles, Type &angle, const VecAxes axes = VecAxes()) {
+  void ToAxisAngle(TVector<Type, 3> &vAngles, Type &angle, const VecAxes axes = VecAxes()) {
     Type sinAngle = sqrt(Type(1) - _w * _w);
     angle = 2 * acos(_w);
 
@@ -232,7 +232,7 @@ public:
   };
 
   // Assignment from a vector
-  __forceinline QUAT &operator=(const QuatVector &vOther) {
+  __forceinline QUAT &operator=(const Vector &vOther) {
     _w = vOther[0];
     _x = vOther[1];
     _y = vOther[2];
@@ -307,8 +307,8 @@ public:
 #undef QUAT
 
 // Standard quaternions
-typedef TQuaternion<f32> QuatF; // Single precision quaternion
-typedef TQuaternion<f64> QuatD; // Double precision quaternion
+typedef TQuaternion<f32> quatf; // Single precision quaternion
+typedef TQuaternion<f64> quatd; // Double precision quaternion
 
 };
 

@@ -164,19 +164,19 @@ public:
   VARIANT_TYPE_METHODS(const CValObject &, CValObject, VAL_OBJ, Object);
   VARIANT_TYPE_METHODS(      CVariant   *, CVariant *, VAL_PTR, Ptr);
 
-  VARIANT_TYPE_METHODS(const Vec2D &, Vec2D, VAL_VEC2, Vec2);
-  VARIANT_TYPE_METHODS(const Vec3D &, Vec3D, VAL_VEC3, Vec3);
-  VARIANT_TYPE_METHODS(const Mat2D &, Mat2D, VAL_MAT2, Mat2);
-  VARIANT_TYPE_METHODS(const Mat3D &, Mat3D, VAL_MAT3, Mat3);
+  VARIANT_TYPE_METHODS(const vec2d &, vec2d, VAL_VEC2, Vec2);
+  VARIANT_TYPE_METHODS(const vec3d &, vec3d, VAL_VEC3, Vec3);
+  VARIANT_TYPE_METHODS(const mat2d &, mat2d, VAL_MAT2, Mat2);
+  VARIANT_TYPE_METHODS(const mat3d &, mat3d, VAL_MAT3, Mat3);
 
-  VARIANT_TYPE_METHODS(const CValArray  &, CValArray,  VAL_ARR,      Array);
-  VARIANT_TYPE_METHODS(const Bits_t     &, Bits_t,     VAL_ARR_BIT,  BitArray);
-  VARIANT_TYPE_METHODS(const Bytes_t    &, Bytes_t,    VAL_ARR_U8,   ByteArray);
-  VARIANT_TYPE_METHODS(const Ints_t     &, Ints_t,     VAL_ARR_S64,  IntArray);
-  VARIANT_TYPE_METHODS(const Numbers_t  &, Numbers_t,  VAL_ARR_F64,  NumArray);
-  VARIANT_TYPE_METHODS(const Strings_t  &, Strings_t,  VAL_ARR_STR,  StrArray);
-  VARIANT_TYPE_METHODS(const CVec2Array &, CVec2Array, VAL_ARR_VEC2, Vec2Array);
-  VARIANT_TYPE_METHODS(const CVec3Array &, CVec3Array, VAL_ARR_VEC3, Vec3Array);
+  VARIANT_TYPE_METHODS(const CValArray   &, CValArray,   VAL_ARR,      Array);
+  VARIANT_TYPE_METHODS(const Bits_t      &, Bits_t,      VAL_ARR_BIT,  BitArray);
+  VARIANT_TYPE_METHODS(const Bytes_t     &, Bytes_t,     VAL_ARR_U8,   ByteArray);
+  VARIANT_TYPE_METHODS(const Ints_t      &, Ints_t,      VAL_ARR_S64,  IntArray);
+  VARIANT_TYPE_METHODS(const Numbers_t   &, Numbers_t,   VAL_ARR_F64,  NumArray);
+  VARIANT_TYPE_METHODS(const Strings_t   &, Strings_t,   VAL_ARR_STR,  StrArray);
+  VARIANT_TYPE_METHODS(const Vec2Array_t &, Vec2Array_t, VAL_ARR_VEC2, Vec2Array);
+  VARIANT_TYPE_METHODS(const Vec3Array_t &, Vec3Array_t, VAL_ARR_VEC3, Vec3Array);
 
   // Check for a distinctive number type (float, integer or invalid)
   inline EType GetNumberType(void) const {
@@ -204,13 +204,13 @@ public:
 };
 
 // ToAnyArray() methods for converting typed arrays into variant arrays
-VARIANT_CONVERT_ARRAY_METHOD(Bits_t,     Bit);
-VARIANT_CONVERT_ARRAY_METHOD(Bytes_t,    U8);
-VARIANT_CONVERT_ARRAY_METHOD(Ints_t,     S64);
-VARIANT_CONVERT_ARRAY_METHOD(Numbers_t,  F64);
-VARIANT_CONVERT_ARRAY_METHOD(Strings_t,  String);
-VARIANT_CONVERT_ARRAY_METHOD(CVec2Array, Vec2);
-VARIANT_CONVERT_ARRAY_METHOD(CVec3Array, Vec3);
+VARIANT_CONVERT_ARRAY_METHOD(Bits_t,      Bit);
+VARIANT_CONVERT_ARRAY_METHOD(Bytes_t,     U8);
+VARIANT_CONVERT_ARRAY_METHOD(Ints_t,      S64);
+VARIANT_CONVERT_ARRAY_METHOD(Numbers_t,   F64);
+VARIANT_CONVERT_ARRAY_METHOD(Strings_t,   String);
+VARIANT_CONVERT_ARRAY_METHOD(Vec2Array_t, Vec2);
+VARIANT_CONVERT_ARRAY_METHOD(Vec3Array_t, Vec3);
 
 // Retrieve value from a variant of a specific number type
 template<typename Type> inline

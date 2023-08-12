@@ -18,7 +18,7 @@ namespace dreamy {
 
 // Fixed array of rotation angles
 ANGLES_TEMP
-class TAngles : public TNumVec<Type, iDimensions> {
+class TAngles : public TVector<Type, iDimensions> {
 
 public:
   // Default constructor
@@ -60,17 +60,17 @@ public:
 
 public:
   // Calculate direction vector from euler angles
-  inline void AnglesToDir(TNumVec<Type, 3> &vDirection) const {
+  inline void AnglesToDir(TVector<Type, 3> &vDirection) const {
     // Make rotation matrix from the angles
     TMatrix<Type, 3, 3> mDirection;
     Mat3DFromAngles(mDirection, *this);
 
     // Rotate a front-facing vector by the matrix
-    vDirection = TNumVec<Type, 3>((Type)0.0, (Type)0.0, (Type)-1.0) * mDirection;
+    vDirection = TVector<Type, 3>((Type)0.0, (Type)0.0, (Type)-1.0) * mDirection;
   };
 
   // Calculate euler angles from a direction vector (without banking)
-  inline void DirToAngles(TNumVec<Type, 3> &vAngles) const {
+  inline void DirToAngles(TVector<Type, 3> &vAngles) const {
     Type &h = vAngles[0];
     Type &p = vAngles[1];
     Type &b = vAngles[2];
@@ -94,7 +94,7 @@ public:
   };
 
   // Rotate euler angles in radians using the trackball method
-  void RotateTrackball(const TNumVec<Type, 3> &vRotation) {
+  void RotateTrackball(const TVector<Type, 3> &vRotation) {
     TMatrix<Type, 3, 3> mRotation;
     TMatrix<Type, 3, 3> mOriginal;
 
@@ -108,7 +108,7 @@ public:
   };
 
   // Rotate euler angles in radians using the airplane method
-  void RotateAirplane(const TNumVec<Type, 3> &vRotation) {
+  void RotateAirplane(const TVector<Type, 3> &vRotation) {
     TMatrix<Type, 3, 3> mRotation;
     TMatrix<Type, 3, 3> mOriginal;
 

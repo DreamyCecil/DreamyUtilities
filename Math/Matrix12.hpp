@@ -11,8 +11,8 @@
 namespace dreamy {
 
 // Rotation matrix with position
-typedef TMatrix<f32, 3, 4> Mat12F;
-typedef TMatrix<f64, 3, 4> Mat12D;
+typedef TMatrix<f32, 3, 4> mat12f;
+typedef TMatrix<f64, 3, 4> mat12d;
 
 // Define operators
 #define MATRIX_TYPE f32
@@ -30,7 +30,7 @@ typedef TMatrix<f64, 3, 4> Mat12D;
 // Make 4x3 matrix from a rotation matrix and a position vector
 template<typename Type>
 inline void Mat3DtoMat12(ROTMAT12 &m12,
-  const ROTMAT3D &m3D, const TNumVec<Type, 3> &vPos)
+  const ROTMAT3D &m3D, const TVector<Type, 3> &vPos)
 {
   m12(0, 0) = m3D(0, 0);
   m12(0, 1) = m3D(0, 1);
@@ -50,7 +50,7 @@ inline void Mat3DtoMat12(ROTMAT12 &m12,
 // Convert 4x3 matrix into a rotation matrix and a position vector
 template<typename Type>
 inline void Mat12toMat3D(const ROTMAT12 &m12,
-  ROTMAT3D &m3D, TNumVec<Type, 3> &vPos)
+  ROTMAT3D &m3D, TVector<Type, 3> &vPos)
 {
   m3D(0, 0) = m12(0, 0);
   m3D(0, 1) = m12(0, 1);

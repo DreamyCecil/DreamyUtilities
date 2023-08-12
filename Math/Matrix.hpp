@@ -31,9 +31,9 @@ ROTMAT_TEMP class TMatrix {
 
 public:
   typedef Type T; // Template type
-  typedef TNumVec<Type, iRows> MatrixRow;      // Row of values
-  typedef TNumVec<Type, iCols> MatrixColumn;   // Column of values
-  typedef TNumVec<MatrixColumn, iRows> Matrix; // Row of columns
+  typedef TVector<Type, iRows> MatrixRow;      // Row of values
+  typedef TVector<Type, iCols> MatrixColumn;   // Column of values
+  typedef TVector<MatrixColumn, iRows> Matrix; // Row of columns
 
 protected:
   Matrix _matrix;
@@ -140,7 +140,7 @@ public:
 public:
 
   // Vector with the same amount of dimensions as matrix rows
-  #define NUMVEC TNumVec<Type, iRows>
+  #define NUMVEC TVector<Type, iRows>
 
   // Apply rotation matrix to the vector
   friend NUMVEC operator*(const NUMVEC &v, const ROTMAT &matrix) {

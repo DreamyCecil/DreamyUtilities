@@ -19,7 +19,7 @@ public:
   typedef Type T; // Template type
 
 public:
-  TNumVec<Type, 3> _pos;
+  TVector<Type, 3> _pos;
   TQuaternion<Type> _rot;
 
 public:
@@ -41,8 +41,8 @@ public:
 };
 
 // Standard qvectors
-typedef TQuatVec<f32> QuatVecF; // Single precision qvector
-typedef TQuatVec<f64> QuatVecD; // Double precision qvector
+typedef TQuatVec<f32> qvecf; // Single precision qvector
+typedef TQuatVec<f64> qvecd; // Double precision qvector
 
 };
 

@@ -73,7 +73,7 @@ ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
 };
 
 // Make 3D rotation matrix out of euler angles (H, P, B) in radians
-inline void Mat3DFromAngles(ROTMAT &m, const TNumVec<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
+inline void Mat3DFromAngles(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
   // Heading
   MATRIX_TYPE sinH = sin(vAngles[axes._x]);
   MATRIX_TYPE cosH = cos(vAngles[axes._x]);
@@ -96,7 +96,7 @@ inline void Mat3DFromAngles(ROTMAT &m, const TNumVec<MATRIX_TYPE, 3> &vAngles, c
 };
 
 // Make inverted 3D rotation matrix out of euler angles (H, P, B) in radians
-inline void Mat3DFromAnglesInverse(ROTMAT &m, const TNumVec<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
+inline void Mat3DFromAnglesInverse(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
   // Heading
   MATRIX_TYPE sinH = sin(vAngles[axes._x]);
   MATRIX_TYPE cosH = cos(vAngles[axes._x]);
@@ -119,7 +119,7 @@ inline void Mat3DFromAnglesInverse(ROTMAT &m, const TNumVec<MATRIX_TYPE, 3> &vAn
 };
 
 // Convert rotation matrix into euler angles (H, P, B) in radians
-inline void Mat3DToAngles(const ROTMAT &m, TNumVec<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
+inline void Mat3DToAngles(const ROTMAT &m, TVector<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
   MATRIX_TYPE &h = vAngles[axes._x];
   MATRIX_TYPE &p = vAngles[axes._y];
   MATRIX_TYPE &b = vAngles[axes._z];

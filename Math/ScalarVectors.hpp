@@ -12,12 +12,12 @@
 
 namespace dreamy {
 
-#define NUMVEC_CLASS TNumVec
+#define NUMVEC_CLASS TVector
 
 // 32-bit integer vectors
-typedef TNumVec<s32, 2> Vec2I; // 2 integers
-typedef TNumVec<s32, 3> Vec3I; // 3 integers
-typedef TNumVec<s32, 4> Vec4I; // 4 integers
+typedef TVector<s32, 2> vec2i; // 2 integers
+typedef TVector<s32, 3> vec3i; // 3 integers
+typedef TVector<s32, 4> vec4i; // 4 integers
 
 // Define arithmetic operators
 #define VECTOR_TYPE s32
@@ -30,9 +30,9 @@ typedef TNumVec<s32, 4> Vec4I; // 4 integers
 #undef VECTOR_TYPE
 
 // Single precision vectors
-typedef TNumVec<f32, 2> Vec2F; // 2D single precision vector
-typedef TNumVec<f32, 3> Vec3F; // 3D single precision vector
-typedef TNumVec<f32, 4> Vec4F; // 4D single precision vector
+typedef TVector<f32, 2> vec2f; // 2D single precision vector
+typedef TVector<f32, 3> vec3f; // 3D single precision vector
+typedef TVector<f32, 4> vec4f; // 4D single precision vector
 
 // Define arithmetic operators
 #define VECTOR_TYPE f32
@@ -45,9 +45,9 @@ typedef TNumVec<f32, 4> Vec4F; // 4D single precision vector
 #undef VECTOR_TYPE
 
 // Double precision vectors
-typedef TNumVec<f64, 2> Vec2D; // 2D double precision vector
-typedef TNumVec<f64, 3> Vec3D; // 3D double precision vector
-typedef TNumVec<f64, 4> Vec4D; // 4D double precision vector
+typedef TVector<f64, 2> vec2d; // 2D double precision vector
+typedef TVector<f64, 3> vec3d; // 3D double precision vector
+typedef TVector<f64, 4> vec4d; // 4D double precision vector
 
 // Define arithmetic operators
 #define VECTOR_TYPE f64
@@ -62,8 +62,8 @@ typedef TNumVec<f64, 4> Vec4D; // 4D double precision vector
 #undef NUMVEC_CLASS
 
 // Array types
-typedef std::vector<Vec2D> CVec2Array; // Array of 2D vectors
-typedef std::vector<Vec3D> CVec3Array; // Array of 3D vectors
+typedef std::vector<vec2d> Vec2Array_t; // Array of 2D vectors
+typedef std::vector<vec3d> Vec3Array_t; // Array of 3D vectors
 
 };
 
