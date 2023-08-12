@@ -25,8 +25,8 @@ public:
     typedef std::unordered_map<Type, u32> CValueCounts; // Occurrences of next values
     typedef std::unordered_map<CUniqueOrder<Type>, CValueCounts> CNextValueCounts; // Occurrences of next values per value order
   #else
-    typedef std::map<Type, u32> CValueCounts; // Occurrences of next values
-    typedef std::map<CUniqueOrder<Type>, CValueCounts> CNextValueCounts; // Occurrences of next values per value order
+    typedef dreamy::unordered_map<Type, u32> CValueCounts; // Occurrences of next values
+    typedef dreamy::unordered_map<CUniqueOrder<Type>, CValueCounts> CNextValueCounts; // Occurrences of next values per value order
   #endif
 
   CNextValueCounts mch_counts;
@@ -35,8 +35,8 @@ public:
     typedef std::unordered_map<Type, f32> CValueChances; // Chances of next values
     typedef std::unordered_map<CUniqueOrder<Type>, CValueChances> CNextValueChances; // Chances of next values per value order
   #else
-    typedef std::map<Type, f32> CValueChances; // Chances of next values
-    typedef std::map<CUniqueOrder<Type>, CValueChances> CNextValueChances; // Chances of next values per value order
+    typedef dreamy::unordered_map<Type, f32> CValueChances; // Chances of next values
+    typedef dreamy::unordered_map<CUniqueOrder<Type>, CValueChances> CNextValueChances; // Chances of next values per value order
   #endif
 
   CNextValueChances mch_chances;

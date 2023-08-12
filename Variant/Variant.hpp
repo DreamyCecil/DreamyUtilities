@@ -19,20 +19,20 @@
 
 // Value containers
 #include <vector>
-#include <map>
+#include <../Types/UnorderedMap.hpp>
 
 namespace dreamy {
 
 class CVariant; // Pre-define variant
 
-typedef std::vector<CVariant>              CValArray;  // Array of values
-typedef std::map<CHashedString, CVariant>  CValObject; // Variable map
-typedef std::pair<CHashedString, CVariant> CValPair;   // Key-value pair
+typedef std::vector<CVariant>                          CValArray;  // Array of values
+typedef dreamy::unordered_map<CHashedString, CVariant> CValObject; // Variable map
+typedef std::pair<CHashedString, CVariant>             CValPair;   // Key-value pair
 
 // Define methods for a type
 #define VARIANT_TYPE_METHODS(ArgumentType, ValueType, TypeIndex, FuncIdentifier) \
   /* Type constructor */ \
-  /*CVariant(ArgumentType valSet) { _type = EType(TypeIndex); _val = valSet; }*/ \
+  /*CVariant(ArgumentType valSet) { From##FuncIdentifier(valSet); }*/ \
   /* Type assignment (method instead of 'operator=' to avoid confusion between the class and its types) */ \
   inline void From##FuncIdentifier(ArgumentType valSet) { _type = (EType)TypeIndex; _val = valSet; } \
   /* Type casting */ \
@@ -62,12 +62,12 @@ public:
     VAL_F32,
     VAL_F64, // JSON real numbers
     VAL_BIT, // Bit switch/boolean
-    VAL_U8,
+    VAL_U8,  // ASCII/UTF-8 character
     VAL_S8,
-    VAL_U16,
+    VAL_U16, // UTF-16 character
     VAL_S16,
-    VAL_U32,
-    VAL_S32,
+    VAL_U32, // UTF-32 character
+    VAL_S32, // Integer
     VAL_U64,
     VAL_S64, // JSON integers
 
@@ -200,7 +200,7 @@ public:
   };
 };
 
-// Methods for converting typed arrays into variant arrays
+// ToAnyArray() methods for converting typed arrays into variant arrays
 VARIANT_CONVERT_ARRAY_METHOD(Bits_t,     Bit);
 VARIANT_CONVERT_ARRAY_METHOD(Bytes_t,    U8);
 VARIANT_CONVERT_ARRAY_METHOD(Ints_t,     S64);
