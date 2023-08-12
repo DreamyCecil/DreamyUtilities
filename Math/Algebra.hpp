@@ -75,16 +75,16 @@ inline s64 Abs(s64 x) {
 
 // Fast absolute value for single precision float
 inline f32 Abs(f32 x) {
-  s32 i = *(s32 *)&x;
+  s32 i = *reinterpret_cast<s32 *>(&x);
   i &= 0x7FFFFFFF;
-  return *(f32 *)&i;
+  return *reinterpret_cast<f32 *>(&i);
 };
 
 // Fast absolute value for double precision float
 inline f64 Abs(f64 x) {
-  s64 i = *(s64 *)&x;
+  s64 i = *reinterpret_cast<s64 *>(&x);
   i &= 0x7FFFFFFFFFFFFFFF;
-  return *(f64 *)&i;
+  return *reinterpret_cast<f64 *>(&i);
 };
 
 #undef MATH_TEMP
