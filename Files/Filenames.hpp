@@ -90,17 +90,17 @@ public:
     // Make consistent slashes
     Replace(strPath, '\\', '/');
 
-    // Absolute path
+    // Absolute path, e.g. "abc/strDirName/qwe"
     size_t iDir(strPath.rfind("/" + strDirName + "/"));
     if (iDir != NULL_POS) return iDir + 1;
 
-    // Relative down to the desired directory
-    iDir = strPath.rfind("/" + strDirName);
-    if (iDir != NULL_POS) return iDir + 1;
+    // Relative down to the desired directory, e.g. "abc/qwe/strDirName"
+    iDir = strPath.rfind("/" + strDirName) + 1;
+    if (iDir == strPath.length() - strDirName.length()) return iDir;
 
-    // Relative up to the desired directory
+    // Relative up to the desired directory, e.g. "strDirName/abc/qwe"
     iDir = strPath.find(strDirName + "/");
-    if (iDir != NULL_POS) return iDir;
+    if (iDir == 0) return 0;
 
     // No extra directories up or down the path, must be the same
     if (strPath == strDirName) {
