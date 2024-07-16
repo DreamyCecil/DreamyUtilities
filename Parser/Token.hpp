@@ -79,11 +79,11 @@ public:
     TKN_SINGLEQUOTE = '\'', // Usually enclosing characters
     TKN_BACKSLASH   = '\\', // Usually within context (e.g. escape characters)
 
-    // End of file
-    TKN_EOF = 256,
+    // End of file/data
+    TKN_END = 256,
 
-    // Last token for offsetting
-    TKN_LASTTOKEN = 300,
+    // Last token for offsetting (new tokens can be verified by ignoring the first 9 bits)
+    TKN_LASTTOKEN = 512,
   };
 
 protected:
@@ -174,33 +174,6 @@ typedef std::vector<CParserToken> CTokenList;
 // Add one parser token
 inline void AddToken(CTokenList &aTokens, u32 iType,
                       const CTokenPos &pos, const CVariant &val = CVariant()) {
-  aTokens.push_back(CParserToken(iType, pos, val));
-};
-
-// Add one integer parser token
-inline void AddIntegerToken(CTokenList &aTokens, u32 iType,
-                            const CTokenPos &pos, s64 iNumber) {
-  CVariant val;
-  val.FromS64(iNumber);
-
-  aTokens.push_back(CParserToken(iType, pos, val));
-};
-
-// Add one real number parser token
-inline void AddRealToken(CTokenList &aTokens, u32 iType,
-                          const CTokenPos &pos, f64 fNumber) {
-  CVariant val;
-  val.FromF64(fNumber);
-
-  aTokens.push_back(CParserToken(iType, pos, val));
-};
-
-// Add one string parser token
-inline void AddStringToken(CTokenList &aTokens, u32 iType,
-                            const CTokenPos &pos, const Str_t &str) {
-  CVariant val;
-  val.FromString(str);
-
   aTokens.push_back(CParserToken(iType, pos, val));
 };
 

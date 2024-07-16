@@ -34,8 +34,7 @@ inline void TokenizeString(CTokenList &aTokens, const Str_t &str, bool bTokenize
 
         if (!bTokenized) {
           // Tokenize every other character
-          u32 iCharType = (u32)*data.pchCur;
-          AddIntegerToken(aTokens, iCharType, data.pos, *data.pchCur);
+          AddToken(aTokens, (u32)*data.pchCur, data.pos, *data.pchCur);
         }
       } break;
     }

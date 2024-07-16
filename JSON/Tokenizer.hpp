@@ -16,14 +16,9 @@ static const struct JsonConstants {
 
   // Default constructor
   inline JsonConstants(void) {
-    CVariant val;
-    list["null"] = val;
-
-    val.FromBit(true);
-    list["true"] = val;
-
-    val.FromBit(false);
-    list["false"] = val;
+    list["null"] = CVariant();
+    list["true"] = true;
+    list["false"] = false;
   };
 } _jsonConstants;
 
@@ -46,7 +41,7 @@ inline void TokenizeJSON(CTokenList &aTokens, const Str_t &strJSON, const CValOb
       case '{': case '}': // Object block
       case '[': case ']': // Array block
       case '+': case '-': // Unary operators
-        AddIntegerToken(aTokens, ch, data.pos, ch);
+        AddToken(aTokens, ch, data.pos, ch);
         break;
 
       default: {

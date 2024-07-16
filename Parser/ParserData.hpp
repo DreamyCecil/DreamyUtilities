@@ -102,7 +102,7 @@ public:
     pos = CTokenPos(iEndPos, iEndPos, -1, -1);
     SetPosition(pos.iLast);
 
-    AddToken(aTokens, CParserToken::TKN_EOF, pos);
+    AddToken(aTokens, CParserToken::TKN_END, pos);
   };
 
   // Tokenize C/C++ styled comments
@@ -133,7 +133,7 @@ public:
 
         // Skip comment opening
         Str_t strComment = ExtractString(2);
-        AddStringToken(aTokens, CParserToken::TKN_COMMENT, pos, strComment);
+        AddToken(aTokens, CParserToken::TKN_COMMENT, pos, strComment);
       } return true;
 
       // Multi-line comment
@@ -164,7 +164,7 @@ public:
         // Count comment closing
         pos.iLast += 2;
 
-        AddStringToken(aTokens, CParserToken::TKN_COMMENT, pos, strComment);
+        AddToken(aTokens, CParserToken::TKN_COMMENT, pos, strComment);
       } return true;
     }
 
@@ -177,106 +177,106 @@ public:
       // Operators
       case '+': {
         switch (*pchNext) {
-          case '=': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("+=")); break;
-          case '+': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("++")); break;
-          default: AddIntegerToken(aTokens, CParserToken::TKN_ADD, pos, '+');
+          case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("+=")); break;
+          case '+': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("++")); break;
+          default: AddToken(aTokens, CParserToken::TKN_ADD, pos, '+');
         }
       } return true;
 
       case '-': {
         switch (*pchNext) {
-          case '=': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("-=")); break;
-          case '-': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("--")); break;
-          default: AddIntegerToken(aTokens, CParserToken::TKN_SUB, pos, '-');
+          case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("-=")); break;
+          case '-': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("--")); break;
+          default: AddToken(aTokens, CParserToken::TKN_SUB, pos, '-');
         }
       } return true;
 
       case '*': {
         if (*pchNext == '=') {
           Advance(1);
-          AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("*="));
+          AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("*="));
         } else {
-          AddIntegerToken(aTokens, CParserToken::TKN_MUL, pos, '*');
+          AddToken(aTokens, CParserToken::TKN_MUL, pos, '*');
         }
       } return true;
 
       case '/': {
         if (*pchNext == '=') {
           Advance(1);
-          AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("/="));
+          AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("/="));
         } else {
-          AddIntegerToken(aTokens, CParserToken::TKN_DIV, pos, '/');
+          AddToken(aTokens, CParserToken::TKN_DIV, pos, '/');
         }
       } return true;
 
       // Bitwise operators
       case '|': {
         switch (*pchNext) {
-          case '=': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("|=")); break;
-          case '|': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("||")); break;
-          default: AddIntegerToken(aTokens, CParserToken::TKN_OR, pos, '|');
+          case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("|=")); break;
+          case '|': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("||")); break;
+          default: AddToken(aTokens, CParserToken::TKN_OR, pos, '|');
         }
       } return true;
 
       case '&': {
         switch (*pchNext) {
-          case '=': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("&=")); break;
-          case '&': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("&&")); break;
-          default: AddIntegerToken(aTokens, CParserToken::TKN_AND, pos, '&');
+          case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("&=")); break;
+          case '&': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("&&")); break;
+          default: AddToken(aTokens, CParserToken::TKN_AND, pos, '&');
         }
       } return true;
 
       case '^': {
         switch (*pchNext) {
-          case '=': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("^=")); break;
-          case '^': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("^^")); break;
-          default: AddIntegerToken(aTokens, CParserToken::TKN_XOR, pos, '^');
+          case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("^=")); break;
+          case '^': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("^^")); break;
+          default: AddToken(aTokens, CParserToken::TKN_XOR, pos, '^');
         }
       } return true;
 
       // Other operators
       case '>': {
         switch (*pchNext) {
-          case '=': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral(">=")); break;
-          case '>': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral(">>")); break;
-          default: AddIntegerToken(aTokens, CParserToken::TKN_RIGHT, pos, '>');
+          case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral(">=")); break;
+          case '>': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral(">>")); break;
+          default: AddToken(aTokens, CParserToken::TKN_RIGHT, pos, '>');
         }
       } return true;
 
       case '<': {
         switch (*pchNext) {
-          case '=': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("<=")); break;
-          case '<': Advance(1); AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("<<")); break;
-          default: AddIntegerToken(aTokens, CParserToken::TKN_LEFT, pos, '<');
+          case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("<=")); break;
+          case '<': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("<<")); break;
+          default: AddToken(aTokens, CParserToken::TKN_LEFT, pos, '<');
         }
       } return true;
 
       case '=': {
         if (*pchNext == '=') {
           Advance(1);
-          AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("=="));
+          AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("=="));
         } else {
-          AddIntegerToken(aTokens, CParserToken::TKN_EQUAL, pos, '=');
+          AddToken(aTokens, CParserToken::TKN_EQUAL, pos, '=');
         }
       } return true;
 
       case '!': {
         if (*pchNext == '=') {
           Advance(1);
-          AddIntegerToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("!="));
+          AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("!="));
         } else {
-          AddIntegerToken(aTokens, CParserToken::TKN_EXCLAMATION, pos, '!');
+          AddToken(aTokens, CParserToken::TKN_EXCLAMATION, pos, '!');
         }
       } return true;
 
       // Other symbols
-      case '#': AddIntegerToken(aTokens, CParserToken::TKN_HASH,     pos, '#'); return true;
-      case '$': AddIntegerToken(aTokens, CParserToken::TKN_DOLLAR,   pos, '$'); return true;
-      case '@': AddIntegerToken(aTokens, CParserToken::TKN_AT,       pos, '@'); return true;
-      case '`': AddIntegerToken(aTokens, CParserToken::TKN_GRAVE,    pos, '`'); return true;
-      case '~': AddIntegerToken(aTokens, CParserToken::TKN_TILDE,    pos, '~'); return true;
-      case '%': AddIntegerToken(aTokens, CParserToken::TKN_PERCENT,  pos, '%'); return true;
-      case '?': AddIntegerToken(aTokens, CParserToken::TKN_QUESTION, pos, '?'); return true;
+      case '#': AddToken(aTokens, CParserToken::TKN_HASH,     pos, '#'); return true;
+      case '$': AddToken(aTokens, CParserToken::TKN_DOLLAR,   pos, '$'); return true;
+      case '@': AddToken(aTokens, CParserToken::TKN_AT,       pos, '@'); return true;
+      case '`': AddToken(aTokens, CParserToken::TKN_GRAVE,    pos, '`'); return true;
+      case '~': AddToken(aTokens, CParserToken::TKN_TILDE,    pos, '~'); return true;
+      case '%': AddToken(aTokens, CParserToken::TKN_PERCENT,  pos, '%'); return true;
+      case '?': AddToken(aTokens, CParserToken::TKN_QUESTION, pos, '?'); return true;
     }
 
     return false;
@@ -353,7 +353,7 @@ public:
 
     // Add string
     if (chString != '\0' && ParseString(str, chString)) {
-      AddStringToken(aTokens, CParserToken::TKN_VALUE, pos, str);
+      AddToken(aTokens, CParserToken::TKN_VALUE, pos, str);
       return true;
 
     // Add character sequence
@@ -373,7 +373,7 @@ public:
       }*/
 
       s64 iCharSequence = static_cast<s64>(MultiCharLiteral(str.c_str()));
-      AddIntegerToken(aTokens, CParserToken::TKN_VALUE, pos, iCharSequence);
+      AddToken(aTokens, CParserToken::TKN_VALUE, pos, iCharSequence);
 
       return true;
     }
@@ -442,7 +442,7 @@ public:
       // Hexadecimal numbers
       } else if (ubType == 1) { 
         if ((*pchCur >= 'a' && *pchCur <= 'f')
-          || (*pchCur >= 'A' && *pchCur <= 'F')) {
+         || (*pchCur >= 'A' && *pchCur <= 'F')) {
           Advance(1);
         } else {
           break;
@@ -463,18 +463,18 @@ public:
     switch (ubType) {
       case 0: { // Integer
         s64 iValue = StrToS64(strString);
-        AddIntegerToken(aTokens, CParserToken::TKN_VALUE, pos, iValue);
+        AddToken(aTokens, CParserToken::TKN_VALUE, pos, iValue);
       } break;
 
       case 1: { // Hexadecimal integer
         s64 iHexValue = 0;
         sscanf_s(strString.c_str(), "%llx", &iHexValue);
-        AddIntegerToken(aTokens, CParserToken::TKN_VALUE, pos, iHexValue);
+        AddToken(aTokens, CParserToken::TKN_VALUE, pos, iHexValue);
       } break;
 
       default: { // Real number
         f64 fValue = atof(strString.c_str());
-        AddRealToken(aTokens, CParserToken::TKN_VALUE, pos, fValue);
+        AddToken(aTokens, CParserToken::TKN_VALUE, pos, fValue);
       } break;
     }
 
@@ -505,7 +505,7 @@ public:
       }
 
       Str_t strName = ExtractString(0);
-      AddStringToken(aTokens, CParserToken::TKN_IDENTIFIER, pos, strName);
+      AddToken(aTokens, CParserToken::TKN_IDENTIFIER, pos, strName);
 
       return true;
     }
