@@ -100,17 +100,15 @@ inline void BuildJSONValue(CVariant &val, const CTokenList &aTokens, CTokenList:
     // Value beginning with a unary operator
     case CParserToken::TKN_ADD:
     case CParserToken::TKN_SUB: {
-      s8 iSign = (iToken == CParserToken::TKN_SUB ? -1 : 1);
-
       switch (it->GetValue().GetType()) {
-        case CVariant::VAL_S64: {
-          s64 iNumber = it->GetValue().ToS64();
-          val.FromS64(iNumber * iSign);
+        case CVariant::VAL_INT: {
+          s64 iNumber = it->GetValue().ToInt();
+          val.FromInt(iToken == CParserToken::TKN_SUB ? -iNumber : iNumber);
         }
 
-        case CVariant::VAL_F64: {
-          f64 fNumber = it->GetValue().ToF64();
-          val.FromF64(fNumber * iSign);
+        case CVariant::VAL_FLOAT: {
+          f64 fNumber = it->GetValue().ToFloat();
+          val.FromFloat(iToken == CParserToken::TKN_SUB ? -fNumber : fNumber);
         }
 
         // Not a number
@@ -130,7 +128,7 @@ void BuildJSONPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_
   const CParserToken &tknKey = (*(it++))(CParserToken::TKN_VALUE);
 
   // Not a string
-  if (tknKey.GetValue().GetType() != CVariant::VAL_STR) {
+  if (tknKey.GetValue().GetType() != CVariant::VAL_STRING) {
     throw CTokenException(it->GetTokenPos(), "Expected a name string");
   }
 

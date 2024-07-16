@@ -6,7 +6,7 @@
 
 #include "../Base/Base.hpp"
 
-#include "Variant.hpp"
+#include "../Variant/Variant.hpp"
 
 namespace dreamy {
 
@@ -27,19 +27,11 @@ typedef bool (*CVariantCompareFunc)(const CVariant &, const CVariant &);
 
 VARIANT_COMPARE_METHOD_CUSTOM(Invalid, true);
 
-VARIANT_COMPARE_METHOD(F32);
-VARIANT_COMPARE_METHOD(F64);
-VARIANT_COMPARE_METHOD(Bit);
-VARIANT_COMPARE_METHOD(U8);
-VARIANT_COMPARE_METHOD(S8);
-VARIANT_COMPARE_METHOD(U16);
-VARIANT_COMPARE_METHOD(S16);
-VARIANT_COMPARE_METHOD(U32);
-VARIANT_COMPARE_METHOD(S32);
-VARIANT_COMPARE_METHOD(U64);
-VARIANT_COMPARE_METHOD(S64);
-
+VARIANT_COMPARE_METHOD(Bool);
+VARIANT_COMPARE_METHOD(Float);
+VARIANT_COMPARE_METHOD(Int);
 VARIANT_COMPARE_METHOD(String);
+
 VARIANT_COMPARE_METHOD(Object);
 VARIANT_COMPARE_METHOD(Ptr);
 
@@ -49,10 +41,10 @@ VARIANT_COMPARE_METHOD_CUSTOM(Mat2, CompareMatrices(val1.ToMat2(), val2.ToMat2()
 VARIANT_COMPARE_METHOD_CUSTOM(Mat3, CompareMatrices(val1.ToMat3(), val2.ToMat3()));
 
 VARIANT_COMPARE_METHOD(Array);
-VARIANT_COMPARE_METHOD(BitArray);
+VARIANT_COMPARE_METHOD(BoolArray);
 VARIANT_COMPARE_METHOD(ByteArray);
 VARIANT_COMPARE_METHOD(IntArray);
-VARIANT_COMPARE_METHOD(NumArray);
+VARIANT_COMPARE_METHOD(FloatArray);
 VARIANT_COMPARE_METHOD(StrArray);
 VARIANT_COMPARE_METHOD(Vec2Array);
 VARIANT_COMPARE_METHOD(Vec3Array);
@@ -69,19 +61,11 @@ bool CVariant::Compare(const CVariant &valOther) const {
   D_ASSERT(eThis >= VAL_INVALID && eThis < VAL_LAST);
 
   // Variant comparison methods per type
-  CVariantCompareFunc aMethods[CVariant::VAL_LAST] = {
+  CVariantCompareFunc aMethods[VAL_LAST] = {
     &CompareInvalid,
-    &CompareF32,
-    &CompareF64,
-    &CompareBit,
-    &CompareU8,
-    &CompareS8,
-    &CompareU16,
-    &CompareS16,
-    &CompareU32,
-    &CompareS32,
-    &CompareU64,
-    &CompareS64,
+    &CompareBool,
+    &CompareFloat,
+    &CompareInt,
     &CompareString,
     &CompareObject,
     &ComparePtr,
@@ -90,10 +74,10 @@ bool CVariant::Compare(const CVariant &valOther) const {
     &CompareMat2,
     &CompareMat3,
     &CompareArray,
-    &CompareBitArray,
+    &CompareBoolArray,
     &CompareByteArray,
     &CompareIntArray,
-    &CompareNumArray,
+    &CompareFloatArray,
     &CompareStrArray,
     &CompareVec2Array,
     &CompareVec3Array,
@@ -111,7 +95,7 @@ bool CVariant::operator==(const CVariant &valOther) const {
 
   if (eThis != VAL_INVALID && eOther != VAL_INVALID) {
     // Prioritize real numbers
-    if (eThis == VAL_F64 || eOther == VAL_F64) {
+    if (eThis == VAL_FLOAT || eOther == VAL_FLOAT) {
       return GetNumber<f64>(*this) == GetNumber<f64>(valOther);
     }
 
