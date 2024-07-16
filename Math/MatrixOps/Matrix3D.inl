@@ -129,7 +129,7 @@ inline void Mat3DToAngles(const ROTMAT &m, TVector<MATRIX_TYPE, 3> &vAngles, con
   p = asin(-f23);
 
   // If pitch makes banking be the same as heading
-  if (dreamy::math::SqrtSafe(1.0 - f23 * f23) < 0.001) {
+  if (dreamy::math::SqrtSign(1.0 - f23 * f23) < 0.001) {
     // Set banking to zero
     b = 0;
 
