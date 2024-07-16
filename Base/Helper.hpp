@@ -15,14 +15,34 @@
 
 namespace dreamy {
 
-// Resize raw array of a specific type
+// Resize array by constructing values in place and moving the data bytes
 template<typename Type> inline
-void ResizeBuffer(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
+void ResizeBuffer_memcpy(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
   Type *pNew = new Type[iNewSize];
   memcpy(pNew, *pBuffer, iOldSize * sizeof(Type));
 
   delete[] *pBuffer;
   *pBuffer = pNew;
+};
+
+// Resize array by constructing and reassigning values in place
+template<typename Type> inline
+void ResizeBuffer_new(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
+  Type *pNew = new Type[iNewSize];
+
+  // Reassign old values
+  while (--iOldSize >= 0) {
+    pNew[iOldSize] = (*pBuffer)[iOldSize];
+  }
+
+  delete[] *pBuffer;
+  *pBuffer = pNew;
+};
+
+// Resize array by reallocating C dynamic memory
+template<typename Type> inline
+void ResizeBuffer_realloc(Type **pBuffer, size_t iNewSize) {
+  *pBuffer = (Type *)realloc(*pBuffer, iNewSize * sizeof(Type));
 };
 
 // Ask yes-or-no question in the console and wait for user input
@@ -64,16 +84,13 @@ inline Str_t ConsoleInput(const c8 *strPrompt) {
 
 // Wrapper method for opening files (alternative to fopen & fopen_s)
 __forceinline error_t FileOpen(FILE **file, const c8 *strFilename, const c8 *strMode) {
-  error_t err = 0; // No error
-
   #if !_DREAMY_UNIX && _DREAMY_CPP11
-    err = fopen_s(file, strFilename, strMode);
+    return fopen_s(file, strFilename, strMode);
+
   #else
     *file = fopen(strFilename, strMode);
-    err = errno;
+    return errno;
   #endif
-
-  return err;
 };
 
 // Simple file copying

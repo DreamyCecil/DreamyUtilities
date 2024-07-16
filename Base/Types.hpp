@@ -31,7 +31,7 @@ typedef double f64; // Double precision
 
 // Text
 typedef char c8; // ASCII character
-typedef std::string Str_t; // ASCII string
+typedef std::string Str_t; // ASCII text
 
 // Maximum value of size_t
 #define NULL_POS static_cast<size_t>(-1)

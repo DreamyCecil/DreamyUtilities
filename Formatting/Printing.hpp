@@ -34,7 +34,7 @@ inline void VPrintF(Str_t &strOut, const c8 *strFormat, va_list arg) {
     }
 
     // Increase the buffer size
-    ResizeBuffer<c8>(&pchBuffer, iBufferSize, iBufferSize + 256);
+    ResizeBuffer_memcpy<c8>(&pchBuffer, iBufferSize, iBufferSize + 256);
     iBufferSize += 256;
   }
 
@@ -46,7 +46,7 @@ inline void VPrintF(Str_t &strOut, const c8 *strFormat, va_list arg) {
 #define DREAMY_PRINTF_INLINE(StringOut, StringFormat) { \
   va_list arg; \
   va_start(arg, StringFormat); \
-  VPrintF(StringOut, StringFormat, arg); \
+  dreamy::VPrintF(StringOut, StringFormat, arg); \
   va_end(arg); \
 }
 
