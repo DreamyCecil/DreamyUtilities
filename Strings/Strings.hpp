@@ -261,6 +261,101 @@ void StringSplit(const Type &str, const Type &strDelimiter, std::vector<Type> &a
   aStrings.push_back(str.substr(iLast));
 };
 
+// Separate a string into multiple arguments (e.g. command line arguments)
+// Implemented according to the rules from Microsoft docs:
+// https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
+inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpace)(int) = &isspace) {
+  Str_t strCurrent = "";
+  bool bString = false; // String within double quotes
+
+  while (*str != '\0') {
+    // Hit a double quote
+    if (*str == '"') {
+      ++str;
+
+      // A pair of double quotes within a string
+      if (bString && *str == '"') {
+        // Just add quotes to the argument
+        strCurrent += '"';
+        ++str;
+
+      // Enter or exit the string
+      } else {
+        bString = !bString;
+      }
+
+    // Hit an escape character
+    } else if (*str == '\\') {
+      // Within a string
+      if (bString) {
+        // Skip if it's followed by another one or a quote
+        if (str[1] == '\\' || str[1] == '"') {
+          ++str;
+        }
+
+        // Add the backslash or the escaped character and advance
+        strCurrent += *str;
+        ++str;
+
+      } else {
+        // Check if escape characters preceed a double quote
+        bool bUntilQuote = false;
+        const c8 *pchCheck = str + 1;
+
+        while (*pchCheck != '\0') {
+          // Hit a double quote
+          if (*pchCheck == '"') {
+            bUntilQuote = true;
+            break;
+
+          // Hit something else
+          } else if (*pchCheck != '\\') {
+            break;
+          }
+
+          ++pchCheck;
+        }
+        
+        if (bUntilQuote) {
+          // Convert \\ -> \ and \" -> "
+          do {
+            strCurrent += str[1];
+            str += 2;
+          } while (*str == '\\');
+
+        } else {
+          // Add each espace character
+          do {
+            strCurrent += *str;
+            ++str;
+          } while (*str == '\\');
+        }
+      }
+
+    // Hit an argument separator outside a string
+    } else if (!bString && pIsSpace(static_cast<u8>(*str))) {
+      // Save current string and reset it
+      aArgs.push_back(strCurrent);
+      strCurrent = "";
+
+      // Go until the next valid character
+      do {
+        ++str;
+      } while (pIsSpace(static_cast<u8>(*str)));
+
+    // Add any other character to the string and advance
+    } else {
+      strCurrent += *str;
+      ++str;
+    }
+  }
+
+  // Last argument
+  if (strCurrent != "") {
+    aArgs.push_back(strCurrent);
+  }
+};
+
 // Convert entire string into lowercase
 inline void ToLower(Str_t &str) {
   std::transform(str.begin(), str.end(), str.begin(), ::tolower);
