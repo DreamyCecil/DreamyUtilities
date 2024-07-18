@@ -53,6 +53,11 @@ public:
     return (GetOpenMode() != OM_UNOPEN);
   };
 
+  // Check if the device can be read from
+  inline bool IsReadable(void) const {
+    return (GetOpenMode() & OM_READONLY) != 0;
+  };
+
   // Check if the device can be written in
   inline bool IsWritable(void) const {
     return (GetOpenMode() & OM_WRITEONLY) != 0;
