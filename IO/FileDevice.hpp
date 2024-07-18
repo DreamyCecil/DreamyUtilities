@@ -81,10 +81,9 @@ public:
     _eOpenMode = OM_UNOPEN;
   };
 
-  // Check if the carret at the end
+  // Check if the carret is at the end
   virtual bool AtEnd(void) const {
-    s32 iEOF = feof(_pFile);
-    return iEOF != 0;
+    return Pos() >= Size();
   };
 
   // Return current carret position
@@ -99,19 +98,28 @@ public:
 
   // Try to move the carret to a specified position
   virtual bool Seek(size_t iOffset) {
-    D_ASSERT(_pFile != nullptr);
+    if (!IsOpen()) return false;
     return fseek(_pFile, (s32)iOffset, SEEK_SET) == 0;
   };
 
   // Move forward
   virtual size_t Skip(size_t iMaxSize) {
-    D_ASSERT(_pFile != nullptr);
-    return (size_t)fseek(_pFile, (s32)iMaxSize, SEEK_CUR);
+    if (!IsOpen()) return NULL_POS;
+
+    size_t iLastPos = (size_t)ftell(_pFile);
+
+    if (fseek(_pFile, (s32)iMaxSize, SEEK_CUR) == 0) {
+      // Results in less than iMaxSize if limited by size
+      size_t iCurPos = dreamy::math::Min((size_t)ftell(_pFile), Size());
+      return (iCurPos - iLastPos);
+    }
+
+    return NULL_POS;
   };
 
   // Read bytes from the file
   virtual size_t Read(c8 *pData, size_t iMaxSize) {
-    D_ASSERT(_pFile != nullptr);
+    if (!IsReadable()) return NULL_POS;
     return fread(pData, 1, iMaxSize, _pFile);
   };
 
@@ -127,8 +135,6 @@ public:
   // Write bytes into the file
   virtual size_t Write(const c8 *pData, size_t iMaxSize) {
     if (!IsWritable()) return NULL_POS;
-        
-    D_ASSERT(_pFile != nullptr);
     return fwrite(pData, 1, iMaxSize, _pFile);
   };
 
@@ -140,8 +146,13 @@ public:
 // File manipulation
 public:
 
+  // Return pointer to native file object
+  inline FILE *GetFileObject(void) {
+    return _pFile;
+  };
+
   // Return current filename
-  Str_t GetFilename(void) const {
+  inline const CPath &GetFilename(void) const {
     return _strFilename;
   };
 
@@ -164,11 +175,6 @@ public:
 
     s32 iResult = rename(_strFilename.c_str(), strName.c_str());
     return (iResult == 0);
-  };
-
-  // Return pointer to native file object
-  inline FILE *GetFileObject(void) {
-    return _pFile;
   };
 };
 

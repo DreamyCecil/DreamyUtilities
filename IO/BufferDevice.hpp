@@ -6,6 +6,7 @@
 #include "../Base/Base.hpp"
 
 #include "../Data/ByteArray.hpp"
+#include "../Math/Algorithm.hpp"
 #include "ReadWriteDevice.hpp"
 
 namespace dreamy {
@@ -49,7 +50,7 @@ public:
     return IsOpen() ? _iPos : NULL_POS;
   };
 
-  // Check if the carret at the end
+  // Check if the carret is at the end
   virtual bool AtEnd(void) const {
     return Pos() >= Size();
   };
@@ -75,8 +76,13 @@ public:
 
   // Move forward
   virtual size_t Skip(size_t iMaxSize) {
-    _iPos += iMaxSize;
-    return iMaxSize;
+    size_t iLastPos = _iPos;
+
+    // Don't go past the size
+    _iPos = dreamy::math::Min(_iPos + iMaxSize, Size());
+
+    // Results in less than iMaxSize if limited by size
+    return _iPos - iLastPos;
   };
 
   // Take bytes from the device

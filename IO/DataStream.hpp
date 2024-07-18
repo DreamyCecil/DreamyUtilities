@@ -93,7 +93,7 @@ public:
 
   // Wrapper for IReadWriteDevice::AtEnd()
   bool AtEnd(void) const {
-    return (_pDevice == nullptr || _pDevice->AtEnd());
+    return (_eStatus == STATUS_READPASTEND || _pDevice == nullptr || _pDevice->AtEnd());
   };
 
   // Return used device
@@ -119,7 +119,7 @@ public:
   // Change status only if the current status is 'STATUS_OK'
   void SetStatus(const EStatus eStatus) {
     // Not OK
-    if (eStatus != STATUS_OK) return;
+    if (_eStatus != STATUS_OK) return;
 
     _eStatus = eStatus;
 
