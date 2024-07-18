@@ -16,17 +16,18 @@ class CFileDevice : public IReadWriteDevice {
 
 protected:
   FILE *_pFile;
+  size_t _iSize;
   CPath _strFilename;
 
 public:
   // Default constructor
-  CFileDevice() : _pFile(nullptr), _strFilename("")
+  CFileDevice() : _pFile(nullptr), _iSize(NULL_POS), _strFilename("")
   {
     _eOpenMode = OM_UNOPEN;
   };
 
   // Constructor with path to the file
-  CFileDevice(const c8 *strPath) : _pFile(nullptr), _strFilename(strPath)
+  CFileDevice(const c8 *strPath) : _pFile(nullptr), _iSize(NULL_POS), _strFilename(strPath)
   {
     _eOpenMode = OM_UNOPEN;
   };
@@ -58,7 +59,13 @@ public:
 
     FileOpen(&_pFile, _strFilename.c_str(), strOpenMode);
 
-    if (_pFile != nullptr) {
+    if (_pFile != nullptr)
+    {
+      // Determine file size from the end position
+      fseek(_pFile, 0, SEEK_END);
+      _iSize = (size_t)ftell(_pFile);
+      fseek(_pFile, 0, SEEK_SET);
+
       _eOpenMode = eOpenMode;
       return true;
     }
@@ -87,15 +94,7 @@ public:
 
   // Length of the file
   virtual size_t Size(void) const {
-    if (!IsOpen()) return NULL_POS;
-
-    s32 iCurrentPos = (s32)ftell(_pFile);
-    fseek(_pFile, 0, SEEK_END);
-
-    s32 iFileSize = (s32)ftell(_pFile);
-    fseek(_pFile, iCurrentPos, SEEK_SET);
-
-    return iFileSize;
+    return (IsOpen() ? _iSize : NULL_POS);
   };
 
   // Try to move the carret to a specified position
