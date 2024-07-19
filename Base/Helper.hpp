@@ -57,7 +57,8 @@ inline bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault) {
   c8 chAnswer = 0;
 
   if (!strInput.empty()) {
-    chAnswer = (c8)toupper(strInput[0]);
+    int iUpper = std::toupper(static_cast<u8>(strInput[0]));
+    chAnswer = static_cast<c8>(iUpper);
   }
 
   if (!bYesByDefault) {
@@ -79,7 +80,7 @@ inline Str_t ConsoleInput(const c8 *strPrompt) {
 
   if (strInput.empty()) return "";
 
-  return strInput.c_str();
+  return strInput;
 };
 
 // Wrapper method for opening files (alternative to fopen & fopen_s)

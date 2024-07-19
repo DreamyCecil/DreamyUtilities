@@ -133,6 +133,8 @@ __forceinline u64 MultiCharLiteral(const c8 strLiteral[9]) {
   return *(u64 *)(&str[0]);
 };
 
+inline bool CompareChars(c8 ch1, c8 ch2);
+
 // Compare strings using wildcards
 template<typename Type> inline
 bool WildcardMatch(const Type *strCheck, const Type *strWildcardMask) {
@@ -197,7 +199,7 @@ bool WildcardMatch(const Type *strCheck, const Type *strWildcardMask) {
     }
 
     // Current characters don't match and it's either an "any character" wildcard or an escape sequence
-    if (tolower(*pchMask) != tolower(*pchCur) && (*pchMask != Type('?') || bEscapeChar)) {
+    if (!CompareChars(*pchMask, *pchCur) && (*pchMask != Type('?') || bEscapeChar)) {
       // Expected a wildcard
       if (!bWildcard) return false;
 
@@ -264,7 +266,7 @@ void StringSplit(const Type &str, const Type &strDelimiter, std::vector<Type> &a
 // Separate a string into multiple arguments (e.g. command line arguments)
 // Implemented according to the rules from Microsoft docs:
 // https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
-inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpace)(int) = &isspace) {
+inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpace)(int) = &std::isspace) {
   Str_t strCurrent = "";
   bool bString = false; // String within double quotes
 
@@ -356,19 +358,53 @@ inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpac
   }
 };
 
+// Convert ASCII character into lowercase
+inline c8 CharToLower(c8 ch) {
+  return static_cast<c8>(std::tolower(static_cast<u8>(ch)));
+};
+
+// Convert ASCII character into uppercase
+inline c8 CharToUpper(c8 ch) {
+  return static_cast<c8>(std::toupper(static_cast<u8>(ch)));
+};
+
+// Check if two characters are equal (case insensitive)
+bool CompareChars(c8 ch1, c8 ch2) {
+  return CharToLower(ch1) == CharToLower(ch2);
+};
+
 // Convert entire string into lowercase
 inline void ToLower(Str_t &str) {
-  std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+  std::transform(str.begin(), str.end(), str.begin(), CharToUpper);
 };
 
 // Convert entire string into uppercase
 inline void ToUpper(Str_t &str) {
-  std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+  std::transform(str.begin(), str.end(), str.begin(), CharToUpper);
+};
+
+// Convert a copy of the string into lowercase and return it
+__forceinline Str_t StrToLower(const Str_t &str) {
+  Str_t strCopy(str);
+  ToLower(strCopy);
+  return strCopy;
+};
+
+// Convert a copy of the string into uppercase and return it
+__forceinline Str_t StrToUpper(const Str_t &str) {
+  Str_t strCopy(str);
+  ToUpper(strCopy);
+  return strCopy;
 };
 
 // Replace all occurrences of a character in a string
 inline void Replace(Str_t &str, c8 chOld, c8 chNew) {
   std::replace(str.begin(), str.end(), chOld, chNew);
+};
+
+// Check if two strings are equal (case insensitive)
+inline bool CompareStrings(const Str_t &str1, const Str_t &str2) {
+  return str1.size() == str2.size() && std::equal(str1.begin(), str1.end(), str2.begin(), CompareChars);
 };
 
 };
