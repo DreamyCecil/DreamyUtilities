@@ -8,6 +8,13 @@
 
 #include "../Strings/Strings.hpp"
 
+#if _DREAMY_UNIX
+  #include <unistd.h>
+#else
+  #define WIN32_LEAN_AND_MEAN
+  #include <windows.h>
+#endif
+
 namespace dreamy {
 
 // String wrapper with helper methods for filenames
@@ -127,6 +134,45 @@ inline bool FileExists(const c8 *strFileName) {
 // Check if the file exists
 __forceinline bool FileExists(const Str_t &strFileName) {
   return FileExists(strFileName.c_str());
+};
+
+// Get current working directory of the application
+inline CPath GetCurrentPath(void) {
+  #if _DREAMY_UNIX
+    c8 *strPath = getcwd(nullptr, 0);
+    if (strPath == nullptr) return ""; // Error
+
+    CPath strResult(strPath);
+    free(strPath);
+
+    return strResult + "/";
+
+  #else
+    size_t ctPathLen = (size_t)GetCurrentDirectoryA(0, 0);
+    CPath strResult(ctPathLen, '\0');
+
+    bool bFailed = (GetCurrentDirectoryA(ctPathLen, &strResult[0]) == 0);
+    if (bFailed) return ""; // Error
+
+    // Last character is set to null, so replace it with another separator
+    strResult[ctPathLen - 1] = '\\';
+
+    return strResult;
+  #endif
+};
+
+// Set current working directory of the application
+inline bool SetCurrentPath(const c8 *strPath) {
+  #if _DREAMY_UNIX
+    return chdir(strPath) != -1;
+  #else
+    return SetCurrentDirectoryA(strPath);
+  #endif
+};
+
+// Set current working directory of the application
+__forceinline bool SetCurrentPath(const Str_t &strPath) {
+  return SetCurrentPath(strPath.c_str());
 };
 
 };
