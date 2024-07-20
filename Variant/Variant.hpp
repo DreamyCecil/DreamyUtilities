@@ -160,7 +160,10 @@ public:
   CVariant(u64 i) { FromInt(i); };
   CVariant(unsigned long i) { FromInt(i); }; // Unusual case
 
-  VARIANT_TYPE_METHODS(const Str_t      &, Str_t,      VAL_STRING, String);
+  // Strings
+  VARIANT_TYPE_METHODS(const Str_t &, Str_t, VAL_STRING, String);
+  CVariant(const c8 *str) { FromString(str); };
+
   VARIANT_TYPE_METHODS(const CValObject &, CValObject, VAL_OBJ, Object);
   VARIANT_TYPE_METHODS(      CVariant   *, CVariant *, VAL_PTR, Ptr);
 
