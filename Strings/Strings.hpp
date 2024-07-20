@@ -216,8 +216,8 @@ bool WildcardMatch(const Type *strCheck, const Type *strWildcardMask) {
 };
 
 // Split a string using a character delimiter
-template<typename Type> inline
-void CharSplit(const Type &str, const typename Type::value_type chDelimiter, std::vector<Type> &aStrings) {
+template<typename TypeString, typename TypeContainer> inline
+void CharSplit(const TypeString &str, const typename TypeString::value_type chDelimiter, TypeContainer &aStrings) {
   size_t iLast = 0;
   size_t iPos = str.find(chDelimiter);
 
@@ -239,8 +239,8 @@ void CharSplit(const Type &str, const typename Type::value_type chDelimiter, std
 };
 
 // Split a string using a string delimiter
-template<typename Type> inline
-void StringSplit(const Type &str, const Type &strDelimiter, std::vector<Type> &aStrings) {
+template<typename TypeString, typename TypeContainer> inline
+void StringSplit(const TypeString &str, const TypeString &strDelimiter, TypeContainer &aStrings) {
   const size_t iSize = strDelimiter.Length();
 
   size_t iLast = 0;
