@@ -375,7 +375,7 @@ bool CompareChars(c8 ch1, c8 ch2) {
 
 // Convert entire string into lowercase
 inline void ToLower(Str_t &str) {
-  std::transform(str.begin(), str.end(), str.begin(), CharToUpper);
+  std::transform(str.begin(), str.end(), str.begin(), CharToLower);
 };
 
 // Convert entire string into uppercase
