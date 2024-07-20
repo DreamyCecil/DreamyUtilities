@@ -266,7 +266,7 @@ void StringSplit(const Type &str, const Type &strDelimiter, std::vector<Type> &a
 // Separate a string into multiple arguments (e.g. command line arguments)
 // Implemented according to the rules from Microsoft docs:
 // https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
-inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpace)(int) = &std::isspace) {
+inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpace)(int) = &::isspace) {
   Str_t strCurrent = "";
   bool bString = false; // String within double quotes
 
@@ -360,12 +360,12 @@ inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpac
 
 // Convert ASCII character into lowercase
 inline c8 CharToLower(c8 ch) {
-  return static_cast<c8>(std::tolower(static_cast<u8>(ch)));
+  return static_cast<c8>(::tolower(static_cast<u8>(ch)));
 };
 
 // Convert ASCII character into uppercase
 inline c8 CharToUpper(c8 ch) {
-  return static_cast<c8>(std::toupper(static_cast<u8>(ch)));
+  return static_cast<c8>(::toupper(static_cast<u8>(ch)));
 };
 
 // Check if two characters are equal (case insensitive)

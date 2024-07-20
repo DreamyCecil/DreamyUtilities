@@ -57,7 +57,7 @@ inline bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault) {
   c8 chAnswer = 0;
 
   if (!strInput.empty()) {
-    int iUpper = std::toupper(static_cast<u8>(strInput[0]));
+    int iUpper = ::toupper(static_cast<u8>(strInput[0]));
     chAnswer = static_cast<c8>(iUpper);
   }
 
