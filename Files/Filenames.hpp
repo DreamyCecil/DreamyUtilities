@@ -254,7 +254,7 @@ inline CPath GetCurrentPath(void) {
     return strResult + "/";
 
   #else
-    size_t ctPathLen = (size_t)GetCurrentDirectoryA(0, 0);
+    DWORD ctPathLen = GetCurrentDirectoryA(0, 0);
     CPath strResult(ctPathLen, '\0');
 
     bool bFailed = (GetCurrentDirectoryA(ctPathLen, &strResult[0]) == 0);
@@ -272,7 +272,7 @@ inline bool SetCurrentPath(const c8 *strPath) {
   #if _DREAMY_UNIX
     return chdir(strPath) != -1;
   #else
-    return SetCurrentDirectoryA(strPath);
+    return SetCurrentDirectoryA(strPath) != 0;
   #endif
 };
 

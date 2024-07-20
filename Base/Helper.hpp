@@ -11,6 +11,7 @@
 #include <fstream>
 #include <cctype>
 #include <cstdio>
+#include <cstdlib>
 #include <errno.h>
 
 namespace dreamy {
@@ -94,6 +95,19 @@ __forceinline error_t FileOpen(FILE **file, const c8 *strFilename, const c8 *str
   #endif
 };
 
+// Old standard under GCC cannot accept std::string in stream constructors, so accept them as explicit arguments
+#if _DREAMY_UNIX && !_DREAMY_CPP11
+
+// Simple file copying
+inline void FileCopy(const Str_t &fileSrc, const Str_t &fileDst) {
+  std::ifstream strmSrc(fileSrc.c_str(), std::ios::binary);
+  std::ofstream strmDst(fileDst.c_str(), std::ios::binary);
+
+  strmDst << strmSrc.rdbuf();
+};
+
+#else
+
 // Simple file copying
 template<typename TypeSrc, typename TypeDst> inline
 void FileCopy(const TypeSrc fileSrc, const TypeDst fileDst) {
@@ -102,6 +116,8 @@ void FileCopy(const TypeSrc fileSrc, const TypeDst fileDst) {
 
   strmDst << strmSrc.rdbuf();
 };
+
+#endif
 
 };
 
