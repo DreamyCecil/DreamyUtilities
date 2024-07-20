@@ -8,6 +8,8 @@
 
 #include "../Strings/Strings.hpp"
 
+#include <list>
+
 #if _DREAMY_UNIX
   #include <unistd.h>
 #else
@@ -44,6 +46,11 @@ public:
 #endif
 
 public:
+  // Check if there's a path separator character at some position
+  inline bool PathSeparatorAt(size_t i) const {
+    return (*this)[i] == '/' || (*this)[i] == '\\';
+  };
+
   // Remove directory from the filename
   inline CPath RemoveDir(void) const {
     return substr(find_last_of("/\\") + 1);
@@ -115,6 +122,105 @@ public:
     }
 
     return NULL_POS;
+  };
+
+  // Normalize the path taking "backward" and "current" directories into consideration
+  // E.g. "abc/sub1/../sub2/./qwe" -> "abc/sub2/qwe"
+  inline void Normalize(void) {
+    Str_t strPath(*this);
+    Replace(strPath, '\\', '/');
+
+    // Gather parts of the entire path
+    std::list<Str_t> aParts;
+    CharSplit(strPath, '/', aParts);
+
+    std::list<Str_t> aFinalPath;
+    std::list<Str_t>::const_iterator it;
+
+    // Iterate through the list of directories
+    for (it = aParts.begin(); it != aParts.end(); ++it) {
+      const Str_t &strPart = *it;
+
+      // Ignore current directories
+      if (strPart == ".") continue;
+
+      // If encountered a "backward" directory and there are some directories written
+      if (strPart == ".." && aFinalPath.size() != 0) {
+        // Remove the last directory (go up one directory) and go to the next one
+        aFinalPath.pop_back();
+        continue;
+      }
+
+      // Add directory to the final path
+      aFinalPath.push_back(strPart);
+    }
+
+    // Reset current path
+    *this = "";
+
+    // No path to compose
+    if (aFinalPath.size() == 0) return;
+
+    // Compose the final path
+    std::list<Str_t>::const_iterator itLast = --aFinalPath.end();
+
+    for (it = aFinalPath.begin(); it != aFinalPath.end(); ++it) {
+      *this += *it;
+
+      // Add separators between the directories
+      if (it != itLast) *this += '/';
+    }
+  };
+
+  // Get length of the root name, if there's any
+  size_t RootNameLength() const {
+    const size_t ctLen = length();
+
+  #if !_DREAMY_UNIX
+    // Starts with a drive letter and a colon on Windows (e.g. "C:")
+    const c8 chUpper = CharToUpper((*this)[0]);
+
+    if (ctLen >= 2 && chUpper >= 'A' && chUpper <= 'Z' && (*this)[1] == ':') {
+      return 2;
+    }
+  #endif
+
+    // Starts with a double separator and has any directory right after (e.g. "//abc")
+    if (ctLen > 2
+     && PathSeparatorAt(0) && PathSeparatorAt(1) && !PathSeparatorAt(2)
+     && ::isprint(static_cast<u8>((*this)[2])))
+    {
+      // Find the next separator, if there's any
+      size_t iNextSep = find_first_of("/\\", 3);
+      return (iNextSep == NULL_POS ? ctLen : iNextSep);
+    }
+
+    return 0;
+  };
+
+  // Check if the path starts with a root name (e.g. "C:" or "//abc")
+  inline bool HasRootName() const {
+    return RootNameLength() != 0;
+  };
+
+  // Check if the path starts with a root directory (e.g. "C:/" or "//abc/")
+  inline bool HasRootDirectory() const {
+    const size_t ctRoot = RootNameLength();
+    return length() > ctRoot && PathSeparatorAt(ctRoot);
+  };
+
+  // Check if it's a full path
+  inline bool IsAbsolute() const {
+  #if _DREAMY_UNIX
+    return HasRootDirectory();
+  #else
+    return HasRootName() && HasRootDirectory();
+  #endif
+  };
+
+  // Check if it's a relative path
+  inline bool IsRelative() const {
+    return !IsAbsolute();
   };
 };
 
