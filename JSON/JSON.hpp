@@ -13,7 +13,7 @@
 namespace dreamy {
 
 // Parse JSON string and output it in a variant with optional token list
-inline void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const Str_t &strJSON, const CValObject &oConstants = _jsonConstants.list) {
+inline void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CValObject &oConstants = _jsonConstants.list) {
   static CTokenList aTokenList;
 
   // Supply local token list if none specified

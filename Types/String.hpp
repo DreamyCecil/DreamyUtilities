@@ -6,58 +6,156 @@
 
 #include "../Base/Base.hpp"
 
-#include "../Strings/Strings.hpp"
-
+#include <string>
 #include <list>
-
-#if _DREAMY_UNIX
-  #include <unistd.h>
-#else
-  #define WIN32_LEAN_AND_MEAN
-  #include <windows.h>
-#endif
+#include <algorithm>
 
 namespace dreamy {
 
+// Base class alias so as not to anger the ancients (i.e. MSVC 6.0)
+typedef std::string CStringBase;
+
 // String wrapper with helper methods for filenames
-class CPath : public Str_t {
+class CString : public CStringBase {
 
 // String constructor wrappers
 public:
-  CPath() : Str_t() {};
+  CString() : CStringBase() {};
 
-  CPath(const Str_t &str) : Str_t(str) {};
+  CString(const CStringBase &str) : CStringBase(str) {};
 
-  CPath(const Str_t &str, size_t iPos, size_t iSize = NULL_POS) : Str_t(str, iPos, iSize) {};
+  CString(const CStringBase &str, size_t iPos, size_t iSize = NULL_POS) : CStringBase(str, iPos, iSize) {};
 
-  CPath(const c8 *str) : Str_t(str) {};
+  CString(const c8 *str) : CStringBase(str) {};
 
-  CPath(const c8 *str, size_t iSize) : Str_t(str, iSize) {};
+  CString(const c8 *str, size_t iSize) : CStringBase(str, iSize) {};
 
-  CPath(size_t iSize, c8 ch) : Str_t(iSize, ch) {};
+  CString(size_t iSize, c8 ch) : CStringBase(iSize, ch) {};
 
   template<typename Iter>
-  CPath(Iter itFirst, Iter itLast) : Str_t(itFirst, itLast) {};
+  CString(Iter itFirst, Iter itLast) : CStringBase(itFirst, itLast) {};
 
 #if _DREAMY_CPP11
-  CPath(std::initializer_list<c8> il) : Str_t(il) {};
+  CString(std::initializer_list<c8> il) : CStringBase(il) {};
 
-  CPath(Str_t &&str) DREAMY_NOEXCEPT : Str_t(str) {};
+  CString(CStringBase &&str) DREAMY_NOEXCEPT : CStringBase(str) {};
 #endif
 
+// Generic methods
 public:
+
+  // Convert ASCII character into lowercase
+  static inline c8 CharToLower(c8 ch) {
+    return static_cast<c8>(::tolower(static_cast<u8>(ch)));
+  };
+
+  // Convert ASCII character into uppercase
+  static inline c8 CharToUpper(c8 ch) {
+    return static_cast<c8>(::toupper(static_cast<u8>(ch)));
+  };
+
+  // Check if two characters are equal (case insensitive)
+  static inline bool CompareChars(c8 ch1, c8 ch2) {
+    return CharToLower(ch1) == CharToLower(ch2);
+  };
+
+  // Convert entire string into lowercase
+  inline void ToLower(void) {
+    std::transform(begin(), end(), begin(), CharToLower);
+  };
+
+  // Convert entire string into uppercase
+  inline void ToUpper(void) {
+    std::transform(begin(), end(), begin(), CharToUpper);
+  };
+
+  // Convert a copy of the string into lowercase and return it
+  inline CString AsLower(void) const {
+    CString strCopy(*this);
+    strCopy.ToLower();
+    return strCopy;
+  };
+
+  // Convert a copy of the string into uppercase and return it
+  inline CString AsUpper(void) const {
+    CString strCopy(*this);
+    strCopy.ToUpper();
+    return strCopy;
+  };
+
+  // Replace all occurrences of a character in a string
+  inline void Replace(c8 chOld, c8 chNew) {
+    std::replace(begin(), end(), chOld, chNew);
+  };
+
+  // Check if two strings are equal (case insensitive)
+  inline bool Compare(const CString &str) const {
+    return size() == str.size() && std::equal(begin(), end(), str.begin(), CompareChars);
+  };
+
+  // Split a string using a character delimiter
+  template<typename TypeContainer>
+  void CharSplit(const c8 chDelimiter, TypeContainer &aStrings) const {
+    size_t iLast = 0;
+    size_t iPos = find(chDelimiter);
+
+    while (iPos != NULL_POS) {
+      aStrings.push_back(substr(iLast, iPos - iLast));
+
+      // Skip delimiter
+      iPos += 1;
+
+      // Remember position after the delimiter
+      iLast = iPos;
+
+      // Get position of the next one
+      iPos = find(chDelimiter, iPos);
+    }
+
+    // Last token
+    aStrings.push_back(substr(iLast));
+  };
+
+  // Split a string using a string delimiter
+  template<typename TypeContainer>
+  void StringSplit(const CString &strDelimiter, TypeContainer &aStrings) const {
+    const size_t iSize = strDelimiter.length();
+
+    size_t iLast = 0;
+    size_t iPos = find(strDelimiter);
+
+    while (iPos != NULL_POS) {
+      aStrings.push_back(substr(iLast, iPos - iLast));
+
+      // Skip delimiter
+      iPos += iSize;
+
+      // Remember position after the delimiter
+      iLast = iPos;
+
+      // Get position of the next one
+      iPos = find(strDelimiter, iPos);
+    }
+
+    // Last token
+    aStrings.push_back(substr(iLast));
+  };
+
+// Path and filename methods
+public:
+
   // Check if there's a path separator character at some position
   inline bool PathSeparatorAt(size_t i) const {
     return (*this)[i] == '/' || (*this)[i] == '\\';
   };
 
   // Remove directory from the filename
-  inline CPath RemoveDir(void) const {
+  inline CString RemoveDir(void) const {
     return substr(find_last_of("/\\") + 1);
   };
 
   // Remove extension from the filename
-  inline CPath RemoveExt(void) const {
+  inline CString RemoveExt(void) const {
     const size_t iPeriodPos(find_last_of('.'));
     const size_t iLastDir(find_last_of("/\\"));
 
@@ -70,18 +168,18 @@ public:
   };
 
   // Get name of the file
-  inline CPath GetFileName(void) const {
+  inline CString GetFileName(void) const {
     return RemoveDir().RemoveExt();
   };
 
   // Get path to the file
-  inline CPath GetFileDir(void) const {
+  inline CString GetFileDir(void) const {
     const size_t iLastDirectory(find_last_of("/\\") + 1);
     return substr(0, iLastDirectory);
   };
 
   // Get file extension with the period
-  inline CPath GetFileExt(void) const {
+  inline CString GetFileExt(void) const {
     const size_t iPeriodPos(find_last_of('.'));
     const size_t iLastDir(find_last_of("/\\"));
 
@@ -94,15 +192,13 @@ public:
   };
 
   // Go up the path until a certain directory
-  inline size_t GoUpUntilDir(Str_t strDirName) const {
-    Str_t strPath(*this);
-
+  inline size_t GoUpUntilDir(CString strDirName) const {
     // Convert every string in the same case
-    ToLower(strPath);
-    ToLower(strDirName);
+    CString strPath = AsLower();
+    strDirName.ToLower();
 
     // Make consistent slashes
-    Replace(strPath, '\\', '/');
+    strPath.Replace('\\', '/');
 
     // Absolute path, e.g. "abc/strDirName/qwe"
     size_t iDir(strPath.rfind("/" + strDirName + "/"));
@@ -127,19 +223,19 @@ public:
   // Normalize the path taking "backward" and "current" directories into consideration
   // E.g. "abc/sub1/../sub2/./qwe" -> "abc/sub2/qwe"
   inline void Normalize(void) {
-    Str_t strPath(*this);
-    Replace(strPath, '\\', '/');
+    CString strPath(*this);
+    strPath.Replace('\\', '/');
 
     // Gather parts of the entire path
-    std::list<Str_t> aParts;
-    CharSplit(strPath, '/', aParts);
+    std::list<CString> aParts;
+    strPath.CharSplit('/', aParts);
 
-    std::list<Str_t> aFinalPath;
-    std::list<Str_t>::const_iterator it;
+    std::list<CString> aFinalPath;
+    std::list<CString>::const_iterator it;
 
     // Iterate through the list of directories
     for (it = aParts.begin(); it != aParts.end(); ++it) {
-      const Str_t &strPart = *it;
+      const CString &strPart = *it;
 
       // Ignore current directories
       if (strPart == ".") continue;
@@ -162,7 +258,7 @@ public:
     if (aFinalPath.size() == 0) return;
 
     // Compose the final path
-    std::list<Str_t>::const_iterator itLast = --aFinalPath.end();
+    std::list<CString>::const_iterator itLast = --aFinalPath.end();
 
     for (it = aFinalPath.begin(); it != aFinalPath.end(); ++it) {
       *this += *it;
@@ -224,63 +320,21 @@ public:
   };
 };
 
-// Check if the file exists
-inline bool FileExists(const c8 *strFileName) {
-  FILE *file;
-  FileOpen(&file, strFileName, "r");
+};
 
-  if (file == nullptr) {
-    return false;
+#if _DREAMY_CPP11
+namespace std {
+
+// String class hasher
+template<>
+struct hash<dreamy::CString>
+{
+  size_t operator()(const dreamy::CString &str) const {
+    return hash<dreamy::CStringBase>()(str);
   }
-
-  fclose(file);
-  return true;
-};
-
-// Check if the file exists
-__forceinline bool FileExists(const Str_t &strFileName) {
-  return FileExists(strFileName.c_str());
-};
-
-// Get current working directory of the application
-inline CPath GetCurrentPath(void) {
-  #if _DREAMY_UNIX
-    c8 *strPath = getcwd(nullptr, 0);
-    if (strPath == nullptr) return ""; // Error
-
-    CPath strResult(strPath);
-    free(strPath);
-
-    return strResult + "/";
-
-  #else
-    DWORD ctPathLen = GetCurrentDirectoryA(0, 0);
-    CPath strResult(ctPathLen, '\0');
-
-    bool bFailed = (GetCurrentDirectoryA(ctPathLen, &strResult[0]) == 0);
-    if (bFailed) return ""; // Error
-
-    // Last character is set to null, so replace it with another separator
-    strResult[ctPathLen - 1] = '\\';
-
-    return strResult;
-  #endif
-};
-
-// Set current working directory of the application
-inline bool SetCurrentPath(const c8 *strPath) {
-  #if _DREAMY_UNIX
-    return chdir(strPath) != -1;
-  #else
-    return SetCurrentDirectoryA(strPath) != 0;
-  #endif
-};
-
-// Set current working directory of the application
-__forceinline bool SetCurrentPath(const Str_t &strPath) {
-  return SetCurrentPath(strPath.c_str());
 };
 
 };
+#endif
 
 #endif // (Dreamy Utilities Include Guard)

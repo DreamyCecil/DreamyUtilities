@@ -14,6 +14,13 @@
 #include <cstdlib>
 #include <errno.h>
 
+#if _DREAMY_UNIX
+  #include <unistd.h>
+#else
+  #define WIN32_LEAN_AND_MEAN
+  #include <windows.h>
+#endif
+
 namespace dreamy {
 
 // Resize array by constructing values in place and moving the data bytes
@@ -48,7 +55,7 @@ void ResizeBuffer_realloc(Type **pBuffer, size_t iNewSize) {
 
 // Ask yes-or-no question in the console and wait for user input
 inline bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault) {
-  Str_t strInput;
+  CString strInput;
 
   // Ask a question and wait for input
   std::cout << strQuestion << (bYesByDefault ? " [Y/n]: " : " [y/N]: ");
@@ -72,8 +79,8 @@ inline bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault) {
 };
 
 // Get user input from the console
-inline Str_t ConsoleInput(const c8 *strPrompt) {
-  Str_t strInput;
+inline CString ConsoleInput(const c8 *strPrompt) {
+  CString strInput;
 
   // Display a prompt and wait for input
   std::cout << strPrompt;
@@ -99,7 +106,7 @@ __forceinline error_t FileOpen(FILE **file, const c8 *strFilename, const c8 *str
 #if _DREAMY_UNIX && !_DREAMY_CPP11
 
 // Simple file copying
-inline void FileCopy(const Str_t &fileSrc, const Str_t &fileDst) {
+inline void FileCopy(const CString &fileSrc, const CString &fileDst) {
   std::ifstream strmSrc(fileSrc.c_str(), std::ios::binary);
   std::ofstream strmDst(fileDst.c_str(), std::ios::binary);
 
@@ -118,6 +125,63 @@ void FileCopy(const TypeSrc fileSrc, const TypeDst fileDst) {
 };
 
 #endif
+
+// Check if the file exists
+inline bool FileExists(const c8 *strFileName) {
+  FILE *file;
+  FileOpen(&file, strFileName, "r");
+
+  if (file == nullptr) {
+    return false;
+  }
+
+  fclose(file);
+  return true;
+};
+
+// Check if the file exists
+__forceinline bool FileExists(const CString &strFileName) {
+  return FileExists(strFileName.c_str());
+};
+
+// Get current working directory of the application
+inline CString GetCurrentPath(void) {
+  #if _DREAMY_UNIX
+    c8 *strPath = getcwd(nullptr, 0);
+    if (strPath == nullptr) return ""; // Error
+
+    CString strResult(strPath);
+    free(strPath);
+
+    return strResult + "/";
+
+  #else
+    DWORD ctPathLen = GetCurrentDirectoryA(0, 0);
+    CString strResult(ctPathLen, '\0');
+
+    bool bFailed = (GetCurrentDirectoryA(ctPathLen, &strResult[0]) == 0);
+    if (bFailed) return ""; // Error
+
+    // Last character is set to null, so replace it with another separator
+    strResult[ctPathLen - 1] = '\\';
+
+    return strResult;
+  #endif
+};
+
+// Set current working directory of the application
+inline bool SetCurrentPath(const c8 *strPath) {
+  #if _DREAMY_UNIX
+    return chdir(strPath) != -1;
+  #else
+    return SetCurrentDirectoryA(strPath) != 0;
+  #endif
+};
+
+// Set current working directory of the application
+__forceinline bool SetCurrentPath(const CString &strPath) {
+  return SetCurrentPath(strPath.c_str());
+};
 
 };
 

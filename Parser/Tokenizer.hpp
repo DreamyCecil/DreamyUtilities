@@ -13,7 +13,7 @@
 namespace dreamy {
 
 // General tokenization of a string
-inline void TokenizeString(CTokenList &aTokens, const Str_t &str, bool bTokenizeComments = false) {
+inline void TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments = false) {
   CParserData data(str);
 
   while (data.CanParse()) {

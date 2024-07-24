@@ -137,12 +137,12 @@ public:
   };
 
   // Get position string
-  const Str_t PrintPos(void) const {
+  const CString PrintPos(void) const {
     u32 iLine, iCol;
     GetTokenPos().GetPos(iLine, iCol);
 
     // Print a line and a column
-    Str_t str;
+    CString str;
     dreamy::PrintF(str, "line %u, col %u", iLine, iCol);
 
     return str;

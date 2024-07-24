@@ -45,7 +45,7 @@ public:
 class CMessageException : public CException {
 
 protected:
-  Str_t _message;
+  CString _message;
 
 public:
   // Default constructor
@@ -54,7 +54,7 @@ public:
   };
 
   // Constructor from a string
-  CMessageException(const Str_t &strError) : _message(strError)
+  CMessageException(const CString &strError) : _message(strError)
   {
   };
 

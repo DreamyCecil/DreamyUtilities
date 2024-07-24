@@ -11,19 +11,19 @@
 namespace dreamy {
 
 // Read text file from a stream into a string
-inline Str_t ReadTextFile(CFileDevice &file) {
-  Str_t str(file.Size(), '\0');
+inline CString ReadTextFile(CFileDevice &file) {
+  CString str(file.Size(), '\0');
   file.Read(&str[0], sizeof(c8) * file.Size());
 
   return str;
 };
 
 // Open and read text file into a string
-inline Str_t ReadTextFile(const Str_t &strFilename) {
+inline CString ReadTextFile(const CString &strFilename) {
   CFileDevice file(strFilename.c_str());
   file.Open(IReadWriteDevice::OM_READONLY);
 
-  Str_t str(file.Size(), '\0');
+  CString str(file.Size(), '\0');
   file.Read(&str[0], sizeof(c8) * file.Size());
 
   file.Close();
@@ -32,7 +32,7 @@ inline Str_t ReadTextFile(const Str_t &strFilename) {
 };
 
 // Open and read text file into a string if possible
-inline bool ReadTextFileIfPossible(const Str_t &strFilename, Str_t &strText) {
+inline bool ReadTextFileIfPossible(const CString &strFilename, CString &strText) {
   CFileDevice file(strFilename.c_str());
   file.Open(IReadWriteDevice::OM_READONLY);
 

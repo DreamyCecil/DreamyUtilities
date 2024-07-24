@@ -18,7 +18,7 @@ class CParserData {
 
 public:
   // String data
-  const Str_t str;
+  const CString str;
 
   const c8 *pchCur; // Current character
   const c8 *pchNext; // Next character
@@ -31,7 +31,7 @@ public:
 
 public:
   // Default constructor
-  CParserData(const Str_t &strSet) : str(strSet), pchCur(&strSet[0]), pchNext(&strSet[1]),
+  CParserData(const CString &strSet) : str(strSet), pchCur(&strSet[0]), pchNext(&strSet[1]),
     iLineCur(0), iLineBeg(0), pos(0, 0, 0, 0)
   {
   };
@@ -87,7 +87,7 @@ public:
   };
 
   // Extract a part of the string within the [begin - current character] range
-  inline Str_t ExtractString(u32 iBeginOffset) {
+  inline CString ExtractString(u32 iBeginOffset) {
     iBeginOffset += pos.iFirst;
     return str.substr(iBeginOffset, pos.iLast - iBeginOffset);
   };
@@ -132,7 +132,7 @@ public:
         }
 
         // Skip comment opening
-        Str_t strComment = ExtractString(2);
+        CString strComment = ExtractString(2);
         AddToken(aTokens, CParserToken::TKN_COMMENT, pos, strComment);
       } return true;
 
@@ -159,7 +159,7 @@ public:
         }
 
         // Skip comment opening
-        Str_t strComment = ExtractString(2);
+        CString strComment = ExtractString(2);
 
         // Count comment closing
         pos.iLast += 2;
@@ -283,7 +283,7 @@ public:
   };
 
   // Parse a string enclosed within certain characters
-  bool ParseString(Str_t &str, const c8 chEnclosed) {
+  bool ParseString(CString &str, const c8 chEnclosed) {
     if (*pchCur != chEnclosed) {
       return false;
     }
@@ -349,7 +349,7 @@ public:
 
   // Tokenize character sequences
   bool ParseCharSequences(CTokenList &aTokens, const c8 chString, const c8 chCharSeq) {
-    Str_t str;
+    CString str;
 
     // Add string
     if (chString != '\0' && ParseString(str, chString)) {
@@ -458,7 +458,7 @@ public:
     }
 
     // Save the number
-    Str_t strString = ExtractString(0);
+    CString strString = ExtractString(0);
 
     switch (ubType) {
       case 0: { // Integer
@@ -504,7 +504,7 @@ public:
         }
       }
 
-      Str_t strName = ExtractString(0);
+      CString strName = ExtractString(0);
       AddToken(aTokens, CParserToken::TKN_IDENTIFIER, pos, strName);
 
       return true;

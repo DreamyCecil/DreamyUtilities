@@ -15,7 +15,7 @@ class CHashedString {
 
 private:
   u64 _hash;
-  Str_t _string;
+  CString _string;
 
 public:
   // Default constructor
@@ -24,7 +24,7 @@ public:
   };
 
   // Generate a hash value from a string
-  __forceinline CHashedString(const Str_t &str) {
+  __forceinline CHashedString(const CString &str) {
     _string = str;
 
     CSimpleHasher hasher;
@@ -46,7 +46,7 @@ public:
   };
 
   // Get pure string
-  inline const Str_t &GetString(void) const {
+  inline const CString &GetString(void) const {
     return _string;
   };
 

@@ -55,25 +55,25 @@ inline void DumpDataChunks(CStringStream &out, void *pData, size_t iStartOffset,
 
 // Print unsigned integers
 
-inline Str_t DumpField(const u8 *pField, const c8 *strPrintAs = "%u") {
+inline CString DumpField(const u8 *pField, const c8 *strPrintAs = "%u") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;
 };
 
-inline Str_t DumpField(const u16 *pField, const c8 *strPrintAs = "%u") {
+inline CString DumpField(const u16 *pField, const c8 *strPrintAs = "%u") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;
 };
 
-inline Str_t DumpField(const u32 *pField, const c8 *strPrintAs = "%u") {
+inline CString DumpField(const u32 *pField, const c8 *strPrintAs = "%u") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;
 };
 
-inline Str_t DumpField(const u64 *pField, const c8 *strPrintAs = "%llu") {
+inline CString DumpField(const u64 *pField, const c8 *strPrintAs = "%llu") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;
@@ -81,32 +81,32 @@ inline Str_t DumpField(const u64 *pField, const c8 *strPrintAs = "%llu") {
 
 // Print signed integers
 
-inline Str_t DumpField(const s8 *pField, const c8 *strPrintAs = "%d") {
+inline CString DumpField(const s8 *pField, const c8 *strPrintAs = "%d") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;
 };
 
-inline Str_t DumpField(const s16 *pField, const c8 *strPrintAs = "%d") {
+inline CString DumpField(const s16 *pField, const c8 *strPrintAs = "%d") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;
 };
 
-inline Str_t DumpField(const s32 *pField, const c8 *strPrintAs = "%d") {
+inline CString DumpField(const s32 *pField, const c8 *strPrintAs = "%d") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;
 };
 
-inline Str_t DumpField(const s64 *pField, const c8 *strPrintAs = "%lld") {
+inline CString DumpField(const s64 *pField, const c8 *strPrintAs = "%lld") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;
 };
 
 // Print string
-inline Str_t DumpField(const c8 **pField, const c8 *strPrintAs = "%s") {
+inline CString DumpField(const c8 **pField, const c8 *strPrintAs = "%s") {
   c8 str[128];
   sprintf(str, strPrintAs, *pField);
   return str;

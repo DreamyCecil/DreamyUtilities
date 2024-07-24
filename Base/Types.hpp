@@ -4,8 +4,6 @@
 #ifndef _DREAMYUTILITIES_INCL_TYPES_H
 #define _DREAMYUTILITIES_INCL_TYPES_H
 
-#include <string>
-
 namespace dreamy {
 
 // Scalar types
@@ -31,11 +29,13 @@ typedef double f64; // Double precision
 
 // Text
 typedef char c8; // ASCII character
-typedef std::string Str_t; // ASCII text
 
 // Maximum value of size_t
 #define NULL_POS static_cast<size_t>(-1)
 
 };
+
+// String class
+#include "../Types/String.hpp"
 
 #endif // (Dreamy Utilities Include Guard)

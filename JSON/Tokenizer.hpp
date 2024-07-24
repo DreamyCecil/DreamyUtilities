@@ -23,7 +23,7 @@ static const struct JsonConstants {
 } _jsonConstants;
 
 // Tokenize JSON file contents
-inline void TokenizeJSON(CTokenList &aTokens, const Str_t &strJSON, const CValObject &oConstants = _jsonConstants.list) {
+inline void TokenizeJSON(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants = _jsonConstants.list) {
   CParserData data(strJSON);
 
   while (data.CanParse()) {
@@ -49,7 +49,7 @@ inline void TokenizeJSON(CTokenList &aTokens, const Str_t &strJSON, const CValOb
         if (data.ParseIdentifiers(aTokens)) {
           // Assume it's an identifier
           CParserToken &tkn = aTokens[aTokens.size() - 1];
-          const Str_t &strName = tkn.GetValue().ToString();
+          const CString &strName = tkn.GetValue().ToString();
 
           // Find constant in the list and retrieve its value
           CValObject::const_iterator itConst = oConstants.find(strName);

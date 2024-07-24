@@ -16,7 +16,7 @@
 namespace dreamy {
 
 // Format a string using a list of arguments
-inline void VPrintF(Str_t &strOut, const c8 *strFormat, va_list arg) {
+inline void VPrintF(CString &strOut, const c8 *strFormat, va_list arg) {
   // Allocate new buffer
   size_t iBufferSize = 256;
   c8 *pchBuffer = new c8[iBufferSize];
@@ -51,7 +51,7 @@ inline void VPrintF(Str_t &strOut, const c8 *strFormat, va_list arg) {
 }
 
 // Custom string formatting
-inline void PrintF(Str_t &strOut, const c8 *strFormat, ...) {
+inline void PrintF(CString &strOut, const c8 *strFormat, ...) {
   DREAMY_PRINTF_INLINE(strOut, strFormat);
 };
 

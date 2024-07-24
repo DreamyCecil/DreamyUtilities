@@ -9,19 +9,18 @@
 #include "../Formatting/Exception.hpp"
 
 #include <vector>
-#include <algorithm>
 
 namespace dreamy {
 
 // Convert real number into a string without trailing zeros
 template<typename Type> inline
-Str_t RealToString(const Type fNumber) {
+CString RealToString(const Type fNumber) {
   #if _DREAMY_CPP11
     return std::to_string(fNumber);
 
   #else
     // Print the number
-    Str_t str;
+    CString str;
     {
       c8 strPrint[256];
       snprintf(strPrint, 256, "%f", fNumber);
@@ -50,7 +49,7 @@ Str_t RealToString(const Type fNumber) {
 };
 
 // Convert string into a signed 64-bit integer
-inline s64 StrToS64(const Str_t &str) {
+inline s64 StrToS64(const CString &str) {
   s64 i64bit;
   sscanf_s(str.c_str(), "%lld", &i64bit);
 
@@ -58,7 +57,7 @@ inline s64 StrToS64(const Str_t &str) {
 };
 
 // Convert string into an unsigned 64-bit integer
-inline u64 StrToU64(const Str_t &str) {
+inline u64 StrToU64(const CString &str) {
   u64 i64bit;
   sscanf_s(str.c_str(), "%llu", &i64bit);
 
@@ -66,8 +65,8 @@ inline u64 StrToU64(const Str_t &str) {
 };
 
 // Convert character escape sequences into escape characters
-inline void ConvertEscapeChars(Str_t &str) {
-  Str_t strOriginal = str; // Copy of the string for restoration
+inline void ConvertEscapeChars(CString &str) {
+  CString strOriginal = str; // Copy of the string for restoration
   size_t iReplaced = 0; // Amount of replaced characters for offsetting
 
   // Parse escape characters
@@ -133,8 +132,6 @@ __forceinline u64 MultiCharLiteral(const c8 strLiteral[9]) {
   return *(u64 *)(&str[0]);
 };
 
-inline bool CompareChars(c8 ch1, c8 ch2);
-
 // Compare strings using wildcards
 template<typename Type> inline
 bool WildcardMatch(const Type *strCheck, const Type *strWildcardMask) {
@@ -199,7 +196,7 @@ bool WildcardMatch(const Type *strCheck, const Type *strWildcardMask) {
     }
 
     // Current characters don't match and it's either an "any character" wildcard or an escape sequence
-    if (!CompareChars(*pchMask, *pchCur) && (*pchMask != Type('?') || bEscapeChar)) {
+    if (!CString::CompareChars(*pchMask, *pchCur) && (*pchMask != Type('?') || bEscapeChar)) {
       // Expected a wildcard
       if (!bWildcard) return false;
 
@@ -215,59 +212,11 @@ bool WildcardMatch(const Type *strCheck, const Type *strWildcardMask) {
   }
 };
 
-// Split a string using a character delimiter
-template<typename TypeString, typename TypeContainer> inline
-void CharSplit(const TypeString &str, const typename TypeString::value_type chDelimiter, TypeContainer &aStrings) {
-  size_t iLast = 0;
-  size_t iPos = str.find(chDelimiter);
-
-  while (iPos != NULL_POS) {
-    aStrings.push_back(str.substr(iLast, iPos - iLast));
-
-    // Skip delimiter
-    iPos += 1;
-
-    // Remember position after the delimiter
-    iLast = iPos;
-
-    // Get position of the next one
-    iPos = str.find(chDelimiter, iPos);
-  }
-
-  // Last token
-  aStrings.push_back(str.substr(iLast));
-};
-
-// Split a string using a string delimiter
-template<typename TypeString, typename TypeContainer> inline
-void StringSplit(const TypeString &str, const TypeString &strDelimiter, TypeContainer &aStrings) {
-  const size_t iSize = strDelimiter.Length();
-
-  size_t iLast = 0;
-  size_t iPos = str.find(strDelimiter);
-
-  while (iPos != NULL_POS) {
-    aStrings.push_back(str.substr(iLast, iPos - iLast));
-
-    // Skip delimiter
-    iPos += iSize;
-
-    // Remember position after the delimiter
-    iLast = iPos;
-
-    // Get position of the next one
-    iPos = str.find(strDelimiter, iPos);
-  }
-
-  // Last token
-  aStrings.push_back(str.substr(iLast));
-};
-
 // Separate a string into multiple arguments (e.g. command line arguments)
 // Implemented according to the rules from Microsoft docs:
 // https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
-inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpace)(int) = &::isspace) {
-  Str_t strCurrent = "";
+inline void StringToArgs(const c8 *str, std::vector<CString> &aArgs, int (*pIsSpace)(int) = &::isspace) {
+  CString strCurrent = "";
   bool bString = false; // String within double quotes
 
   while (*str != '\0') {
@@ -356,55 +305,6 @@ inline void StringToArgs(const c8 *str, std::vector<Str_t> &aArgs, int (*pIsSpac
   if (strCurrent != "") {
     aArgs.push_back(strCurrent);
   }
-};
-
-// Convert ASCII character into lowercase
-inline c8 CharToLower(c8 ch) {
-  return static_cast<c8>(::tolower(static_cast<u8>(ch)));
-};
-
-// Convert ASCII character into uppercase
-inline c8 CharToUpper(c8 ch) {
-  return static_cast<c8>(::toupper(static_cast<u8>(ch)));
-};
-
-// Check if two characters are equal (case insensitive)
-bool CompareChars(c8 ch1, c8 ch2) {
-  return CharToLower(ch1) == CharToLower(ch2);
-};
-
-// Convert entire string into lowercase
-inline void ToLower(Str_t &str) {
-  std::transform(str.begin(), str.end(), str.begin(), CharToLower);
-};
-
-// Convert entire string into uppercase
-inline void ToUpper(Str_t &str) {
-  std::transform(str.begin(), str.end(), str.begin(), CharToUpper);
-};
-
-// Convert a copy of the string into lowercase and return it
-__forceinline Str_t StrToLower(const Str_t &str) {
-  Str_t strCopy(str);
-  ToLower(strCopy);
-  return strCopy;
-};
-
-// Convert a copy of the string into uppercase and return it
-__forceinline Str_t StrToUpper(const Str_t &str) {
-  Str_t strCopy(str);
-  ToUpper(strCopy);
-  return strCopy;
-};
-
-// Replace all occurrences of a character in a string
-inline void Replace(Str_t &str, c8 chOld, c8 chNew) {
-  std::replace(str.begin(), str.end(), chOld, chNew);
-};
-
-// Check if two strings are equal (case insensitive)
-inline bool CompareStrings(const Str_t &str1, const Str_t &str2) {
-  return str1.size() == str2.size() && std::equal(str1.begin(), str1.end(), str2.begin(), CompareChars);
 };
 
 };

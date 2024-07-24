@@ -60,7 +60,7 @@ public:
 
   // Print into the stream
   void PrintF(const c8 *strFormat, ...) {
-    Str_t strOut;
+    CString strOut;
     DREAMY_PRINTF_INLINE(strOut, strFormat);
 
     *this << strOut;
@@ -121,7 +121,7 @@ public:
   };
 
   // Write STL string into the stream
-  virtual CDataStream &operator<<(const Str_t &str) {
+  virtual CDataStream &operator<<(const CString &str) {
     // Write every character
     size_t iSize = str.length();
 

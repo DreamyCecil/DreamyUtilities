@@ -41,10 +41,10 @@ namespace dreamy {
 
 #if defined(_DREAMY_INDENT_WITH_SPACES) && _DREAMY_INDENT_WITH_SPACES >= 0
   // Indent values in the formatted printout with a specific amount of spaces
-  #define VARIANT_PRINT_INDENT(Level) Str_t((Level) * _DREAMY_INDENT_WITH_SPACES, ' ')
+  #define VARIANT_PRINT_INDENT(Level) CString((Level) * _DREAMY_INDENT_WITH_SPACES, ' ')
 #else
   // Indent values in the formatted printout with tabs
-  #define VARIANT_PRINT_INDENT(Level) Str_t((Level), '\t')
+  #define VARIANT_PRINT_INDENT(Level) CString((Level), '\t')
 #endif
 
 // Simple types

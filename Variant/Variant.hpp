@@ -161,7 +161,7 @@ public:
   CVariant(unsigned long i) { FromInt(i); }; // Unusual case
 
   // Strings
-  VARIANT_TYPE_METHODS(const Str_t &, Str_t, VAL_STRING, String);
+  VARIANT_TYPE_METHODS(const CString &, CString, VAL_STRING, String);
   CVariant(const c8 *str) { FromString(str); };
 
   VARIANT_TYPE_METHODS(const CValObject &, CValObject, VAL_OBJ, Object);

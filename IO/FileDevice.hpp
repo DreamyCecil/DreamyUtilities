@@ -8,8 +8,6 @@
 
 #include "ReadWriteDevice.hpp"
 
-#include "../Files/Filenames.hpp"
-
 namespace dreamy {
 
 class CFileDevice : public IReadWriteDevice {
@@ -17,7 +15,7 @@ class CFileDevice : public IReadWriteDevice {
 protected:
   FILE *_pFile;
   size_t _iSize;
-  CPath _strFilename;
+  CString _strFilename;
 
 public:
   // Default constructor
@@ -152,7 +150,7 @@ public:
   };
 
   // Return current filename
-  inline const CPath &GetFilename(void) const {
+  inline const CString &GetFilename(void) const {
     return _strFilename;
   };
 
@@ -168,7 +166,7 @@ public:
   };
 
   // Try to rename file on disk
-  bool Rename(const Str_t &strName) {
+  bool Rename(const CString &strName) {
     if (_strFilename.length() == 0 && strName.length() == 0) {
       return false;
     }

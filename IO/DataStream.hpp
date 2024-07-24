@@ -435,7 +435,7 @@ public:
     return *this;
   };
 
-  virtual CDataStream &operator<<(const Str_t &str) {
+  virtual CDataStream &operator<<(const CString &str) {
     // Write length
     size_t iSize = str.length();
     *this << (u32)iSize;
@@ -448,7 +448,7 @@ public:
     return *this;
   };
 
-  virtual CDataStream &operator>>(Str_t &str) {
+  virtual CDataStream &operator>>(CString &str) {
     // Read length
     u32 iSize;
     *this >> iSize;
