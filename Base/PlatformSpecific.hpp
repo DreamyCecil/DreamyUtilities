@@ -39,10 +39,4 @@
 
 #endif
 
-// Secure method replacements for Unix and C++98
-#if _DREAMY_UNIX || !_DREAMY_CPP11
-  #define sscanf_s  sscanf
-  #define swscanf_s swscanf
-#endif
-
 #endif // (Dreamy Utilities Include Guard)

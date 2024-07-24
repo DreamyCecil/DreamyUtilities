@@ -28,7 +28,7 @@ Type ByteSwapT(Type valSrc)
   SwapData dst;
   src._val = valSrc;
 
-  for (u32 i = 0; i < sizeof(Type); i++)
+  for (u32 i = 0; i < sizeof(Type); ++i)
   {
     dst._bytes[i] = src._bytes[sizeof(Type) - i - 1];
   }
@@ -46,9 +46,9 @@ Type ByteSwapT(Type valSrc)
   // Invert bytes of a 32-bit integer
   static inline u32 _byteswap_ulong(u32 i32) {
     return ((i32 & 0xFF000000) >> 24)
-          | ((i32 & 0x00FF0000) >>  8)
-          | ((i32 & 0x0000FF00) <<  8)
-          | ((i32 & 0x000000FF) << 24);
+         | ((i32 & 0x00FF0000) >>  8)
+         | ((i32 & 0x0000FF00) <<  8)
+         | ((i32 & 0x000000FF) << 24);
   };
 
   // Invert bytes of a 64-bit integer
