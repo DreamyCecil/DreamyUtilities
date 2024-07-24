@@ -12,58 +12,6 @@
 
 namespace dreamy {
 
-// Convert real number into a string without trailing zeros
-template<typename Type> inline
-CString RealToString(const Type fNumber) {
-  #if _DREAMY_CPP11
-    return std::to_string(fNumber);
-
-  #else
-    // Print the number
-    CString str;
-    {
-      c8 strPrint[256];
-      snprintf(strPrint, 256, "%f", fNumber);
-
-      str = strPrint;
-    }
-
-    // Check for a dot
-    size_t iDot = str.find('.');
-    if (iDot == NULL_POS) return str;
-
-    size_t iSize = str.length() - 1;
-
-    // Remove zeros from the end
-    while (str[iSize] == '0') {
-      --iSize;
-
-      // Check for a dot
-      if (str[iSize] == '.') {
-        return str.substr(0, iSize);
-      }
-    }
-
-    return str.substr(0, iSize);
-  #endif
-};
-
-// Convert string into a signed 64-bit integer
-inline s64 StrToS64(const CString &str) {
-  s64 i64bit;
-  sscanf_s(str.c_str(), "%lld", &i64bit);
-
-  return i64bit;
-};
-
-// Convert string into an unsigned 64-bit integer
-inline u64 StrToU64(const CString &str) {
-  u64 i64bit;
-  sscanf_s(str.c_str(), "%llu", &i64bit);
-
-  return i64bit;
-};
-
 // Convert character escape sequences into escape characters
 inline void ConvertEscapeChars(CString &str) {
   CString strOriginal = str; // Copy of the string for restoration

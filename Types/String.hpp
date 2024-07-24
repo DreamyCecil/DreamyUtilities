@@ -44,6 +44,53 @@ public:
 // Generic methods
 public:
 
+  // Convert real number into a string without trailing zeros
+  template<typename Type>
+  void FromReal(const Type fNumber) {
+    #if _DREAMY_CPP11
+      *this = std::to_string(fNumber);
+
+    #else
+      // Print the number
+      c8 strPrint[256];
+      snprintf(strPrint, 256, "%f", fNumber);
+      *this = strPrint;
+
+      // Check for a dot
+      size_t iDot = find('.');
+      if (iDot == NULL_POS) return;
+
+      CString str(*this);
+      size_t iSize = str.length() - 1;
+
+      // Remove zeros from the end
+      while (str[iSize] == '0') {
+        --iSize;
+
+        // Check for a dot
+        if (str[iSize] == '.') break;
+      }
+
+      *this = str.substr(0, iSize);
+    #endif
+  };
+
+  // Convert string into a signed 64-bit integer
+  inline s64 ToS64(void) const {
+    s64 i64bit;
+    sscanf_s(c_str(), "%lld", &i64bit);
+
+    return i64bit;
+  };
+
+  // Convert string into an unsigned 64-bit integer
+  inline u64 ToU64(void) const {
+    u64 i64bit;
+    sscanf_s(c_str(), "%llu", &i64bit);
+
+    return i64bit;
+  };
+
   // Convert ASCII character into lowercase
   static inline c8 CharToLower(c8 ch) {
     return static_cast<c8>(::tolower(static_cast<u8>(ch)));

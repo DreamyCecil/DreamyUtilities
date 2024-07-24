@@ -462,7 +462,7 @@ public:
 
     switch (ubType) {
       case 0: { // Integer
-        s64 iValue = StrToS64(strString);
+        s64 iValue = strString.ToS64();
         AddToken(aTokens, CParserToken::TKN_VALUE, pos, iValue);
       } break;
 
