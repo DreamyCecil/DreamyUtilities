@@ -107,15 +107,24 @@ VARIANT_DECLARE_PRINT(PrintStrArray);
 VARIANT_DECLARE_PRINT(PrintVec2Array);
 VARIANT_DECLARE_PRINT(PrintVec3Array);
 
-// Define methods for a type
+// Define methods for a full type
 #define VARIANT_TYPE_METHODS(ArgumentType, ValueType, TypeIndex, FuncIdentifier) \
   /* Type constructor */ \
   CVariant(ArgumentType valSet) { From##FuncIdentifier(valSet); } \
   /* Type assignment (method instead of 'operator=' to avoid confusion between the class and its types) */ \
   inline void From##FuncIdentifier(ArgumentType valSet) { _type = (EType)TypeIndex; _val = valSet; _print = &Print##FuncIdentifier; } \
   /* Type casting */ \
-  inline       ValueType &To##FuncIdentifier(void)      { return AnyCast<ValueType>(_val); } \
-  inline const ValueType To##FuncIdentifier(void) const { return AnyCast<ValueType>(_val); }
+  inline       ValueType &To##FuncIdentifier(void)       { return AnyCast<ValueType>(_val); } \
+  inline const ValueType &To##FuncIdentifier(void) const { return AnyCast<ValueType>(_val); }
+
+// Define methods for a pointer type
+#define VARIANT_PTR_METHODS(ValueType, TypeIndex, FuncIdentifier) \
+  /* Type constructor */ \
+  CVariant(ValueType valSet) { From##FuncIdentifier(valSet); } \
+  /* Type assignment (method instead of 'operator=' to avoid confusion between the class and its types) */ \
+  inline void From##FuncIdentifier(ValueType valSet) { _type = (EType)TypeIndex; _val = valSet; _print = &Print##FuncIdentifier; } \
+  /* Type casting */ \
+  inline ValueType To##FuncIdentifier(void) const { return AnyCast<ValueType>(_val); }
 
 // Define a global method for converting arrays of some type into an array of variants
 #define VARIANT_CONVERT_ARRAY_METHOD(ArrayType, TypeName) \
@@ -240,7 +249,7 @@ public:
   CVariant(const c8 *str) { FromString(str); };
 
   VARIANT_TYPE_METHODS(const CValObject &, CValObject, VAL_OBJ, Object);
-  VARIANT_TYPE_METHODS(      CVariant   *, CVariant *, VAL_PTR, Ptr);
+  VARIANT_PTR_METHODS(CVariant *, VAL_PTR, Ptr);
 
   VARIANT_TYPE_METHODS(const vec2d &, vec2d, VAL_VEC2, Vec2);
   VARIANT_TYPE_METHODS(const vec3d &, vec3d, VAL_VEC3, Vec3);
