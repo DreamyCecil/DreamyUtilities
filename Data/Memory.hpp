@@ -1,10 +1,14 @@
 //! This file is a part of Dreamy Utilities.
 //! Licensed under the MIT license (see LICENSE file).
 
-#ifndef _DREAMYUTILITIES_INCL_BYTESWAP_H
-#define _DREAMYUTILITIES_INCL_BYTESWAP_H
+#ifndef _DREAMYUTILITIES_INCL_MEMORY_H
+#define _DREAMYUTILITIES_INCL_MEMORY_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
+
+#include "../Types/String.hpp"
+
+#include <cstdlib>
 
 // Byte-swapping functions for modern MSVC compilers
 #if !_DREAMY_UNIX && _DREAMY_CPP11
@@ -83,6 +87,36 @@ __forceinline u64 ByteSwap64(u64 i64)
   #else
     return __builtin_bswap64(i64);
   #endif
+};
+
+// Resize array by constructing values in place and moving the data bytes
+template<typename Type> inline
+void ResizeBuffer_memcpy(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
+  Type *pNew = new Type[iNewSize];
+  memcpy(pNew, *pBuffer, iOldSize * sizeof(Type));
+
+  delete[] *pBuffer;
+  *pBuffer = pNew;
+};
+
+// Resize array by constructing and reassigning values in place
+template<typename Type> inline
+void ResizeBuffer_new(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
+  Type *pNew = new Type[iNewSize];
+
+  // Reassign old values
+  while (--iOldSize >= 0) {
+    pNew[iOldSize] = (*pBuffer)[iOldSize];
+  }
+
+  delete[] *pBuffer;
+  *pBuffer = pNew;
+};
+
+// Resize array by reallocating C dynamic memory
+template<typename Type> inline
+void ResizeBuffer_realloc(Type **pBuffer, size_t iNewSize) {
+  *pBuffer = (Type *)realloc(*pBuffer, iNewSize * sizeof(Type));
 };
 
 };

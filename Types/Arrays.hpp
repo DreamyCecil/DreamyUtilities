@@ -4,7 +4,7 @@
 #ifndef _DREAMYUTILITIES_INCL_ARRAYS_H
 #define _DREAMYUTILITIES_INCL_ARRAYS_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
 // Value containers
 #include <vector>

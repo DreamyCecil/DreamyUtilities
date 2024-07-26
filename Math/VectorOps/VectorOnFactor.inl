@@ -3,7 +3,7 @@
 
 // Define operations for vectors with factors
 #define DO_DIMENSION_OPERATION(VecIndex, ThisVec, Operation, Other) ThisVec[VecIndex] Operation Other;
-#include "../Math/VectorOps/OpsDefine.inl"
+#include "OpsDefine.inl"
 
 // Multiply vector by a factor
 template<> inline
@@ -33,4 +33,4 @@ NUMVEC &NUMVEC::operator/=(const VECTOR_TYPE factor) {
   return *this;
 };
 
-#include "../Math/VectorOps/OpsUndef.inl"
+#include "OpsUndef.inl"

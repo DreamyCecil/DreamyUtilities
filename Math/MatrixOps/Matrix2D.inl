@@ -10,8 +10,8 @@
 
 // Make 2D rotation matrix out of an angle in radians
 inline void Mat2DFromAngle(ROTMAT &m, const MATRIX_TYPE angle) {
-  MATRIX_TYPE sinAngle(sin(angle));
-  MATRIX_TYPE cosAngle(cos(angle));
+  MATRIX_TYPE sinAngle((MATRIX_TYPE)sin(angle));
+  MATRIX_TYPE cosAngle((MATRIX_TYPE)cos(angle));
 
   m(0, 0) = cosAngle;
   m(0, 1) = -sinAngle;

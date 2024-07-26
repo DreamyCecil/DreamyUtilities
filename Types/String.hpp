@@ -1,21 +1,13 @@
 //! This file is a part of Dreamy Utilities.
 //! Licensed under the MIT license (see LICENSE file).
 
-#ifndef _DREAMYUTILITIES_INCL_FILENAMES_H
-#define _DREAMYUTILITIES_INCL_FILENAMES_H
+#ifndef _DREAMYUTILITIES_INCL_STRING_H
+#define _DREAMYUTILITIES_INCL_STRING_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
 #include <string>
-#include <list>
-#include <algorithm>
-#include <cstdio>
-
-// Secure method replacements for Unix and C++98
-#if _DREAMY_UNIX || !_DREAMY_CPP11
-  #define sscanf_s  sscanf
-  #define swscanf_s swscanf
-#endif
+#include <vector>
 
 namespace dreamy {
 
@@ -51,6 +43,15 @@ public:
 // Generic methods
 public:
 
+  // Format a string using a list of arguments
+  void VPrintF(const c8 *strFormat, va_list arg);
+
+  // Custom string formatting
+  void PrintF(const c8 *strFormat, ...);
+
+  // Convert character escape sequences into escape characters
+  void ConvertEscapeChars(void);
+
   // Convert real number into a string without trailing zeros
   template<typename Type>
   void FromReal(const Type fNumber) {
@@ -83,69 +84,37 @@ public:
   };
 
   // Convert string into a signed 64-bit integer
-  inline s64 ToS64(void) const {
-    s64 i64bit;
-    sscanf_s(c_str(), "%lld", &i64bit);
-
-    return i64bit;
-  };
+  s64 ToS64(void) const;
 
   // Convert string into an unsigned 64-bit integer
-  inline u64 ToU64(void) const {
-    u64 i64bit;
-    sscanf_s(c_str(), "%llu", &i64bit);
-
-    return i64bit;
-  };
+  u64 ToU64(void) const;
 
   // Convert ASCII character into lowercase
-  static inline c8 CharToLower(c8 ch) {
-    return static_cast<c8>(::tolower(static_cast<u8>(ch)));
-  };
+  static c8 CharToLower(c8 ch);
 
   // Convert ASCII character into uppercase
-  static inline c8 CharToUpper(c8 ch) {
-    return static_cast<c8>(::toupper(static_cast<u8>(ch)));
-  };
+  static c8 CharToUpper(c8 ch);
 
   // Check if two characters are equal (case insensitive)
-  static inline bool CompareChars(c8 ch1, c8 ch2) {
-    return CharToLower(ch1) == CharToLower(ch2);
-  };
+  static bool CompareChars(c8 ch1, c8 ch2);
 
   // Convert entire string into lowercase
-  inline void ToLower(void) {
-    std::transform(begin(), end(), begin(), CharToLower);
-  };
+  void ToLower(void);
 
   // Convert entire string into uppercase
-  inline void ToUpper(void) {
-    std::transform(begin(), end(), begin(), CharToUpper);
-  };
+  void ToUpper(void);
 
   // Convert a copy of the string into lowercase and return it
-  inline CString AsLower(void) const {
-    CString strCopy(*this);
-    strCopy.ToLower();
-    return strCopy;
-  };
+  CString AsLower(void) const;
 
   // Convert a copy of the string into uppercase and return it
-  inline CString AsUpper(void) const {
-    CString strCopy(*this);
-    strCopy.ToUpper();
-    return strCopy;
-  };
+  CString AsUpper(void) const;
 
   // Replace all occurrences of a character in a string
-  inline void Replace(c8 chOld, c8 chNew) {
-    std::replace(begin(), end(), chOld, chNew);
-  };
+  void Replace(c8 chOld, c8 chNew);
 
   // Check if two strings are equal (case insensitive)
-  inline bool Compare(const CString &str) const {
-    return size() == str.size() && std::equal(begin(), end(), str.begin(), CompareChars);
-  };
+  bool Compare(const CString &str) const;
 
   // Split a string using a character delimiter
   template<typename TypeContainer>
@@ -195,158 +164,44 @@ public:
     aStrings.push_back(substr(iLast));
   };
 
+  // Compare strings using wildcards
+  static bool WildcardMatch(const c8 *str, const c8 *strWildcardMask);
+
+  // Compare strings using wildcards
+  inline bool WildcardMatch(const c8 *strWildcardMask) const {
+    return WildcardMatch(c_str(), strWildcardMask);
+  };
+
 // Path and filename methods
 public:
 
   // Check if there's a path separator character at some position
-  inline bool PathSeparatorAt(size_t i) const {
-    return (*this)[i] == '/' || (*this)[i] == '\\';
-  };
+  bool PathSeparatorAt(size_t i) const;
 
   // Remove directory from the filename
-  inline CString RemoveDir(void) const {
-    return substr(find_last_of("/\\") + 1);
-  };
+  CString RemoveDir(void) const;
 
   // Remove extension from the filename
-  inline CString RemoveExt(void) const {
-    const size_t iPeriodPos(find_last_of('.'));
-    const size_t iLastDir(find_last_of("/\\"));
-
-    // No period found or it's before the last directory
-    if (iPeriodPos == NULL_POS || (iLastDir != NULL_POS && iPeriodPos < iLastDir)) {
-      return *this;
-    }
-
-    return substr(0, iPeriodPos);
-  };
+  CString RemoveExt(void) const;
 
   // Get name of the file
-  inline CString GetFileName(void) const {
-    return RemoveDir().RemoveExt();
-  };
+  CString GetFileName(void) const;
 
   // Get path to the file
-  inline CString GetFileDir(void) const {
-    const size_t iLastDirectory(find_last_of("/\\") + 1);
-    return substr(0, iLastDirectory);
-  };
+  CString GetFileDir(void) const;
 
   // Get file extension with the period
-  inline CString GetFileExt(void) const {
-    const size_t iPeriodPos(find_last_of('.'));
-    const size_t iLastDir(find_last_of("/\\"));
-
-    // No period found or it's before the last directory
-    if (iPeriodPos == NULL_POS || (iLastDir != NULL_POS && iPeriodPos < iLastDir)) {
-      return "";
-    }
-
-    return substr(iPeriodPos);
-  };
+  CString GetFileExt(void) const;
 
   // Go up the path until a certain directory
-  inline size_t GoUpUntilDir(CString strDirName) const {
-    // Convert every string in the same case
-    CString strPath = AsLower();
-    strDirName.ToLower();
-
-    // Make consistent slashes
-    strPath.Replace('\\', '/');
-
-    // Absolute path, e.g. "abc/strDirName/qwe"
-    size_t iDir(strPath.rfind("/" + strDirName + "/"));
-    if (iDir != NULL_POS) return iDir + 1;
-
-    // Relative down to the desired directory, e.g. "abc/qwe/strDirName"
-    iDir = strPath.rfind("/" + strDirName) + 1;
-    if (iDir == strPath.length() - strDirName.length()) return iDir;
-
-    // Relative up to the desired directory, e.g. "strDirName/abc/qwe"
-    iDir = strPath.find(strDirName + "/");
-    if (iDir == 0) return 0;
-
-    // No extra directories up or down the path, must be the same
-    if (strPath == strDirName) {
-      return 0;
-    }
-
-    return NULL_POS;
-  };
+  size_t GoUpUntilDir(CString strDirName) const;
 
   // Normalize the path taking "backward" and "current" directories into consideration
   // E.g. "abc/sub1/../sub2/./qwe" -> "abc/sub2/qwe"
-  inline void Normalize(void) {
-    CString strPath(*this);
-    strPath.Replace('\\', '/');
-
-    // Gather parts of the entire path
-    std::list<CString> aParts;
-    strPath.CharSplit('/', aParts);
-
-    std::list<CString> aFinalPath;
-    std::list<CString>::const_iterator it;
-
-    // Iterate through the list of directories
-    for (it = aParts.begin(); it != aParts.end(); ++it) {
-      const CString &strPart = *it;
-
-      // Ignore current directories
-      if (strPart == ".") continue;
-
-      // If encountered a "backward" directory and there are some directories written
-      if (strPart == ".." && aFinalPath.size() != 0) {
-        // Remove the last directory (go up one directory) and go to the next one
-        aFinalPath.pop_back();
-        continue;
-      }
-
-      // Add directory to the final path
-      aFinalPath.push_back(strPart);
-    }
-
-    // Reset current path
-    *this = "";
-
-    // No path to compose
-    if (aFinalPath.size() == 0) return;
-
-    // Compose the final path
-    std::list<CString>::const_iterator itLast = --aFinalPath.end();
-
-    for (it = aFinalPath.begin(); it != aFinalPath.end(); ++it) {
-      *this += *it;
-
-      // Add separators between the directories
-      if (it != itLast) *this += '/';
-    }
-  };
+  void Normalize(void);
 
   // Get length of the root name, if there's any
-  size_t RootNameLength() const {
-    const size_t ctLen = length();
-
-  #if !_DREAMY_UNIX
-    // Starts with a drive letter and a colon on Windows (e.g. "C:")
-    const c8 chUpper = CharToUpper((*this)[0]);
-
-    if (ctLen >= 2 && chUpper >= 'A' && chUpper <= 'Z' && (*this)[1] == ':') {
-      return 2;
-    }
-  #endif
-
-    // Starts with a double separator and has any directory right after (e.g. "//abc")
-    if (ctLen > 2
-     && PathSeparatorAt(0) && PathSeparatorAt(1) && !PathSeparatorAt(2)
-     && ::isprint(static_cast<u8>((*this)[2])))
-    {
-      // Find the next separator, if there's any
-      size_t iNextSep = find_first_of("/\\", 3);
-      return (iNextSep == NULL_POS ? ctLen : iNextSep);
-    }
-
-    return 0;
-  };
+  size_t RootNameLength() const;
 
   // Check if the path starts with a root name (e.g. "C:" or "//abc")
   inline bool HasRootName() const {
@@ -373,6 +228,22 @@ public:
     return !IsAbsolute();
   };
 };
+
+// Reusable inline formatting
+#define DREAMY_PRINTF_INLINE(StringOut, StringFormat) { \
+  va_list arg; \
+  va_start(arg, StringFormat); \
+  (StringOut).VPrintF(StringFormat, arg); \
+  va_end(arg); \
+}
+
+// Convert string up to 8 characters into a 64-bit integer in constant order
+u64 MultiCharLiteral(const c8 strLiteral[9]);
+
+// Separate a string into multiple arguments (e.g. command line arguments)
+// Implemented according to the rules from Microsoft docs:
+// https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
+void StringToArgs(const c8 *str, std::vector<CString> &aArgs, int (*pIsSpace)(int) = &::isspace);
 
 };
 

@@ -1,12 +1,11 @@
-// This file is a part of Dreamy Utilities
+//! This file is a part of Dreamy Utilities.
+//! Licensed under the MIT license (see LICENSE file).
 
 #ifndef _DREAMYUTILITIES_INCL_BUFFERDEVICE_H
 #define _DREAMYUTILITIES_INCL_BUFFERDEVICE_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Data/ByteArray.hpp"
-#include "../Math/Algorithm.hpp"
 #include "ReadWriteDevice.hpp"
 
 namespace dreamy {
@@ -19,118 +18,40 @@ protected:
 
 public:
   // Default constructor
-  CBufferDevice() : _pData(nullptr), _iPos(0)
-  {
-  };
+  CBufferDevice();
 
   // Constructor that uses pointed CByteArray as internal buffer
-  CBufferDevice(CByteArray *pByteArray) : _pData(pByteArray), _iPos(0)
-  {
-  };
+  CBufferDevice(CByteArray *pByteArray);
 
   // Start interacting in a given mode
-  virtual bool Open(EOpenMode eOpenMode) {
-    if (_pData == nullptr) {
-      return false;
-    }
-
-    _eOpenMode = eOpenMode;
-    _iPos = 0;
-    return IsOpen();
-  };
+  virtual bool Open(EOpenMode eOpenMode);
 
   // End interacting with
-  virtual void Close(void) {
-    _eOpenMode = OM_UNOPEN;
-    _iPos = 0;
-  };
+  virtual void Close(void);
 
   // Return current carret position
-  virtual size_t Pos(void) const {
-    return IsOpen() ? _iPos : NULL_POS;
-  };
+  virtual size_t Pos(void) const;
 
   // Check if the carret is at the end
-  virtual bool AtEnd(void) const {
-    return Pos() >= Size();
-  };
+  virtual bool AtEnd(void) const;
 
   // Length of the buffer
-  virtual size_t Size(void) const {
-    return _pData->Size();
-  };
+  virtual size_t Size(void) const;
 
   // Try to move the carret to a specified position
-  virtual bool Seek(size_t iOffset) {
-    if (_pData == nullptr || IsOpen()) {
-      return false;
-    }
-
-    // Past the limit
-    if (iOffset >= Size()) return false;
-
-    // Set new position
-    _iPos = iOffset;
-    return true;
-  };
+  virtual bool Seek(size_t iOffset);
 
   // Move forward
-  virtual size_t Skip(size_t iMaxSize) {
-    size_t iLastPos = _iPos;
-
-    // Don't go past the size
-    _iPos = dreamy::math::Min(_iPos + iMaxSize, Size());
-
-    // Results in less than iMaxSize if limited by size
-    return _iPos - iLastPos;
-  };
+  virtual size_t Skip(size_t iMaxSize);
 
   // Take bytes from the device
-  virtual size_t Read(c8 *pData, size_t iMaxSize) {
-    if (pData == nullptr || _pData == nullptr || _pData->IsNull()) {
-      return NULL_POS;
-    }
-
-    if (AtEnd()) return 0;
-
-    size_t iExpectedPos = _iPos + iMaxSize;
-
-    // Past the limit
-    if (iExpectedPos > Size()) {
-      size_t iNotEnough = iExpectedPos - Size();
-      iMaxSize -= iNotEnough;
-    }
-
-    memcpy(pData, &_pData->ConstData()[_iPos], iMaxSize);
-    _iPos += iMaxSize;
-
-    return iMaxSize;
-  };
+  virtual size_t Read(c8 *pData, size_t iMaxSize);
 
   // Take bytes without moving carret forward
-  virtual size_t Peek(c8 *pData, size_t iMaxSize) {
-    size_t iCurrentPos = Pos();
-    size_t iLength = Read(pData, iMaxSize);
-    Seek(iCurrentPos);
-
-    return iLength;
-  };
+  virtual size_t Peek(c8 *pData, size_t iMaxSize);
 
   // Put bytes into the device
-  virtual size_t Write(const c8 *pData, size_t iMaxSize) {
-    if (pData == nullptr || _pData == nullptr || !IsWritable()) {
-      return NULL_POS;
-    }
-
-    if (_iPos + iMaxSize >= Size()) {
-      _pData->Resize(Size() + iMaxSize);
-    }
-
-    memcpy(&_pData->Data()[_iPos], pData, iMaxSize);
-    _iPos += iMaxSize;
-
-    return iMaxSize;
-  };
+  virtual size_t Write(const c8 *pData, size_t iMaxSize);
 
   // Get type of the device class
   virtual EDeviceType GetType(void) const {
@@ -141,16 +62,10 @@ public:
 public:
 
   // Set new byte array (while unopen)
-  void SetBuffer(CByteArray *pData) {
-    if (IsOpen()) return;
-    _pData = pData;
-  };
+  void SetBuffer(CByteArray *pData);
 
   // Get byte array
-  const c8 *GetBuffer(void) const {
-    D_ASSERT(_pData != nullptr);
-    return _pData->ConstData();
-  };
+  const c8 *GetBuffer(void) const;
 };
 
 };

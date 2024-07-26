@@ -4,7 +4,7 @@
 #ifndef _DREAMYUTILITIES_INCL_MATH_RANDOM_H
 #define _DREAMYUTILITIES_INCL_MATH_RANDOM_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
 #include <cstdlib>
 

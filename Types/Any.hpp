@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_ANY_H
 #define _DREAMYUTILITIES_INCL_ANY_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Types/Exception.hpp"
+#include "Exception.hpp"
 
 #include <algorithm>
 #include <typeinfo>

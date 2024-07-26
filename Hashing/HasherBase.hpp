@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_HASHERBASE_H
 #define _DREAMYUTILITIES_INCL_HASHERBASE_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Data/ByteArray.hpp"
+#include "../Types/ByteArray.hpp"
 
 namespace dreamy {
 

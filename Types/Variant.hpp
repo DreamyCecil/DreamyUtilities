@@ -4,25 +4,20 @@
 #ifndef _DREAMYUTILITIES_INCL_VARIANT_H
 #define _DREAMYUTILITIES_INCL_VARIANT_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-// Any value type
-#include "../Types/Any.hpp"
-
-// Hashed variable type
-#include "../Types/HashedString.hpp"
+#include "Any.hpp"
+#include "Arrays.hpp"
+#include "HashedString.hpp"
 
 // Extra types
-#include "../Types/Arrays.hpp"
+#include "../IO/StringStream.hpp"
 #include "../Math/ScalarMatrices.hpp"
 #include "../Math/ScalarVectors.hpp"
 
 // Value containers
 #include <vector>
-#include "../Types/UnorderedMap.hpp"
-
-// Declare variant printout methods
-#include "../Variant/DeclarePrinting.hpp"
+#include "UnorderedMap.hpp"
 
 namespace dreamy {
 
@@ -31,6 +26,86 @@ class CVariant; // Pre-define variant
 typedef std::vector<CVariant>                          CValArray;  // Array of values
 typedef dreamy::unordered_map<CHashedString, CVariant> CValObject; // Variable map
 typedef std::pair<CHashedString, CVariant>             CValPair;   // Key-value pair
+
+// Structure that handles options for specific printout of variant types
+struct ValPrintOpts {
+  // Printout type
+  enum EPrintType {
+    // Single line (except when they contain newlines, e.g. strings)
+    // [arg1 = compact : bool]
+    // [arg2 = strings without quotes : bool]
+    E_INLINE,
+
+    // JSON-like blocks with automatic indentation
+    // [arg1 = indentation level : s32]
+    E_FORMATTED,
+  } eType;
+
+  s32 aiArgs[3]; // Printout arguments
+
+  // Default constructor
+  ValPrintOpts(const EPrintType eSetType = E_INLINE, s32 iArg1 = 0, s32 iArg2 = 0, s32 iArg3 = 0) :
+    eType(eSetType)
+  {
+    aiArgs[0] = iArg1;
+    aiArgs[1] = iArg2;
+    aiArgs[2] = iArg3;
+  };
+
+  // Copy constructor
+  ValPrintOpts(const ValPrintOpts &optsOther) : eType(optsOther.eType) {
+    aiArgs[0] = optsOther.aiArgs[0];
+    aiArgs[1] = optsOther.aiArgs[1];
+    aiArgs[2] = optsOther.aiArgs[2];
+  };
+
+  // Get printout type
+  EPrintType GetType(void) const {
+    return eType;
+  };
+
+  // Check if inline printout
+  bool IsInline(void) const {
+    return GetType() == E_INLINE;
+  };
+
+  // Check if formatted printout
+  bool IsFormatted(void) const {
+    return GetType() == E_FORMATTED;
+  };
+};
+
+// Declare method for printing a variant into a stream
+#define VARIANT_DECLARE_PRINT(FuncName) \
+  void FuncName(const CVariant &val, CStringStream &strm, const ValPrintOpts &opts, const c8 *strUndefined)
+
+// Printing method function type
+typedef VARIANT_DECLARE_PRINT((*CVariantPrintFunc));
+
+// Declare type-specific printing methods
+VARIANT_DECLARE_PRINT(PrintInvalid);
+
+VARIANT_DECLARE_PRINT(PrintBool);
+VARIANT_DECLARE_PRINT(PrintFloat);
+VARIANT_DECLARE_PRINT(PrintInt);
+VARIANT_DECLARE_PRINT(PrintString);
+
+VARIANT_DECLARE_PRINT(PrintObject);
+VARIANT_DECLARE_PRINT(PrintPtr);
+
+VARIANT_DECLARE_PRINT(PrintVec2);
+VARIANT_DECLARE_PRINT(PrintVec3);
+VARIANT_DECLARE_PRINT(PrintMat2);
+VARIANT_DECLARE_PRINT(PrintMat3);
+
+VARIANT_DECLARE_PRINT(PrintArray);
+VARIANT_DECLARE_PRINT(PrintBoolArray);
+VARIANT_DECLARE_PRINT(PrintByteArray);
+VARIANT_DECLARE_PRINT(PrintIntArray);
+VARIANT_DECLARE_PRINT(PrintFloatArray);
+VARIANT_DECLARE_PRINT(PrintStrArray);
+VARIANT_DECLARE_PRINT(PrintVec2Array);
+VARIANT_DECLARE_PRINT(PrintVec3Array);
 
 // Define methods for a type
 #define VARIANT_TYPE_METHODS(ArgumentType, ValueType, TypeIndex, FuncIdentifier) \
@@ -200,10 +275,10 @@ public:
   };
 
   // Compare vanilla types directly
-  inline bool Compare(const CVariant &valOther) const;
+  bool Compare(const CVariant &valOther) const;
 
   // Comparison
-  inline bool operator==(const CVariant &valOther) const;
+  bool operator==(const CVariant &valOther) const;
 
   // Difference comparison
   inline bool operator!=(const CVariant &valOther) const {
@@ -232,12 +307,40 @@ Type GetNumber(const CVariant &val)
   }
 };
 
+// Define method for printing a variant into a stream with specific function arguments
+#define VARIANT_DEFINE_PRINT(FuncName, ArgVal, ArgStrm, ArgOpts, ArgUndefined) \
+  void FuncName(const CVariant &ArgVal, CStringStream &ArgStrm, const ValPrintOpts &ArgOpts, const c8 *ArgUndefined)
+
+// Define global method for printing out the variant
+#define VARIANT_PRINT_METHOD(TypeName) \
+  VARIANT_DEFINE_PRINT(Print##TypeName, val, strm, opts, strUndefined) { \
+    strm << val.To##TypeName(); \
+  }
+
+// Define global method for printing out the variant with extras
+#define VARIANT_PRINT_METHOD_CUSTOM(TypeName, Printout) \
+  VARIANT_DEFINE_PRINT(Print##TypeName, val, strm, opts, strUndefined) { \
+    strm << Printout; \
+  }
+
+// Define global method for printing out the type array variant
+#define VARIANT_PRINT_METHOD_ARRAY(TypeName, ArrayPrefix) \
+  VARIANT_DEFINE_PRINT(Print##TypeName, val, strm, opts, strUndefined) { \
+    /* Add array prefix and convert to array of any type */ \
+    strm << ArrayPrefix; \
+    CValArray aPrint; \
+    ToAnyArray(aPrint, val.To##TypeName()); \
+    PrintArray(aPrint, strm, opts, strUndefined); \
+  }
+
+#if defined(_DREAMY_INDENT_WITH_SPACES) && _DREAMY_INDENT_WITH_SPACES >= 0
+  // Indent values in the formatted printout with a specific amount of spaces
+  #define VARIANT_PRINT_INDENT(Level) CString((Level) * _DREAMY_INDENT_WITH_SPACES, ' ')
+#else
+  // Indent values in the formatted printout with tabs
+  #define VARIANT_PRINT_INDENT(Level) CString((Level), '\t')
+#endif
+
 };
-
-// Variant comparison
-#include "../Variant/Comparison.hpp"
-
-// Define variant printout in JSON format
-#include "../Variant/DefinePrinting.hpp"
 
 #endif // (Dreamy Utilities Include Guard)

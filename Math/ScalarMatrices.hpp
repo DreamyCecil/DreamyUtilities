@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_SCALARMATRICES_H
 #define _DREAMYUTILITIES_INCL_SCALARMATRICES_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Matrix.hpp"
+#include "Matrix.hpp"
 
 namespace dreamy {
 
@@ -16,8 +16,8 @@ typedef TMatrix<f32, 3, 3> mat3f; // 3x3 single precision matrix
 
 // Define operators
 #define MATRIX_TYPE f32
-#include "../Math/MatrixOps/Matrix2D.inl"
-#include "../Math/MatrixOps/Matrix3D.inl"
+#include "MatrixOps/Matrix2D.inl"
+#include "MatrixOps/Matrix3D.inl"
 #undef MATRIX_TYPE
 
 // Double precision matrices
@@ -26,8 +26,8 @@ typedef TMatrix<f64, 3, 3> mat3d; // 3x3 double precision matrix
 
 // Define operators
 #define MATRIX_TYPE f64
-#include "../Math/MatrixOps/Matrix2D.inl"
-#include "../Math/MatrixOps/Matrix3D.inl"
+#include "MatrixOps/Matrix2D.inl"
+#include "MatrixOps/Matrix3D.inl"
 #undef MATRIX_TYPE
 
 };

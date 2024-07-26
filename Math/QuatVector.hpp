@@ -4,11 +4,11 @@
 #ifndef _DREAMYUTILITIES_INCL_QVECTOR_H
 #define _DREAMYUTILITIES_INCL_QVECTOR_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Quaternion.hpp"
-#include "../Math/Vector.hpp"
-#include "../Math/Matrix12.hpp"
+#include "Quaternion.hpp"
+#include "Vector.hpp"
+#include "Matrix12.hpp"
 
 namespace dreamy {
 

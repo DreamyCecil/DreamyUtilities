@@ -75,14 +75,14 @@ ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
 // Make 3D rotation matrix out of euler angles (H, P, B) in radians
 inline void Mat3DFromAngles(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
   // Heading
-  MATRIX_TYPE sinH = sin(vAngles[axes._x]);
-  MATRIX_TYPE cosH = cos(vAngles[axes._x]);
+  MATRIX_TYPE sinH = (MATRIX_TYPE)sin(vAngles[axes._x]);
+  MATRIX_TYPE cosH = (MATRIX_TYPE)cos(vAngles[axes._x]);
   // Pitch
-  MATRIX_TYPE sinP = sin(vAngles[axes._y]);
-  MATRIX_TYPE cosP = cos(vAngles[axes._y]);
+  MATRIX_TYPE sinP = (MATRIX_TYPE)sin(vAngles[axes._y]);
+  MATRIX_TYPE cosP = (MATRIX_TYPE)cos(vAngles[axes._y]);
   // Banking
-  MATRIX_TYPE sinB = sin(vAngles[axes._z]);
-  MATRIX_TYPE cosB = cos(vAngles[axes._z]);
+  MATRIX_TYPE sinB = (MATRIX_TYPE)sin(vAngles[axes._z]);
+  MATRIX_TYPE cosB = (MATRIX_TYPE)cos(vAngles[axes._z]);
 
   m(0, 0) = cosH * cosB + sinP * sinH * sinB;
   m(0, 1) = sinP * sinH * cosB - cosH * sinB;
@@ -98,14 +98,14 @@ inline void Mat3DFromAngles(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAngles, c
 // Make inverted 3D rotation matrix out of euler angles (H, P, B) in radians
 inline void Mat3DFromAnglesInverse(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
   // Heading
-  MATRIX_TYPE sinH = sin(vAngles[axes._x]);
-  MATRIX_TYPE cosH = cos(vAngles[axes._x]);
+  MATRIX_TYPE sinH = (MATRIX_TYPE)sin(vAngles[axes._x]);
+  MATRIX_TYPE cosH = (MATRIX_TYPE)cos(vAngles[axes._x]);
   // Pitch
-  MATRIX_TYPE sinP = sin(vAngles[axes._y]);
-  MATRIX_TYPE cosP = cos(vAngles[axes._y]);
+  MATRIX_TYPE sinP = (MATRIX_TYPE)sin(vAngles[axes._y]);
+  MATRIX_TYPE cosP = (MATRIX_TYPE)cos(vAngles[axes._y]);
   // Banking
-  MATRIX_TYPE sinB = sin(vAngles[axes._z]);
-  MATRIX_TYPE cosB = cos(vAngles[axes._z]);
+  MATRIX_TYPE sinB = (MATRIX_TYPE)sin(vAngles[axes._z]);
+  MATRIX_TYPE cosB = (MATRIX_TYPE)cos(vAngles[axes._z]);
 
   m(0, 0) = cosH * cosB + sinP * sinH * sinB;
   m(1, 0) = sinP * sinH * cosB - cosH * sinB;
@@ -126,7 +126,7 @@ inline void Mat3DToAngles(const ROTMAT &m, TVector<MATRIX_TYPE, 3> &vAngles, con
 
   // Calculate pitch
   MATRIX_TYPE f23 = m(1, 2);
-  p = asin(-f23);
+  p = (MATRIX_TYPE)asin(-f23);
 
   // If pitch makes banking be the same as heading
   if (dreamy::math::SqrtSign(1.0 - f23 * f23) < 0.001) {
@@ -134,12 +134,12 @@ inline void Mat3DToAngles(const ROTMAT &m, TVector<MATRIX_TYPE, 3> &vAngles, con
     b = 0;
 
     // and calculate heading for that
-    h = atan2(m(0, 1) / -m(1, 2), m(0, 0));
+    h = (MATRIX_TYPE)atan2(m(0, 1) / -m(1, 2), m(0, 0));
 
   } else {
     // Calculate banking and heading normally
-    b = atan2(m(1, 0), m(1, 1));
-    h = atan2(m(0, 2), m(2, 2));
+    b = (MATRIX_TYPE)atan2(m(1, 0), m(1, 1));
+    h = (MATRIX_TYPE)atan2(m(0, 2), m(2, 2));
   }
 };
 

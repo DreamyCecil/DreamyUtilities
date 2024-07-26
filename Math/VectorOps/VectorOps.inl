@@ -8,12 +8,12 @@
   #error Please define the type for 'VECTOR_TYPE' before operation definitions.
 #endif
 
-#include "../Math/VectorOps/VectorOnVector.inl"
-#include "../Math/VectorOps/VectorOnFactor.inl"
+#include "VectorOnVector.inl"
+#include "VectorOnFactor.inl"
 
 // Define operations for adding up vector values
 #define DO_DIMENSION_OPERATION(VecIndex, ThisVec, Operation, Other) +(ThisVec[VecIndex] Operation Other[VecIndex])
-#include "../Math/VectorOps/OpsDefine.inl"
+#include "OpsDefine.inl"
 
 // Dot product between two vectors
 template<> inline
@@ -27,9 +27,9 @@ VECTOR_TYPE NUMVEC::operator%(const NUMVEC &vOther) const {
 template<> inline
 VECTOR_TYPE NUMVEC::Length(void) const {
   VECTOR_TYPE total = (*this) % (*this);
-  return (VECTOR_TYPE)sqrt(total);
+  return (VECTOR_TYPE)sqrt((double)total);
 };
 
-#include "../Math/VectorOps/OpsUndef.inl"
+#include "OpsUndef.inl"
 
 #undef NUMVEC_OPS_FOR

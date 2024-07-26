@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_EXCEPTION_H
 #define _DREAMYUTILITIES_INCL_EXCEPTION_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Formatting/Printing.hpp"
+#include "String.hpp"
 
 #if defined(_DREAMY_STL_EXCEPTION)
   #include <exception>
@@ -79,6 +79,25 @@ public:
     DREAMY_PRINTF_INLINE(ex._message, strFormat);
 
     throw ex;
+  };
+};
+
+// Exception that formatting may throw
+class CFormattingException : public CMessageException {
+
+private:
+  size_t _char;
+
+public:
+  // Default constructor
+  CFormattingException(size_t iSetChar) : _char(iSetChar)
+  {
+    PrintF("Formatting exception at %ull", _char);
+  };
+
+  // Get character position
+  inline size_t GetCharacter(void) const {
+    return _char;
   };
 };
 

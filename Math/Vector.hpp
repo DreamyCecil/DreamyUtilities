@@ -4,11 +4,11 @@
 #ifndef _DREAMYUTILITIES_INCL_NUMERICVECTOR_H
 #define _DREAMYUTILITIES_INCL_NUMERICVECTOR_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Trigonometry.hpp"
+#include "Trigonometry.hpp"
 
-#include <math.h>
+#include <cmath>
 
 namespace dreamy {
 

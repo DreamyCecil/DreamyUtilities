@@ -4,11 +4,11 @@
 #ifndef _DREAMYUTILITIES_INCL_ANGLES_H
 #define _DREAMYUTILITIES_INCL_ANGLES_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Matrix.hpp"
-#include "../Math/Vector.hpp"
-#include "../Math/Trigonometry.hpp"
+#include "Matrix.hpp"
+#include "Vector.hpp"
+#include "Trigonometry.hpp"
 
 namespace dreamy {
 

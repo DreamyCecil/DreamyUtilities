@@ -4,11 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_STRINGSTREAM_H
 #define _DREAMYUTILITIES_INCL_STRINGSTREAM_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
 #include "DataStream.hpp"
-
-#include <stdlib.h>
 
 namespace dreamy {
 
@@ -20,51 +18,19 @@ private:
 
 public:
   // Default constructor
-  CStringStream() : CDataStream()
-  {
-    _pbaString = new CByteArray('\0', (1 << 16));
-    _pDevice = new CBufferDevice(_pbaString);
-    _pDevice->Open(IReadWriteDevice::OM_READWRITE);
-
-    _bHasOwnDevice = true;
-  };
+  CStringStream();
 
   // Constructor with a device
-  CStringStream(IReadWriteDevice *d, IReadWriteDevice::EOpenMode om) :
-    CDataStream(d), _pbaString(nullptr)
-  {
-    _pDevice->Open(om);
-  };
+  CStringStream(IReadWriteDevice *d, IReadWriteDevice::EOpenMode om);
 
   // Constructor from an existing string
-  CStringStream(const c8 *str, size_t iSize) : CDataStream()
-  {
-    // Create enough bytes and copy the string to the beginning
-    _pbaString = new CByteArray('\0', (1 << 16));
-    memcpy(_pbaString->Data(), str, iSize);
-
-    _pDevice = new CBufferDevice(_pbaString);
-    _pDevice->Open(IReadWriteDevice::OM_WRITEONLY);
-
-    // Go to the end of the string
-    Seek(iSize);
-
-    _bHasOwnDevice = true;
-  };
+  CStringStream(const c8 *str, size_t iSize);
 
   // Return data as a string
-  const c8 *GetString(void) const {
-    D_ASSERT(_pDevice->GetType() == IReadWriteDevice::TYPE_BUFFER);
-    return ((CBufferDevice *)_pDevice)->GetBuffer();
-  };
+  const c8 *GetString(void) const;
 
   // Print into the stream
-  void PrintF(const c8 *strFormat, ...) {
-    CString strOut;
-    DREAMY_PRINTF_INLINE(strOut, strFormat);
-
-    *this << strOut;
-  };
+  void PrintF(const c8 *strFormat, ...);
 
   // Read a text line until a specific delimiter
   template<typename Type>
@@ -109,62 +75,32 @@ public:
 public:
 
   // Write string into the stream
-  virtual CDataStream &operator<<(const c8 *str) {
-    // Write every character
-    size_t iSize = strlen(str);
-
-    for (size_t i = 0; i < iSize; ++i) {
-      *this << str[i];
-    }
-
-    return *this;
-  };
+  virtual CDataStream &operator<<(const c8 *str);
 
   // Write STL string into the stream
-  virtual CDataStream &operator<<(const CString &str) {
-    // Write every character
-    size_t iSize = str.length();
+  virtual CDataStream &operator<<(const CString &str);
 
-    for (size_t i = 0; i < iSize; ++i) {
-      *this << str[i];
-    }
+  virtual CDataStream &operator<<(c8 src);
+  virtual CDataStream &operator>>(c8 &dst);
 
-    return *this;
-  };
-
-  virtual CDataStream &operator<<(c8 src) {
-    if (Write(&src, 1) != 1) SetStatus(STATUS_WRITEFAILED);
-    return *this;
-  };
-
-  virtual CDataStream &operator>>(c8 &dst) {
-    if (Read(&dst, 1) != 1) dst = 0;
-    return *this;
-  };
-
-  // Define method for printing a simple value into the stream
-  #define WRITE_VAL(_Type, _Format) \
-    virtual CDataStream &operator<<(_Type val) { \
-      c8 str[128]; \
-      sprintf(str, _Format, val); \
-      return operator<<(str); \
-    };
+  // Declare method for printing a simple value into the stream
+  #define WRITE_VAL(_Type) virtual CDataStream &operator<<(_Type val)
 
   // Write methods for numbers
-  WRITE_VAL(u8 , "%hhu");
-  WRITE_VAL(u16, "%hu");
-  WRITE_VAL(u32, "%lu");
-  WRITE_VAL(u64, "%llu");
-  WRITE_VAL(s8 , "%hhd");
-  WRITE_VAL(s16, "%hd");
-  WRITE_VAL(s32, "%ld");
-  WRITE_VAL(s64, "%lld");
-  WRITE_VAL(f32, "%g");
-  WRITE_VAL(f64, "%g");
-      
+  WRITE_VAL(u8);
+  WRITE_VAL(u16);
+  WRITE_VAL(u32);
+  WRITE_VAL(u64);
+  WRITE_VAL(s8);
+  WRITE_VAL(s16);
+  WRITE_VAL(s32);
+  WRITE_VAL(s64);
+  WRITE_VAL(f32);
+  WRITE_VAL(f64);
+
   // size_t is not the same as u32/u64 in Unix
   #if _DREAMY_UNIX
-  WRITE_VAL(size_t, "%llu");
+    WRITE_VAL(size_t);
   #endif
 
   #undef WRITE_VAL

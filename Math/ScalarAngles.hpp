@@ -4,10 +4,10 @@
 #ifndef _DREAMYUTILITIES_INCL_SCALARANGLES_H
 #define _DREAMYUTILITIES_INCL_SCALARANGLES_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Angles.hpp"
-#include "../Math/ScalarVectors.hpp"
+#include "Angles.hpp"
+#include "ScalarVectors.hpp"
 
 namespace dreamy {
 
@@ -21,11 +21,11 @@ typedef TAngles<s32, 4> ang4i; // 4 integers
 // Define arithmetic operators
 #define VECTOR_TYPE s32
 #define NUMVEC_OPS_FOR 2
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #undef VECTOR_TYPE
 
 // Single precision angles
@@ -36,11 +36,11 @@ typedef TAngles<f32, 4> ang4f; // 4D single precision angles
 // Define arithmetic operators
 #define VECTOR_TYPE f32
 #define NUMVEC_OPS_FOR 2
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #undef VECTOR_TYPE
 
 // Double precision angles
@@ -51,11 +51,11 @@ typedef TAngles<f64, 4> ang4d; // 4D double precision angles
 // Define arithmetic operators
 #define VECTOR_TYPE f64
 #define NUMVEC_OPS_FOR 2
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "../Math/VectorOps/AnglesOps.inl"
+#include "VectorOps/AnglesOps.inl"
 #undef VECTOR_TYPE
 
 #undef NUMVEC_CLASS

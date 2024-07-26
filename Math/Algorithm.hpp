@@ -4,7 +4,7 @@
 #ifndef _DREAMYUTILITIES_INCL_MATH_ALGORITHM_H
 #define _DREAMYUTILITIES_INCL_MATH_ALGORITHM_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
 namespace dreamy {
 

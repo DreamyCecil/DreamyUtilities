@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_MARKOV_UNIQUEORDER_H
 #define _DREAMYUTILITIES_INCL_MARKOV_UNIQUEORDER_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../MarkovChain/MarkovBase.hpp"
+#include "MarkovBase.hpp"
 
 #include <deque>
 

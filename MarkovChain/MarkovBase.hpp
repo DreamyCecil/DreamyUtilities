@@ -4,7 +4,7 @@
 #ifndef _DREAMYUTILITIES_INCL_MARKOV_BASE_H
 #define _DREAMYUTILITIES_INCL_MARKOV_BASE_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
 #include <vector>
 

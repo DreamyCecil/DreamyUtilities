@@ -4,7 +4,7 @@
 #ifndef _DREAMYUTILITIES_INCL_HASHEDSTRING_H
 #define _DREAMYUTILITIES_INCL_HASHEDSTRING_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
 #include "../Hashing/SimpleHasher.hpp"
 

@@ -8,6 +8,6 @@
   #error Please define the type for 'VECTOR_TYPE' before operation definitions.
 #endif
 
-#include "../Math/VectorOps/DegRad.inl"
+#include "DegRad.inl"
 
 #undef NUMVEC_OPS_FOR

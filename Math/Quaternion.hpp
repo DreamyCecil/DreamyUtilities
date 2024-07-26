@@ -4,10 +4,10 @@
 #ifndef _DREAMYUTILITIES_INCL_QUATERNION_H
 #define _DREAMYUTILITIES_INCL_QUATERNION_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Vector.hpp"
-#include "../Math/ScalarMatrices.hpp"
+#include "Vector.hpp"
+#include "ScalarMatrices.hpp"
 
 namespace dreamy {
 
@@ -51,12 +51,12 @@ public:
 
   // Convert from euler angles (H, P, B) in radians
   void FromEuler(const TVector<Type, 3> &vAngles, const VecAxes axes = _DREAMY_DEFAULT_AXES) {
-    Type cosH = cos(vAngles[0] * Type(0.5));
-    Type sinH = sin(vAngles[0] * Type(0.5));
-    Type cosP = cos(vAngles[1] * Type(0.5));
-    Type sinP = sin(vAngles[1] * Type(0.5));
-    Type cosB = cos(vAngles[2] * Type(0.5));
-    Type sinB = sin(vAngles[2] * Type(0.5));
+    Type cosH = (Type)cos(vAngles[0] * Type(0.5));
+    Type sinH = (Type)sin(vAngles[0] * Type(0.5));
+    Type cosP = (Type)cos(vAngles[1] * Type(0.5));
+    Type sinP = (Type)sin(vAngles[1] * Type(0.5));
+    Type cosB = (Type)cos(vAngles[2] * Type(0.5));
+    Type sinB = (Type)sin(vAngles[2] * Type(0.5));
 
     _w = cosB * cosP * cosH + sinB * sinP * sinH;
 
@@ -82,7 +82,7 @@ public:
     // Heading
     Type sinH_cosP = 2 * (_w * axisValue[2] + axisValue[0] * axisValue[1]);
     Type cosH_cosP = 1 - 2 * (axisValue[1] * axisValue[1] + axisValue[2] * axisValue[2]);
-    vAngles[0] = atan2(sinH_cosP, cosH_cosP);
+    vAngles[0] = (Type)atan2(sinH_cosP, cosH_cosP);
 
     // Pitch
     Type sinP = 2 * (_w * axisValue[1] - axisValue[2] * axisValue[0]);
@@ -90,13 +90,13 @@ public:
     if (dreamy::math::Abs(sinP) >= 1) {
       vAngles[1] = dreamy::math::CopySign(Type(dreamy::math::PI / 2), sinP); // Use 90 degrees if out of range
     } else {
-      vAngles[1] = asin(sinP);
+      vAngles[1] = (Type)asin(sinP);
     }
 
     // Banking
     Type sinB_cosP = 2 * (_w * axisValue[0] + axisValue[1] * axisValue[2]);
     Type cosB_cosP = 1 - 2 * (axisValue[0] * axisValue[0] + axisValue[1] * axisValue[1]);
-    vAngles[2] = atan2(sinB_cosP, cosB_cosP);
+    vAngles[2] = (Type)atan2(sinB_cosP, cosB_cosP);
   };
 
   // Convert to a rotation matrix
@@ -133,7 +133,7 @@ public:
 
     if (trace > 0.0) {
       // abs(w) > 1/2 or w > 1/2
-      root = sqrt(trace + Type(1.0)); // 2w
+      root = (Type)sqrt(trace + Type(1.0)); // 2w
       _w = Type(0.5) * root;
       root = Type(0.5) / root; // 1/(4w)
 
@@ -158,7 +158,7 @@ public:
       u32 j = aNext[i];
       u32 k = aNext[j];
 
-      root = sqrt(matrix(i, i) - matrix(j, j) - matrix(k, k) + Type(1.0));
+      root = (Type)sqrt(matrix(i, i) - matrix(j, j) - matrix(k, k) + Type(1.0));
 
       Type *quat[3] = { &_x, &_y, &_z };
       *quat[i] = Type(0.5) * root;
@@ -173,9 +173,9 @@ public:
 
   // Convert from axis angle (in radians)
   void FromAxisAngle(const TVector<Type, 3> &vAngles, const Type angle, const VecAxes axes = VecAxes()) {
-    Type sinAngle = sin(angle / 2);
+    Type sinAngle = (Type)sin(angle / 2);
 
-    _w = cos(angle / 2);
+    _w = (Type)cos(angle / 2);
     _x = vAngles[axes._x] * sinAngle;
     _y = vAngles[axes._y] * sinAngle;
     _z = vAngles[axes._z] * sinAngle;
@@ -183,8 +183,8 @@ public:
 
   // Convert to axis angle (in radians)
   void ToAxisAngle(TVector<Type, 3> &vAngles, Type &angle, const VecAxes axes = VecAxes()) {
-    Type sinAngle = sqrt(Type(1) - _w * _w);
-    angle = 2 * acos(_w);
+    Type sinAngle = (Type)sqrt(Type(1) - _w * _w);
+    angle = 2 * (Type)acos(_w);
 
     // Angle isn't zero
     if (dreamy::math::Abs(sinAngle) >= 0.001) {

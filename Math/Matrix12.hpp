@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_MATRIX12_H
 #define _DREAMYUTILITIES_INCL_MATRIX12_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Matrix.hpp"
+#include "Matrix.hpp"
 
 namespace dreamy {
 
@@ -16,11 +16,11 @@ typedef TMatrix<f64, 3, 4> mat12d;
 
 // Define operators
 #define MATRIX_TYPE f32
-#include "../Math/MatrixOps/Matrix12.inl"
+#include "MatrixOps/Matrix12.inl"
 #undef MATRIX_TYPE
 
 #define MATRIX_TYPE f64
-#include "../Math/MatrixOps/Matrix12.inl"
+#include "MatrixOps/Matrix12.inl"
 #undef MATRIX_TYPE
 
 // Matrix template and types

@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_MARKOV_RANDOMIZER_H
 #define _DREAMYUTILITIES_INCL_MARKOV_RANDOMIZER_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../MarkovChain/MarkovBase.hpp"
+#include "MarkovBase.hpp"
 
 // Random algorithms
 #if defined(_DREAMY_BOOST_RANDOM_DEVICE)
@@ -49,22 +49,20 @@ namespace dreamy {
     };
   };
 
-#elif _DREAMY_CPP11
-  #if !_DREAMY_UNIX
-    // Random seed type
-    typedef std::random_device::result_type RandomSeed_t;
+#elif _DREAMY_CPP11 && !_DREAMY_UNIX
+  // Random seed type
+  typedef std::random_device::result_type RandomSeed_t;
 
-    // Generate random seed sequence
-    inline std::initializer_list<RandomSeed_t> GenerateSeedSeq(const c8 *strSeed) {
-      static std::random_device rd(strSeed);
+  // Generate random seed sequence
+  inline std::initializer_list<RandomSeed_t> GenerateSeedSeq(const c8 *strSeed) {
+    static std::random_device rd(strSeed);
 
-      static RandomSeed_t aResults[8] = {
-        rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()
-      };
-
-      return std::initializer_list<RandomSeed_t>(&aResults[0], &aResults[8]);
+    static RandomSeed_t aResults[8] = {
+      rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()
     };
-  #endif
+
+    return std::initializer_list<RandomSeed_t>(&aResults[0], &aResults[8]);
+  };
 #endif
 
 };

@@ -4,12 +4,11 @@
 #ifndef _DREAMYUTILITIES_INCL_MARKOV_CHAIN_H
 #define _DREAMYUTILITIES_INCL_MARKOV_CHAIN_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../MarkovChain/MarkovBase.hpp"
-#include "../MarkovChain/UniqueOrder.hpp"
-#include "../MarkovChain/Randomizer.hpp"
-
+#include "MarkovBase.hpp"
+#include "UniqueOrder.hpp"
+#include "Randomizer.hpp"
 #include "../Math/Random.hpp"
 
 namespace dreamy {
@@ -20,25 +19,22 @@ template<typename Type> class CMarkovChain {
 public:
   typedef Type T; // Template type
 
-public:
   #if _DREAMY_CPP11
     typedef std::unordered_map<Type, u32> CValueCounts; // Occurrences of next values
     typedef std::unordered_map<CUniqueOrder<Type>, CValueCounts> CNextValueCounts; // Occurrences of next values per value order
-  #else
-    typedef dreamy::unordered_map<Type, u32> CValueCounts; // Occurrences of next values
-    typedef dreamy::unordered_map<CUniqueOrder<Type>, CValueCounts> CNextValueCounts; // Occurrences of next values per value order
-  #endif
 
-  CNextValueCounts mch_counts;
-
-  #if _DREAMY_CPP11
     typedef std::unordered_map<Type, f32> CValueChances; // Chances of next values
     typedef std::unordered_map<CUniqueOrder<Type>, CValueChances> CNextValueChances; // Chances of next values per value order
   #else
+    typedef dreamy::unordered_map<Type, u32> CValueCounts; // Occurrences of next values
+    typedef dreamy::unordered_map<CUniqueOrder<Type>, CValueCounts> CNextValueCounts; // Occurrences of next values per value order
+
     typedef dreamy::unordered_map<Type, f32> CValueChances; // Chances of next values
     typedef dreamy::unordered_map<CUniqueOrder<Type>, CValueChances> CNextValueChances; // Chances of next values per value order
   #endif
 
+public:
+  CNextValueCounts mch_counts;
   CNextValueChances mch_chances;
 
 #if defined(_DREAMY_BOOST_RANDOM_DEVICE)
@@ -76,9 +72,11 @@ public:
   };
 
 #else
+
 public:
   // Default constructor
   CMarkovChain() {};
+
 #endif
 
 // Markov chain training

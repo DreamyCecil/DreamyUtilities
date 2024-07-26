@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_MATH_ALGEBRA_H
 #define _DREAMYUTILITIES_INCL_MATH_ALGEBRA_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include <math.h>
+#include <cmath>
 
 namespace dreamy {
 

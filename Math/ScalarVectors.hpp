@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_SCALARVECTORS_H
 #define _DREAMYUTILITIES_INCL_SCALARVECTORS_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Vector.hpp"
+#include "Vector.hpp"
 
 #include <vector>
 
@@ -22,11 +22,11 @@ typedef TVector<s32, 4> vec4i; // 4 integers
 // Define arithmetic operators
 #define VECTOR_TYPE s32
 #define NUMVEC_OPS_FOR 2
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #undef VECTOR_TYPE
 
 // Single precision vectors
@@ -37,11 +37,11 @@ typedef TVector<f32, 4> vec4f; // 4D single precision vector
 // Define arithmetic operators
 #define VECTOR_TYPE f32
 #define NUMVEC_OPS_FOR 2
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #undef VECTOR_TYPE
 
 // Double precision vectors
@@ -52,11 +52,11 @@ typedef TVector<f64, 4> vec4d; // 4D double precision vector
 // Define arithmetic operators
 #define VECTOR_TYPE f64
 #define NUMVEC_OPS_FOR 2
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 3
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #define NUMVEC_OPS_FOR 4
-#include "../Math/VectorOps/VectorOps.inl"
+#include "VectorOps/VectorOps.inl"
 #undef VECTOR_TYPE
 
 #undef NUMVEC_CLASS

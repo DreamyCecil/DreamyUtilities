@@ -4,9 +4,9 @@
 #ifndef _DREAMYUTILITIES_INCL_READWRITEDEVICE_H
 #define _DREAMYUTILITIES_INCL_READWRITEDEVICE_H
 
-#include "../Base/Base.hpp"
+#include "../DreamyUtilitiesBase.hpp"
 
-#include "../Data/ByteArray.hpp"
+#include "../Types/ByteArray.hpp"
 
 namespace dreamy {
 
@@ -35,7 +35,7 @@ protected:
 
 public:
   // Destructor
-  virtual ~IReadWriteDevice() {};
+  virtual ~IReadWriteDevice();
 
   // Start interacting in a given mode
   virtual bool Open(EOpenMode eOpenMode) = 0;
@@ -87,33 +87,19 @@ public:
   virtual size_t Read(c8 *pData, size_t iMaxSize) = 0;
 
   // Take bytes from the device
-  virtual size_t Read(CByteArray &baData, size_t iMaxSize) {
-    baData.Clear();
-    baData.Resize(iMaxSize);
-
-    return Read(baData.Data(), iMaxSize);
-  };
+  virtual size_t Read(CByteArray &baData, size_t iMaxSize);
 
   // Take bytes without moving the carret forward
   virtual size_t Peek(c8 *pData, size_t iMaxSize) = 0;
 
   // Take bytes without moving the carret forward
-  virtual size_t Peek(CByteArray &baData, size_t iMaxSize) {
-    baData.Clear();
-    baData.Resize(iMaxSize);
-
-    return Peek(baData.Data(), iMaxSize);
-  };
+  virtual size_t Peek(CByteArray &baData, size_t iMaxSize);
 
   // Put bytes into the device
   virtual size_t Write(const c8 *pData, size_t iMaxSize) = 0;
 
   // Put bytes into the device
-  virtual size_t Write(const CByteArray &baData) {
-    if (baData.IsNull()) return NULL_POS;
-
-    return Write(baData.ConstData(), baData.Size());
-  };
+  virtual size_t Write(const CByteArray &baData);
 
   // Get type of the device class
   virtual EDeviceType GetType(void) const {
