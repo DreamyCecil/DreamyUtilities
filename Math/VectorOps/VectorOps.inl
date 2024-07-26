@@ -27,7 +27,7 @@ VECTOR_TYPE NUMVEC::operator%(const NUMVEC &vOther) const {
 template<> inline
 VECTOR_TYPE NUMVEC::Length(void) const {
   VECTOR_TYPE total = (*this) % (*this);
-  return (VECTOR_TYPE)sqrt((double)total);
+  return (VECTOR_TYPE)sqrt((f64)total);
 };
 
 #include "OpsUndef.inl"

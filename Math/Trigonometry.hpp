@@ -14,7 +14,7 @@ namespace dreamy {
 
 // Wrap angle to be between 0 and 360 degrees
 MATH_TEMP inline Type WrapAngle(Type angle) {
-  return (Type)fmod(fmod((double)angle, 360.0) + 360.0, 360.0);
+  return (Type)fmod(fmod((f64)angle, 360.0) + 360.0, 360.0);
 };
 
 // Normalize angle to be between -180 and +180 degrees
