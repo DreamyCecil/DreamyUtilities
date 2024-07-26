@@ -134,6 +134,18 @@ bool CString::Compare(const CString &str) const {
   return size() == str.size() && std::equal(begin(), end(), str.begin(), CompareChars);
 };
 
+bool CString::StartsWith(const CString &str) const {
+  return rfind(str, 0) != NULL_POS;
+};
+
+bool CString::EndWith(const CString &str) const {
+  const size_t ctThis = length();
+  const size_t ctOther = str.length();
+
+  if (ctOther > ctThis) return false;
+  return find(str, ctThis - ctOther) != NULL_POS;
+};
+
 bool CString::WildcardMatch(const c8 *str, const c8 *strWildcardMask) {
   bool bWildcard = false; // Discovered a wildcard this time
   bool bEscapeChar = false; // Discovered an escape character

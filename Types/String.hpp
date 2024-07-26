@@ -113,8 +113,14 @@ public:
   // Replace all occurrences of a character in a string
   void Replace(c8 chOld, c8 chNew);
 
-  // Check if two strings are equal (case insensitive)
+  // Check if two strings are equal (case-insensitive)
   bool Compare(const CString &str) const;
+
+  // Check if a string starts with a substring
+  bool StartsWith(const CString &str) const;
+
+  // Check if a string ends with a substring
+  bool EndWith(const CString &str) const;
 
   // Split a string using a character delimiter
   template<typename TypeContainer>
