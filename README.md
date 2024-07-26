@@ -1,8 +1,6 @@
 # Dreamy Utilities
 
-**Dreamy Utilities** is a framework of simple header libraries that extend C++ functionality via a collection of convenient modules.
-
-The main inspirations behind many design choices are Boost and Qt frameworks.
+**Dreamy Utilities** is a collection of libraries that extend C++ functionality. The main inspirations behind many design choices are Boost and Qt frameworks.
 
 Visit [this repository's wiki](https://github.com/DreamyCecil/DreamyUtilities/wiki) for details and information about different libraries.
 

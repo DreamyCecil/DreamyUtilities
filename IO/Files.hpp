@@ -44,11 +44,21 @@ inline void FileCopy(const CString &fileSrc, const CString &fileDst) {
 // Check if the file exists
 bool FileExists(const c8 *strFileName);
 
+// Check if the file exists
+__forceinline bool FileExists(const CString &strFileName) {
+  return FileExists(strFileName.c_str());
+};
+
 // Get current working directory of the application
 CString GetCurrentPath(void);
 
 // Set current working directory of the application
 bool SetCurrentPath(const c8 *strPath);
+
+// Set current working directory of the application
+__forceinline bool SetCurrentPath(const CString &strPath) {
+  return SetCurrentPath(strPath.c_str());
+};
 
 // Read text file from a stream into a string
 CString ReadTextFile(class CFileDevice &file);

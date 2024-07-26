@@ -6,7 +6,8 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
-// Value containers
+#include "String.hpp"
+
 #include <vector>
 
 namespace dreamy {
