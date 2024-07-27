@@ -68,7 +68,7 @@ public:
   };
 
   // Assignment operator
-  inline CHashedString operator=(const CHashedString &hsOther) {
+  inline CHashedString &operator=(const CHashedString &hsOther) {
     _hash = hsOther.GetHash();
     _string = hsOther.GetString();
 
