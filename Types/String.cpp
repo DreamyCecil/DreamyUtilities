@@ -301,7 +301,7 @@ size_t CString::GoUpUntilDir(CString strDirName) const {
 };
 
 // Normalize the path taking "backward" and "current" directories into consideration
-// E.g. "abc/sub1/../sub2/./qwe" -> "abc/sub2/qwe"
+// E.g. "abc/sub1/../sub2/./qwe" -> "abc/sub2/qwe" or ".././.." -> "../.."
 void CString::Normalize(void) {
   CString strPath(*this);
   strPath.Replace('\\', '/');
@@ -321,7 +321,8 @@ void CString::Normalize(void) {
     if (strPart == ".") continue;
 
     // If encountered a "backward" directory and there are some directories written
-    if (strPart == ".." && aFinalPath.size() != 0) {
+    // AND it's not another "backward" directory (that has been written because it can't go up any more)
+    if (strPart == ".." && !aFinalPath.empty() && aFinalPath.back() != "..") {
       // Remove the last directory (go up one directory) and go to the next one
       aFinalPath.pop_back();
       continue;
