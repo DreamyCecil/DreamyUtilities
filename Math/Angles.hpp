@@ -83,7 +83,7 @@ public:
     p = (Type)asin(y); // Calculate pitch
 
     // If pointing upwards or downwards
-    if ((f64)y > 0.99 || (f64)y < -0.99) {
+    if (dreamy::math::Abs((f64)y) >= 1.0 - 1e-6) {
       // Heading is irrelevant
       h = 0;
 

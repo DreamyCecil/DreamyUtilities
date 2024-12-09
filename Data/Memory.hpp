@@ -17,9 +17,9 @@
 
 namespace dreamy {
 
-// Invert bytes of any class' content
+// Invert bytes of any structure
 template<typename Type> inline
-Type ByteSwapT(Type valSrc)
+Type ByteSwapT(const Type &valSrc)
 {
   typedef struct {
     union {
