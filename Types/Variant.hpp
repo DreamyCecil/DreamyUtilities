@@ -60,17 +60,17 @@ struct ValPrintOpts {
   };
 
   // Get printout type
-  EPrintType GetType(void) const {
+  __forceinline EPrintType GetType(void) const {
     return eType;
   };
 
   // Check if inline printout
-  bool IsInline(void) const {
+  __forceinline bool IsInline(void) const {
     return GetType() == E_INLINE;
   };
 
   // Check if formatted printout
-  bool IsFormatted(void) const {
+  __forceinline bool IsFormatted(void) const {
     return GetType() == E_FORMATTED;
   };
 };
@@ -278,8 +278,8 @@ public:
     return VAL_INVALID;
   };
 
-  // Print variant value
-  inline void Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *strUndefined = "undefined") const {
+  // Print variant value ('null' is used in place of undefined values in JSON)
+  inline void Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *strUndefined = "null") const {
     _print(*this, strm, opts, strUndefined);
   };
 

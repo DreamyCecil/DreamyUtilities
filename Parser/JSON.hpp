@@ -11,40 +11,44 @@
 
 namespace dreamy {
 
+namespace json {
+
 // Default JSON constants created at runtime
-struct JsonConstants {
+struct Constants {
   CValObject list;
 
   // Default constructor
-  inline JsonConstants(void) {
+  inline Constants(void) {
     list["null"] = CVariant();
     list["true"] = true;
     list["false"] = false;
   };
 };
 
-extern const JsonConstants _jsonConstants;
+extern const Constants _constants;
 
 // Tokenize JSON file contents
-void TokenizeJSON(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants = _jsonConstants.list);
+void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants = _constants.list);
 
 // Build a JSON array
-void BuildJSONArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd);
+void BuildArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd);
 
 // Build a JSON object
-void BuildJSONObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::const_iterator &it);
+void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::const_iterator &it);
 
 // Build one value
-void BuildJSONValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iterator &it);
+void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iterator &it);
 
 // Build one key-value pair
-void BuildJSONPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it);
+void BuildPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it);
 
 // Build a tree of values from a tokenized JSON file
-void BuildJSON(CVariant &valJSON, const CTokenList &aTokens);
+void Build(CVariant &valJSON, const CTokenList &aTokens);
 
 // Parse JSON string and output it in a variant with optional token list
-void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CValObject &oConstants = _jsonConstants.list);
+void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CValObject &oConstants = _constants.list);
+
+}; // namespace json
 
 }; // namespace dreamy
 

@@ -7,11 +7,13 @@
 
 namespace dreamy {
 
+namespace json {
+  
 // Default JSON constants created at runtime
-const JsonConstants _jsonConstants;
+const Constants _constants;
 
 // Tokenize JSON file contents
-void TokenizeJSON(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants) {
+void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants) {
   CParserData data(strJSON);
 
   while (data.CanParse()) {
@@ -64,7 +66,7 @@ void TokenizeJSON(CTokenList &aTokens, const CString &strJSON, const CValObject 
 };
 
 // Build a JSON array
-void BuildJSONArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd) {
+void BuildArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd) {
   CTokenList::const_iterator itClosing = std::find(itCurrent, itEnd, CParserToken(CParserToken::TKN_GROUP_CLOSE));
 
   // Unclosed array
@@ -91,7 +93,7 @@ void BuildJSONArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTo
 };
 
 // Build a JSON object
-void BuildJSONObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::const_iterator &it) {
+void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::const_iterator &it) {
   const CTokenList::const_iterator itStart = it;
 
   CValObject oValues;
@@ -102,7 +104,7 @@ void BuildJSONObject(CVariant &valObject, const CTokenList &aTokens, CTokenList:
     if (!bNext) {
       // Add one key-value pair
       CValPair pair;
-      BuildJSONPair(pair, aTokens, it);
+      BuildPair(pair, aTokens, it);
 
       oValues.insert(pair);
       ++it;
@@ -129,18 +131,18 @@ void BuildJSONObject(CVariant &valObject, const CTokenList &aTokens, CTokenList:
 };
 
 // Build one value
-void BuildJSONValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iterator &it) {
+void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iterator &it) {
   const u32 iToken = it->GetType();
 
   switch (iToken) {
     // Object with variables {}
     case CParserToken::TKN_BLOCK_OPEN:
-      BuildJSONObject(val, aTokens, ++it);
+      BuildObject(val, aTokens, ++it);
       return;
 
     // Array of values []
     case CParserToken::TKN_GROUP_OPEN:
-      BuildJSONArray(val, ++it, aTokens.end());
+      BuildArray(val, ++it, aTokens.end());
       return;
 
     // Pure value
@@ -175,7 +177,7 @@ void BuildJSONValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_
 };
 
 // Build one key-value pair
-void BuildJSONPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it) {
+void BuildPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it) {
   // Key name ("key")
   const CParserToken &tknKey = (*(it++))(CParserToken::TKN_VALUE);
 
@@ -190,13 +192,13 @@ void BuildJSONPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_
   // Build the value and make the pair
   CHashedString hsKey(tknKey.GetValue().ToString());
   CVariant val;
-  BuildJSONValue(val, aTokens, it);
+  BuildValue(val, aTokens, it);
 
   pair = std::make_pair(hsKey, val);
 };
 
 // Build a tree of values from a tokenized JSON file
-void BuildJSON(CVariant &valJSON, const CTokenList &aTokens) {
+void Build(CVariant &valJSON, const CTokenList &aTokens) {
   // No tokens
   if (aTokens.size() == 0) {
     valJSON = CVariant();
@@ -204,11 +206,11 @@ void BuildJSON(CVariant &valJSON, const CTokenList &aTokens) {
   }
 
   CTokenList::const_iterator it = aTokens.begin();
-  BuildJSONValue(valJSON, aTokens, it);
+  BuildValue(valJSON, aTokens, it);
 };
 
 // Parse JSON string and output it in a variant with optional token list
-void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CValObject &oConstants) {
+void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CValObject &oConstants) {
   static CTokenList aTokenList;
 
   // Supply local token list if none specified
@@ -218,8 +220,10 @@ void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, 
   }
 
   // Tokenize JSON string and build a value out of it
-  TokenizeJSON(*paTokens, strJSON, oConstants);
-  BuildJSON(valJSON, *paTokens);
+  Tokenize(*paTokens, strJSON, oConstants);
+  Build(valJSON, *paTokens);
 };
+
+}; // namespace json
 
 }; // namespace dreamy
