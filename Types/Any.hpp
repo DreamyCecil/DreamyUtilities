@@ -152,6 +152,6 @@ ANY_TEMP const Type &AnyCast(const CAny &value) {
 
 #undef ANY_TEMP
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

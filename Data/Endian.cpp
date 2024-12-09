@@ -194,6 +194,6 @@ size_t ToBig(size_t iSrc)
 
 #endif
 
-};
+}; // namespace endian
 
-};
+}; // namespace dreamy

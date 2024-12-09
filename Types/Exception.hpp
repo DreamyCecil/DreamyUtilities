@@ -101,7 +101,7 @@ public:
   };
 };
 
-};
+}; // namespace dreamy
 
 #undef PARENT_EXCEPTION
 

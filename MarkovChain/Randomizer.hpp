@@ -65,6 +65,6 @@ namespace dreamy {
   };
 #endif
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

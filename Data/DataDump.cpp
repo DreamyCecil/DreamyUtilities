@@ -102,4 +102,4 @@ CString DumpField(const c8 **pField, const c8 *strPrintAs) {
   return str;
 };
 
-};
+}; // namespace dreamy

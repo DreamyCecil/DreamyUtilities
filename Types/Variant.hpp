@@ -350,6 +350,6 @@ Type GetNumber(const CVariant &val)
   #define VARIANT_PRINT_INDENT(Level) CString((Level), '\t')
 #endif
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

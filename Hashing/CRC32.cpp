@@ -84,4 +84,4 @@ void CCRC32Hasher::Finish(void) {
   _result ^= 0xFFFFFFFF;
 };
 
-};
+}; // namespace dreamy

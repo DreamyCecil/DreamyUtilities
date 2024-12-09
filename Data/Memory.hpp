@@ -119,6 +119,6 @@ void ResizeBuffer_realloc(Type **pBuffer, size_t iNewSize) {
   *pBuffer = (Type *)realloc(*pBuffer, iNewSize * sizeof(Type));
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

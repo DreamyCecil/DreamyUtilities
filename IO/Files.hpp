@@ -69,6 +69,6 @@ CString ReadTextFile(const CString &strFilename);
 // Open and read text file into a string if possible
 bool ReadTextFileIfPossible(const CString &strFilename, CString &strText);
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

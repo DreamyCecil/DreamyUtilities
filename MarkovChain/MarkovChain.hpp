@@ -195,6 +195,6 @@ public:
   };
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

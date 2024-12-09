@@ -251,7 +251,7 @@ u64 MultiCharLiteral(const c8 strLiteral[9]);
 // https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
 void StringToArgs(const c8 *str, std::vector<CString> &aArgs, int (*pIsSpace)(int) = &::isspace);
 
-};
+}; // namespace dreamy
 
 #if _DREAMY_CPP11
 namespace std {
@@ -265,7 +265,7 @@ struct hash<dreamy::CString>
   }
 };
 
-};
+}; // namespace std
 #endif
 
 #endif // (Dreamy Utilities Include Guard)

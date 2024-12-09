@@ -30,6 +30,6 @@ typedef TMatrix<f64, 3, 3> mat3d; // 3x3 double precision matrix
 #include "MatrixOps/Matrix3D.inl"
 #undef MATRIX_TYPE
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

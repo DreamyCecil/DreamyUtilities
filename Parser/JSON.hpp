@@ -46,6 +46,6 @@ void BuildJSON(CVariant &valJSON, const CTokenList &aTokens);
 // Parse JSON string and output it in a variant with optional token list
 void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CValObject &oConstants = _jsonConstants.list);
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

@@ -404,4 +404,4 @@ CDataStream &CDataStream::operator>>(c8 *str) {
   return *this;
 };
 
-};
+}; // namespace dreamy

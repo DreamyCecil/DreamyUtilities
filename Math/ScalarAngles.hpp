@@ -60,6 +60,6 @@ typedef TAngles<f64, 4> ang4d; // 4D double precision angles
 
 #undef NUMVEC_CLASS
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

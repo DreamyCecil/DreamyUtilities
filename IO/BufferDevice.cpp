@@ -118,4 +118,4 @@ const c8 *CBufferDevice::GetBuffer(void) const {
   return _pData->ConstData();
 };
 
-};
+}; // namespace dreamy

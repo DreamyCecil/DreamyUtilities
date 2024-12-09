@@ -106,6 +106,6 @@ public:
   #undef WRITE_VAL
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

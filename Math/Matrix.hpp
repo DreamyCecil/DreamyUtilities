@@ -207,6 +207,6 @@ bool CompareMatrices(const ROTMAT &m1, const ROTMAT &m2) {
 #undef ROTMAT
 #undef ROTMAT_TEMP
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

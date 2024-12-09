@@ -21,6 +21,6 @@ inline f64 RandRange(const f64 min, const f64 max) {
   return min + static_cast<f64>(rand()) / (static_cast<f64>(RAND_MAX) / (max - min));
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

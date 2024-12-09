@@ -6,7 +6,7 @@
 #include "../Parser/ParserData.hpp"
 
 namespace dreamy {
-  
+
 // Default JSON constants created at runtime
 const JsonConstants _jsonConstants;
 
@@ -222,4 +222,4 @@ void ParseJSON(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, 
   BuildJSON(valJSON, *paTokens);
 };
 
-};
+}; // namespace dreamy

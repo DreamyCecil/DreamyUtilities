@@ -411,4 +411,4 @@ CByteArray CByteArray::ToHex(const c8 chDelimiter) const {
   return baResult;
 };
 
-};
+}; // namespace dreamy

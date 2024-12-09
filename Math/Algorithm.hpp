@@ -32,8 +32,8 @@ Type1 Clamp(Type1 x, Type2 min, Type3 max) {
 
 #undef MATH_TEMP
 
-};
+}; // namespace math
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

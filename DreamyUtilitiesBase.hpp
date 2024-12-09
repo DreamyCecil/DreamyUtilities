@@ -164,6 +164,6 @@ typedef char c8; // ASCII character
 // Maximum value of size_t
 #define NULL_POS static_cast<size_t>(-1)
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

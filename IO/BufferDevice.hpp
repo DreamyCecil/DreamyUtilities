@@ -68,6 +68,6 @@ public:
   const c8 *GetBuffer(void) const;
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

@@ -349,6 +349,6 @@ struct VecAxes {
   #define _DREAMY_DEFAULT_AXES VecAxes(2, 0, 1)
 #endif
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

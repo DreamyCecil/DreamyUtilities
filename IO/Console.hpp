@@ -16,6 +16,6 @@ bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault);
 // Get user input from the console
 CString ConsoleInput(const c8 *strPrompt);
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

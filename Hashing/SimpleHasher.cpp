@@ -44,4 +44,4 @@ u64 CSimpleHasher::operator()(const c8 *pData, size_t iSize) {
   return _result;
 };
 
-};
+}; // namespace dreamy

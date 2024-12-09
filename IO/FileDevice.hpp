@@ -85,6 +85,6 @@ public:
   bool Rename(const CString &strName);
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

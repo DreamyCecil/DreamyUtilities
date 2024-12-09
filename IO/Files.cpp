@@ -97,4 +97,4 @@ bool ReadTextFileIfPossible(const CString &strFilename, CString &strText) {
   return false;
 };
 
-};
+}; // namespace dreamy

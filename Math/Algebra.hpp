@@ -93,8 +93,8 @@ __forceinline f64 Abs(f64 x) {
 
 #undef MATH_TEMP
 
-};
+}; // namespace math
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

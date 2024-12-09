@@ -43,4 +43,4 @@ CString ConsoleInput(const c8 *strPrompt) {
   return strInput;
 };
 
-};
+}; // namespace dreamy

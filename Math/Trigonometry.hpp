@@ -34,6 +34,6 @@ MATH_TEMP inline Type DegToRad(Type angle) {
 
 #undef MATH_TEMP
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

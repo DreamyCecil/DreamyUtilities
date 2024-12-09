@@ -277,6 +277,6 @@ inline void AddToken(CTokenList &aTokens, u32 iType,
   aTokens.push_back(CParserToken(iType, pos, val));
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

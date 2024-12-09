@@ -141,4 +141,4 @@ bool CFileDevice::Rename(const CString &strName) {
   return (iResult == 0);
 };
 
-};
+}; // namespace dreamy

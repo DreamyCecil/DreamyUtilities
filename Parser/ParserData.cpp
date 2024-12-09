@@ -500,4 +500,4 @@ void TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComme
   data.AddEOF(aTokens);
 };
 
-};
+}; // namespace dreamy

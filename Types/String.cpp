@@ -490,4 +490,4 @@ void StringToArgs(const c8 *str, std::vector<CString> &aArgs, int (*pIsSpace)(in
   }
 };
 
-};
+}; // namespace dreamy

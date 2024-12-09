@@ -23,6 +23,6 @@ public:
   virtual CByteArray GetBytes(void) const = 0;
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

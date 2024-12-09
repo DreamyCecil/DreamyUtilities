@@ -65,6 +65,6 @@ typedef TVector<f64, 4> vec4d; // 4D double precision vector
 typedef std::vector<vec2d> Vec2Array_t; // Array of 2D vectors
 typedef std::vector<vec3d> Vec3Array_t; // Array of 3D vectors
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

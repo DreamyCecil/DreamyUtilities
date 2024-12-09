@@ -106,7 +106,7 @@ public:
   };
 };
 
-};
+}; // namespace dreamy
 
 #if _DREAMY_CPP11
 namespace std {
@@ -129,7 +129,7 @@ struct hash<dreamy::CUniqueOrder<Type>>
   }
 };
 
-};
+}; // namespace std
 #endif
 
 #endif // (Dreamy Utilities Include Guard)

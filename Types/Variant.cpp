@@ -321,4 +321,4 @@ VARIANT_DEFINE_PRINT(PrintMat3, val, strm, opts, strUndefined) {
   PrintArray(av, strm, opts, strUndefined);
 };
 
-};
+}; // namespace dreamy

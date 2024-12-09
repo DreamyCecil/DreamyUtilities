@@ -44,6 +44,6 @@ public:
   u64 operator()(const c8 *pData, size_t iSize);
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

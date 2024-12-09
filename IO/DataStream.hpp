@@ -163,6 +163,6 @@ public:
   virtual CDataStream &operator>>(c8 *str);
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

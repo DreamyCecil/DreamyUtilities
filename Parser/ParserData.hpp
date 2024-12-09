@@ -83,6 +83,6 @@ public:
 // General tokenization of a string
 void TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments = false);
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

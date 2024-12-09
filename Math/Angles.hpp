@@ -155,6 +155,6 @@ ANGLES ANGLES::RadToDeg(void) const {
 #undef ANGLES
 #undef ANGLES_TEMP
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

@@ -46,8 +46,8 @@ size_t ToLittle(size_t iSrc);
 size_t ToBig(size_t iSrc);
 #endif
 
-};
+}; // namespace endian
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

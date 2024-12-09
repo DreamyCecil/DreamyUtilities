@@ -310,6 +310,6 @@ public:
 typedef TQuaternion<f32> quatf; // Single precision quaternion
 typedef TQuaternion<f64> quatd; // Double precision quaternion
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

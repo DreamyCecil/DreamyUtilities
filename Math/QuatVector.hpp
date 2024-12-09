@@ -44,6 +44,6 @@ public:
 typedef TQuatVec<f32> qvecf; // Single precision qvector
 typedef TQuatVec<f64> qvecd; // Double precision qvector
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

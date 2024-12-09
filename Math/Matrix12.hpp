@@ -70,6 +70,6 @@ inline void Mat12toMat3D(const ROTMAT12 &m12,
 #undef ROTMAT3D
 #undef ROTMAT12
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

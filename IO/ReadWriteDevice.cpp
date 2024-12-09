@@ -27,4 +27,4 @@ size_t IReadWriteDevice::Write(const CByteArray &baData) {
   return Write(baData.ConstData(), baData.Size());
 };
 
-};
+}; // namespace dreamy

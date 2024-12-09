@@ -29,6 +29,6 @@ CString DumpField(const s64 *pField, const c8 *strPrintAs = "%lld");
 // Print string
 CString DumpField(const c8 **pField, const c8 *strPrintAs = "%s");
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

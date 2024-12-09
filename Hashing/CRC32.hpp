@@ -43,6 +43,6 @@ public:
   void Finish(void);
 };
 
-};
+}; // namespace dreamy
 
 #endif // (Dreamy Utilities Include Guard)

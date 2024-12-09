@@ -107,4 +107,4 @@ WRITE_VAL(f64, "%g");
 
 #undef WRITE_VAL
 
-};
+}; // namespace dreamy
