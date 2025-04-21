@@ -12,8 +12,7 @@
 #if _DREAMY_UNIX
   #include <unistd.h>
 #else
-  #define WIN32_LEAN_AND_MEAN
-  #include <windows.h>
+  #include <direct.h>
 #endif
 
 namespace dreamy {
@@ -33,32 +32,23 @@ bool FileExists(const c8 *strFileName) {
 CString GetCurrentPath(void) {
   #if _DREAMY_UNIX
     c8 *strPath = getcwd(nullptr, 0);
-    if (strPath == nullptr) return ""; // Error
-
-    CString strResult(strPath);
-    free(strPath);
-
-    return strResult + "/";
-
   #else
-    DWORD ctPathLen = GetCurrentDirectoryA(0, 0);
-    CString strResult(ctPathLen, '\0');
-
-    bool bFailed = (GetCurrentDirectoryA(ctPathLen, &strResult[0]) == 0);
-    if (bFailed) return ""; // Error
-
-    // Last character is set to null, so replace it with another separator
-    strResult[ctPathLen - 1] = '\\';
-
-    return strResult;
+    c8 *strPath = _getcwd(nullptr, 0);
   #endif
+
+  if (strPath == nullptr) return ""; // Error
+
+  CString strResult(strPath);
+  free(strPath);
+
+  return strResult + "/";
 };
 
 bool SetCurrentPath(const c8 *strPath) {
   #if _DREAMY_UNIX
     return chdir(strPath) != -1;
   #else
-    return SetCurrentDirectoryA(strPath) != 0;
+    return _chdir(strPath) != -1;
   #endif
 };
 
