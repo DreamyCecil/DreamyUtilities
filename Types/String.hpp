@@ -53,40 +53,33 @@ public:
   void ConvertEscapeChars(void);
 
   // Convert real number into a string without trailing zeros
-  template<typename Type>
-  void FromReal(const Type fNumber) {
-    #if _DREAMY_CPP11
-      *this = std::to_string(fNumber);
+  void FromReal(const f64 fNumber) {
+    // Print the number
+    c8 strPrint[256];
+    snprintf(strPrint, 256, "%f", fNumber);
+    *this = strPrint;
 
-    #else
-      // Print the number
-      c8 strPrint[256];
-      snprintf(strPrint, 256, "%f", fNumber);
-      *this = strPrint;
+    // Find the decimal point
+    size_t iFind = find('.');
+    if (iFind == NULL_POS) return; // No decimal point - no fraction with zeros
 
-      // Check for a dot
-      size_t iDot = find('.');
-      if (iDot == NULL_POS) return;
+    // Find the last non-zero digit in the fraction
+    iFind = find_last_not_of('0');
+    if (iFind == NULL_POS) return; // Fail-safe
 
-      CString str(*this);
-      size_t iSize = str.length() - 1;
-
-      // Remove zeros from the end
-      while (str[iSize] == '0') {
-        --iSize;
-
-        // Check for a dot
-        if (str[iSize] == '.') break;
-      }
-
-      *this = str.substr(0, iSize);
-    #endif
+    if (c_str()[iFind] == '.') iFind--; // Erase the decimal point if the fraction is all zeros
+    erase(iFind + 1); // Trim the fraction
   };
 
-  // Convert string into a signed 64-bit integer
+  // Convert real number into a string without trailing zeros
+  __forceinline void FromReal(const f32 fNumber) {
+    FromReal(static_cast<f64>(fNumber));
+  };
+
+  // Convert string into a signed 64-bit integer (returns 0 if can't convert)
   s64 ToS64(void) const;
 
-  // Convert string into an unsigned 64-bit integer
+  // Convert string into an unsigned 64-bit integer (returns 0 if can't convert)
   u64 ToU64(void) const;
 
   // Convert ASCII character into lowercase
@@ -95,7 +88,7 @@ public:
   // Convert ASCII character into uppercase
   static c8 CharToUpper(c8 ch);
 
-  // Check if two characters are equal (case insensitive)
+  // Check if two characters are equal (case-insensitive)
   static bool CompareChars(c8 ch1, c8 ch2);
 
   // Convert entire string into lowercase
@@ -171,11 +164,11 @@ public:
   };
 
   // Compare strings using wildcards
-  static bool WildcardMatch(const c8 *str, const c8 *strWildcardMask);
+  static bool WildcardMatch(const c8 *str, const c8 *strPattern);
 
   // Compare strings using wildcards
-  inline bool WildcardMatch(const c8 *strWildcardMask) const {
-    return WildcardMatch(c_str(), strWildcardMask);
+  inline bool WildcardMatch(const c8 *strPattern) const {
+    return WildcardMatch(c_str(), strPattern);
   };
 
 // Path and filename methods
@@ -214,7 +207,7 @@ public:
     return RootNameLength() != 0;
   };
 
-  // Check if the path starts with a root directory (e.g. "C:/" or "//abc/")
+  // Check if the path starts with a root directory (e.g. "C:/" or "//abc/" or "/")
   inline bool HasRootDirectory() const {
     const size_t ctRoot = RootNameLength();
     return length() > ctRoot && PathSeparatorAt(ctRoot);

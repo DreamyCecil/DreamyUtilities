@@ -81,16 +81,14 @@ void CString::ConvertEscapeChars(void) {
 };
 
 s64 CString::ToS64(void) const {
-  s64 i64bit;
+  s64 i64bit = 0;
   sscanf_s(c_str(), "%lld", &i64bit);
-
   return i64bit;
 };
 
 u64 CString::ToU64(void) const {
-  u64 i64bit;
+  u64 i64bit = 0;
   sscanf_s(c_str(), "%llu", &i64bit);
-
   return i64bit;
 };
 
@@ -146,82 +144,49 @@ bool CString::EndWith(const CString &str) const {
   return find(str, ctThis - ctOther) != NULL_POS;
 };
 
-bool CString::WildcardMatch(const c8 *str, const c8 *strWildcardMask) {
-  bool bWildcard = false; // Discovered a wildcard this time
-  bool bEscapeChar = false; // Discovered an escape character
+// Source: https://www.geeksforgeeks.org/dsa/wildcard-pattern-matching/#simple-traversal-solution-on-time-and-o1-space
+bool CString::WildcardMatch(const c8 *str, const c8 *strPattern) {
+  const size_t iStrLen = strlen(str);
+  const size_t iPatLen = strlen(strPattern);
+  size_t iStr = 0;
+  size_t iPat = 0;
+  size_t iMatchAnyFrom = (size_t)-1;
+  size_t iMatching = 0;
 
-  // Current character in the mask
-  const c8 *pchMask = strWildcardMask;
-  const c8 *pchMaskLast = pchMask;
+  // Until the end of the string
+  while (iStr < iStrLen) {
+    // If pattern still has characters, check for the same (or any) character
+    if (iPat < iPatLen && (strPattern[iPat] == '?' || CString::CharToLower(strPattern[iPat]) == CString::CharToLower(str[iStr]))) {
+      iStr++;
+      iPat++;
 
-  // Current character in the string
-  const c8 *pchCur = str;
-  const c8 *pchCurLast = pchCur;
+    // If pattern still has characters, check for any match
+    } else if (iPat < iPatLen && strPattern[iPat] == '*') {
+      // Start matching any string from the current position
+      iMatchAnyFrom = iPat;
+      iMatching = iStr;
+      iPat++;
 
-  while (true) {
-    // Discovered "any word" wildcard
-    if (*pchMask == '*') {
-      // Skip subsequent wildcards
-      while (*pchMask == '*') ++pchMask;
+    // If still matching any string
+    } else if (iMatchAnyFrom != (size_t)-1) {
+      // Continue with the pattern from the next character after matching any
+      iPat = iMatchAnyFrom + 1;
+      iMatching++;
+      iStr = iMatching;
 
-      bWildcard = true;
-
-      // Remember current characters
-      pchMaskLast = pchMask;
-      pchCurLast = pchCur;
-    }
-
-    // Reached the end of the mask
-    if (*pchMask == '\0') {
-      // No more characters in the string as well
-      if (*pchCur == '\0') return true;
-
-      // Check for any preceding "any character" wildcards
-      for (--pchMask; (pchMask > strWildcardMask) && (*pchMask == '?'); --pchMask);
-
-      // Discovered a real wildcard and not an escape sequence
-      if (*pchMask == '*' && pchMask > strWildcardMask && pchMask[-1] != '\\') {
-        return true;
-      }
-
-      // Expected a wildcard
-      if (!bWildcard) return false;
-
-      pchMask = pchMaskLast;
-
-    // End of the string
-    } else if (*pchCur == '\0') {
-      // Skip remaining wildcards
-      while (*pchMask == '*') ++pchMask;
-
-      // Reached the end of the mask
-      return (*pchMask == '\0');
-    }
-
-    // Escape character followed by a wildcard character
-    if (*pchMask == '\\' && (pchMask[1] == '*' || pchMask[1] == '?')) {
-      ++pchMask;
-      bEscapeChar = true;
-
+    // Pattern does not match
     } else {
-      bEscapeChar = false;
-    }
-
-    // Current characters don't match and it's either an "any character" wildcard or an escape sequence
-    if (!CString::CompareChars(*pchMask, *pchCur) && (*pchMask != '?' || bEscapeChar)) {
-      // Expected a wildcard
-      if (!bWildcard) return false;
-
-      // Restore characters and proceed with the string
-      pchMask = pchMaskLast;
-      pchCur = ++pchCurLast;
-
-    } else {
-      // Proceed with each string if there are any more characters
-      if (*pchMask != '\0') ++pchMask;
-      if (*pchCur != '\0') ++pchCur;
+      return false;
     }
   }
+
+  // It may only match any strings (nothing) in the remaining pattern after parsing the entire string
+  while (iPat < iPatLen && strPattern[iPat] == '*') {
+    iPat++;
+  }
+
+  // Both strings have reached the end, so they match
+  return iPat == iPatLen;
 };
 
 // Check if there's a path separator character at some position
@@ -354,7 +319,7 @@ size_t CString::RootNameLength() const {
   const size_t ctLen = length();
 
 #if !_DREAMY_UNIX
-  // Starts with a drive letter and a colon on Windows (e.g. "C:")
+  // Starts with a drive letter and a colon (e.g. "C:" - Windows drive)
   const c8 chUpper = CharToUpper((*this)[0]);
 
   if (ctLen >= 2 && chUpper >= 'A' && chUpper <= 'Z' && (*this)[1] == ':') {
@@ -362,7 +327,7 @@ size_t CString::RootNameLength() const {
   }
 #endif
 
-  // Starts with a double separator and has any directory right after (e.g. "//abc")
+  // Starts with a double separator and has any directory right after (e.g. "//abc" - network location)
   if (ctLen > 2
    && PathSeparatorAt(0) && PathSeparatorAt(1) && !PathSeparatorAt(2)
    && ::isprint(static_cast<u8>((*this)[2])))
@@ -372,6 +337,7 @@ size_t CString::RootNameLength() const {
     return (iNextSep == NULL_POS ? ctLen : iNextSep);
   }
 
+  // This may be valid on Linux as the root directory is just "/" (i.e. no preceeding "root name")
   return 0;
 };
 
