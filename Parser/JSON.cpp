@@ -3,21 +3,21 @@
 
 #include "JSON.hpp"
 
-#include "../Parser/ParserData.hpp"
+#include "../Parser/CLikeParser.hpp"
 
 namespace dreamy {
 
 namespace json {
-  
+
 // Default JSON constants created at runtime
 const Constants _constants;
 
 // Tokenize JSON file contents
 void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants) {
-  CParserData data(strJSON);
+  CLikeParser data(strJSON);
 
   while (data.CanParse()) {
-    const c8 ch = *data.pchCur;
+    const c8 ch = *data.GetCurrentChar();
 
     switch (ch) {
       // Skip spaces
@@ -31,12 +31,12 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oCo
       case '{': case '}': // Object block
       case '[': case ']': // Array block
       case '+': case '-': // Unary operators
-        AddToken(aTokens, ch, data.pos, ch);
+        AddToken(aTokens, ch, data.GetTokenPos(), 0);
         break;
 
       default: {
         // Keywords
-        if (data.ParseIdentifiers(aTokens)) {
+        if (data.ParseKeys(aTokens)) {
           // Assume it's an identifier
           CParserToken &tkn = aTokens[aTokens.size() - 1];
           const CString &strName = tkn.GetValue().ToString();
@@ -47,7 +47,7 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oCo
           if (itConst != oConstants.end()) {
             tkn = CParserToken(CParserToken::TKN_VALUE, tkn.GetTokenPos(), itConst->second);
           } else {
-            CTokenException::Throw(data.pos, "Invalid constant '%s'", strName.c_str());
+            CTokenException::Throw(data.GetTokenPos(), "Invalid constant '%s'", strName.c_str());
           }
 
         // Special tokenizers
@@ -57,7 +57,7 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oCo
             || data.ParseCharSequences(aTokens, '"', '\'');
 
           if (!bTokenized) {
-            throw CTokenException(data.pos, "Invalid character for tokenization");
+            throw CTokenException(data.GetTokenPos(), "Invalid character for tokenization");
           }
         }
       } break;
@@ -67,7 +67,7 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oCo
 
 // Build a JSON array
 void BuildArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd) {
-  CTokenList::const_iterator itClosing = std::find(itCurrent, itEnd, CParserToken(CParserToken::TKN_GROUP_CLOSE));
+  CTokenList::const_iterator itClosing = std::find(itCurrent, itEnd, CParserToken(']'));
 
   // Unclosed array
   if (itClosing == itEnd) {
@@ -78,7 +78,7 @@ void BuildArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenL
   bool bNext = false; // Search for the next array entry
 
   while (itCurrent != itClosing) {
-    const CParserToken &tkn = (*itCurrent)(bNext ? CParserToken::TKN_COMMA : CParserToken::TKN_VALUE);
+    const CParserToken &tkn = (*itCurrent)(bNext ? ',' : CParserToken::TKN_VALUE);
 
     // Add one value
     if (!bNext) {
@@ -111,10 +111,10 @@ void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::con
 
     // The next token should be a comma
     } else {
-      (*(it++))(CParserToken::TKN_COMMA);
+      (*(it++))(',');
 
       // Reached the block end right after a comma
-      if (it->GetType() == CParserToken::TKN_BLOCK_CLOSE) {
+      if (it->GetType() == '}') {
         break;
       }
     }
@@ -136,12 +136,12 @@ void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iter
 
   switch (iToken) {
     // Object with variables {}
-    case CParserToken::TKN_BLOCK_OPEN:
+    case '{':
       BuildObject(val, aTokens, ++it);
       return;
 
     // Array of values []
-    case CParserToken::TKN_GROUP_OPEN:
+    case '[':
       BuildArray(val, ++it, aTokens.end());
       return;
 
@@ -151,17 +151,16 @@ void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iter
       return;
 
     // Value beginning with a unary operator
-    case CParserToken::TKN_ADD:
-    case CParserToken::TKN_SUB: {
+    case '+': case '-': {
       switch (it->GetValue().GetType()) {
         case CVariant::VAL_INT: {
           s64 iNumber = it->GetValue().ToInt();
-          val.FromInt(iToken == CParserToken::TKN_SUB ? -iNumber : iNumber);
+          val.FromInt(iToken == '-' ? -iNumber : iNumber);
         }
 
         case CVariant::VAL_FLOAT: {
           f64 fNumber = it->GetValue().ToFloat();
-          val.FromFloat(iToken == CParserToken::TKN_SUB ? -fNumber : fNumber);
+          val.FromFloat(iToken == '-' ? -fNumber : fNumber);
         }
 
         // Not a number
@@ -178,16 +177,22 @@ void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iter
 
 // Build one key-value pair
 void BuildPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it) {
-  // Key name ("key")
-  const CParserToken &tknKey = (*(it++))(CParserToken::TKN_VALUE);
+  const CParserToken &tknKey = *(it++);
 
-  // Not a string
-  if (tknKey.GetValue().GetType() != CVariant::VAL_STRING) {
-    throw CTokenException(it->GetTokenPos(), "Expected a name string");
+  // Expect a name (e.g. "key")
+  if (tknKey.GetType() == CParserToken::TKN_VALUE) {
+    // Not a string
+    if (tknKey.GetValue().GetType() != CVariant::VAL_STRING) {
+      throw CTokenException(it->GetTokenPos(), "Expected a name string or identifier");
+    }
+
+  // Expect an identifier (e.g. key)
+  } else if (tknKey.GetType() != CParserToken::TKN_KEY) {
+    throw CTokenException(it->GetTokenPos(), "Expected a name string or identifier");
   }
 
   // Key assignment ("key" : )
-  (*(it++))(CParserToken::TKN_COLON);
+  (*(it++))(':');
 
   // Build the value and make the pair
   CHashedString hsKey(tknKey.GetValue().ToString());

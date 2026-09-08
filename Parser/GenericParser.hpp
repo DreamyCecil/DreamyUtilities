@@ -1,8 +1,8 @@
 //! This file is a part of Dreamy Utilities.
 //! Licensed under the MIT license (see LICENSE file).
 
-#ifndef _DREAMYUTILITIES_INCL_PARSERDATA_H
-#define _DREAMYUTILITIES_INCL_PARSERDATA_H
+#ifndef _DREAMYUTILITIES_INCL_GENERICPARSER_H
+#define _DREAMYUTILITIES_INCL_GENERICPARSER_H
 
 #include "../DreamyUtilitiesBase.hpp"
 
@@ -11,10 +11,10 @@
 
 namespace dreamy {
 
-// Current parser data
-class CParserData {
+// Generic parser fit for any purpose when parsing manually
+class GenericParser {
 
-public:
+protected:
   // String data
   const CString str;
 
@@ -29,8 +29,24 @@ public:
 
 public:
   // Default constructor
-  CParserData(const CString &strSet);
+  GenericParser(const CString &strSet);
 
+  // Get current character
+  inline const c8 *GetCurrentChar(void) const {
+    return pchCur;
+  };
+
+  // Get next character
+  inline const c8 *GetNextChar(void) const {
+    return pchNext;
+  };
+
+  // Get the current token position
+  inline const CTokenPos &GetTokenPos(void) const {
+    return pos;
+  };
+
+public:
   // Start from a new character
   void Start(void);
 
@@ -40,8 +56,8 @@ public:
   // Set to the current character
   void SetToCurrent(void);
 
-  // Advance character index in either direction
-  void Advance(u32 i);
+  // Advance character index forward
+  void Advance(u32 iOffset);
 
   // Parse another character, if possible (for tokenizers)
   bool CanParse(void);
@@ -55,33 +71,9 @@ public:
   // Extract a part of the string within the [begin - current character] range
   CString ExtractString(u32 iBeginOffset);
 
-// Parsing from the current character one time
-public:
-
   // Add end-of-file token at the very end
   void AddEOF(CTokenList &aTokens);
-
-  // Tokenize C/C++ styled comments
-  bool ParseComments(CTokenList &aTokens, bool bTokenize);
-
-  // Tokenize operators
-  bool ParseOperators(CTokenList &aTokens);
-
-  // Parse a string enclosed within certain characters
-  bool ParseString(CString &str, const c8 chEnclosed);
-
-  // Tokenize character sequences
-  bool ParseCharSequences(CTokenList &aTokens, const c8 chString, const c8 chCharSeq);
-
-  // Tokenize numbers
-  bool ParseNumbers(CTokenList &aTokens);
-
-  // Tokenize words
-  bool ParseIdentifiers(CTokenList &aTokens);
 };
-
-// General tokenization of a string
-void TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments = false);
 
 }; // namespace dreamy
 

@@ -341,30 +341,6 @@ size_t CString::RootNameLength() const {
   return 0;
 };
 
-u64 MultiCharLiteral(const c8 strLiteral[9]) {
-  // Empty literal
-  if (strLiteral[0] == '\0') return 0;
-
-  u8 iSize = 0;
-
-  // Count length up to 8 characters (9th one is disregarded)
-  while (++iSize < 8) {
-    if (strLiteral[iSize] == '\0') break;
-  }
-
-  // Copy characters
-  c8 str[8];
-  memcpy(&str[0], &strLiteral[0], iSize);
-
-  // Nullify last characters
-  if (iSize != 0) {
-    memset(&str[iSize], '\0', 8 - iSize);
-  }
-
-  // Return array of characters in constant order as a single integer
-  return *(u64 *)(&str[0]);
-};
-
 void StringToArgs(const c8 *str, std::vector<CString> &aArgs, int (*pIsSpace)(int)) {
   CString strCurrent = "";
   bool bString = false; // String within double quotes

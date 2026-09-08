@@ -16,8 +16,9 @@
 #include "IO/ReadWriteDevice.cpp"
 #include "IO/StringStream.cpp"
 
+#include "Parser/CLikeParser.cpp"
+#include "Parser/GenericParser.cpp"
 #include "Parser/JSON.cpp"
-#include "Parser/ParserData.cpp"
 
 #include "Types/ByteArray.cpp"
 #include "Types/String.cpp"

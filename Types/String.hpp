@@ -236,9 +236,6 @@ public:
   va_end(arg); \
 }
 
-// Convert string up to 8 characters into a 64-bit integer in constant order
-u64 MultiCharLiteral(const c8 strLiteral[9]);
-
 // Separate a string into multiple arguments (e.g. command line arguments)
 // Implemented according to the rules from Microsoft docs:
 // https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170

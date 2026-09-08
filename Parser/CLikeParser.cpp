@@ -1,73 +1,11 @@
 //! This file is a part of Dreamy Utilities.
 //! Licensed under the MIT license (see LICENSE file).
 
-#include "ParserData.hpp"
+#include "CLikeParser.hpp"
 
 namespace dreamy {
 
-CParserData::CParserData(const CString &strSet) : str(strSet), pchCur(&strSet[0]), pchNext(&strSet[1]),
-  iLineCur(0), iLineBeg(0), pos(0, 0, 0, 0)
-{
-};
-
-void CParserData::Start(void) {
-  // Starting position
-  pos.iFirst = pos.iLast;
-
-  SetToCurrent();
-
-  // Current line and character position (relative to the line)
-  SetPosition(pos.iLast);
-};
-
-bool CParserData::AtEnd(void) {
-  return pos.iLast >= (u32)str.length();
-};
-
-void CParserData::SetToCurrent(void) {
-  pchCur = &str[pos.iLast];
-  pchNext = pchCur + 1;
-};
-
-void CParserData::Advance(u32 i) {
-  pos.iLast += i;
-};
-
-bool CParserData::CanParse(void) {
-  // Already at the end
-  if (AtEnd()) return false;
-
-  // Parse a new character
-  Start();
-  Advance(1);
-
-  return true;
-};
-
-void CParserData::CountLine(void) {
-  ++iLineCur;
-  iLineBeg = pos.iLast;
-};
-
-void CParserData::SetPosition(u32 iPos) {
-  pos.FormatPos(iPos, iLineCur, iLineBeg);
-};
-
-CString CParserData::ExtractString(u32 iBeginOffset) {
-  iBeginOffset += pos.iFirst;
-  return str.substr(iBeginOffset, pos.iLast - iBeginOffset);
-};
-
-void CParserData::AddEOF(CTokenList &aTokens) {
-  const u32 iEndPos = (u32)str.length();
-
-  pos = CTokenPos(iEndPos, iEndPos, -1, -1);
-  SetPosition(pos.iLast);
-
-  AddToken(aTokens, CParserToken::TKN_END, pos);
-};
-
-bool CParserData::ParseComments(CTokenList &aTokens, bool bTokenize) {
+bool CLikeParser::ParseComments(CTokenList &aTokens, bool bTokenize) {
   if (*pchCur != '/') {
     return false;
   }
@@ -79,8 +17,7 @@ bool CParserData::ParseComments(CTokenList &aTokens, bool bTokenize) {
       while (!AtEnd()) {
         SetToCurrent();
 
-        if (*pchCur == '\r'
-          || *pchCur == '\n') {
+        if (*pchCur == '\r' || *pchCur == '\n') {
           break;
         }
 
@@ -132,117 +69,113 @@ bool CParserData::ParseComments(CTokenList &aTokens, bool bTokenize) {
   return false;
 };
 
-bool CParserData::ParseOperators(CTokenList &aTokens) {
+bool CLikeParser::ParseOperators(CTokenList &aTokens) {
   switch (*pchCur) {
     // Operators
     case '+': {
       switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("+=")); break;
-        case '+': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("++")); break;
-        default: AddToken(aTokens, CParserToken::TKN_ADD, pos, '+');
+        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // +=
+        case '+': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // ++
+        default: AddToken(aTokens, *pchCur, pos, 0); // +
       }
     } return true;
 
     case '-': {
       switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("-=")); break;
-        case '-': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("--")); break;
-        default: AddToken(aTokens, CParserToken::TKN_SUB, pos, '-');
+        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // -=
+        case '-': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // --
+        default: AddToken(aTokens, *pchCur, pos, 0); // -
       }
     } return true;
 
     case '*': {
       if (*pchNext == '=') {
         Advance(1);
-        AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("*="));
+        AddToken(aTokens, *pchCur, pos, *pchNext); // *=
       } else {
-        AddToken(aTokens, CParserToken::TKN_MUL, pos, '*');
+        AddToken(aTokens, *pchCur, pos, 0); // *
       }
     } return true;
 
     case '/': {
       if (*pchNext == '=') {
         Advance(1);
-        AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("/="));
+        AddToken(aTokens, *pchCur, pos, *pchNext); // /=
       } else {
-        AddToken(aTokens, CParserToken::TKN_DIV, pos, '/');
+        AddToken(aTokens, *pchCur, pos, 0); // /
       }
     } return true;
 
     // Bitwise operators
     case '|': {
       switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("|=")); break;
-        case '|': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("||")); break;
-        default: AddToken(aTokens, CParserToken::TKN_OR, pos, '|');
+        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // |=
+        case '|': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // ||
+        default: AddToken(aTokens, *pchCur, pos, 0); // |
       }
     } return true;
 
     case '&': {
       switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("&=")); break;
-        case '&': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("&&")); break;
-        default: AddToken(aTokens, CParserToken::TKN_AND, pos, '&');
+        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // &=
+        case '&': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // &&
+        default: AddToken(aTokens, *pchCur, pos, 0); // &
       }
     } return true;
 
     case '^': {
       switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("^=")); break;
-        case '^': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("^^")); break;
-        default: AddToken(aTokens, CParserToken::TKN_XOR, pos, '^');
+        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // ^=
+        case '^': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // ^^
+        default: AddToken(aTokens, *pchCur, pos, 0); // ^
       }
     } return true;
 
     // Other operators
     case '>': {
       switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral(">=")); break;
-        case '>': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral(">>")); break;
-        default: AddToken(aTokens, CParserToken::TKN_RIGHT, pos, '>');
+        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // >=
+        case '>': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // >>
+        default: AddToken(aTokens, *pchCur, pos, 0); // >
       }
     } return true;
 
     case '<': {
       switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("<=")); break;
-        case '<': Advance(1); AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("<<")); break;
-        default: AddToken(aTokens, CParserToken::TKN_LEFT, pos, '<');
+        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // <=
+        case '<': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // <<
+        default: AddToken(aTokens, *pchCur, pos, 0); // <
       }
     } return true;
 
     case '=': {
       if (*pchNext == '=') {
         Advance(1);
-        AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("=="));
+        AddToken(aTokens, *pchCur, pos, *pchNext); // ==
       } else {
-        AddToken(aTokens, CParserToken::TKN_EQUAL, pos, '=');
+        AddToken(aTokens, *pchCur, pos, 0); // =
       }
     } return true;
 
     case '!': {
       if (*pchNext == '=') {
         Advance(1);
-        AddToken(aTokens, CParserToken::TKN_OPERATOR, pos, MultiCharLiteral("!="));
+        AddToken(aTokens, *pchCur, pos, *pchNext); // !=
       } else {
-        AddToken(aTokens, CParserToken::TKN_EXCLAMATION, pos, '!');
+        AddToken(aTokens, *pchCur, pos, 0); // !
       }
     } return true;
 
     // Other symbols
-    case '#': AddToken(aTokens, CParserToken::TKN_HASH,     pos, '#'); return true;
-    case '$': AddToken(aTokens, CParserToken::TKN_DOLLAR,   pos, '$'); return true;
-    case '@': AddToken(aTokens, CParserToken::TKN_AT,       pos, '@'); return true;
-    case '`': AddToken(aTokens, CParserToken::TKN_GRAVE,    pos, '`'); return true;
-    case '~': AddToken(aTokens, CParserToken::TKN_TILDE,    pos, '~'); return true;
-    case '%': AddToken(aTokens, CParserToken::TKN_PERCENT,  pos, '%'); return true;
-    case '?': AddToken(aTokens, CParserToken::TKN_QUESTION, pos, '?'); return true;
+    case '#': case '$': case '@': case '`': case '~': case '%': case '?': {
+      AddToken(aTokens, *pchCur, pos, 0);
+    } return true;
   }
 
   return false;
 };
 
-bool CParserData::ParseString(CString &str, const c8 chEnclosed) {
+bool CLikeParser::ParseString(CString &str, const c8 chEnclosed) {
   if (*pchCur != chEnclosed) {
     return false;
   }
@@ -306,7 +239,7 @@ bool CParserData::ParseString(CString &str, const c8 chEnclosed) {
   return true;
 };
 
-bool CParserData::ParseCharSequences(CTokenList &aTokens, const c8 chString, const c8 chCharSeq) {
+bool CLikeParser::ParseCharSequences(CTokenList &aTokens, const c8 chString, const c8 chCharSeq) {
   CString str;
 
   // Add string
@@ -316,30 +249,20 @@ bool CParserData::ParseCharSequences(CTokenList &aTokens, const c8 chString, con
 
   // Add character sequence
   } else if (chCharSeq != '\0' && ParseString(str, chCharSeq)) {
-    size_t iSequence = str.length();
-
-    // Character sequence is too long
-    if (iSequence > 8) {
+    if (str[0] == '\0') {
+      throw CTokenException(pos, "Character sequence cannot be empty");
+    } else if (str[1] != '\0') {
       throw CTokenException(pos, "Character sequence is too long");
     }
 
-    // Copy character indices in order
-    /*s64 iCharSequence = 0;
-
-    for (size_t i = 0; i < iSequence; ++i) {
-      iCharSequence |= s64(str[iSequence - i - 1]) << (i * 8);
-    }*/
-
-    s64 iCharSequence = static_cast<s64>(MultiCharLiteral(str.c_str()));
-    AddToken(aTokens, CParserToken::TKN_VALUE, pos, iCharSequence);
-
+    AddToken(aTokens, CParserToken::TKN_VALUE, pos, static_cast<s64>(str[0]));
     return true;
   }
 
   return false;
 };
 
-bool CParserData::ParseNumbers(CTokenList &aTokens) {
+bool CLikeParser::ParseNumbers(CTokenList &aTokens) {
   if (*pchCur < '0' || *pchCur > '9') {
     return false;
   }
@@ -438,7 +361,7 @@ bool CParserData::ParseNumbers(CTokenList &aTokens) {
   return true;
 };
 
-bool CParserData::ParseIdentifiers(CTokenList &aTokens) {
+bool CLikeParser::ParseKeys(CTokenList &aTokens) {
   // Start identifier names with an underscore or letters
   if (*pchCur == '_'
   || (*pchCur >= 'a' && *pchCur <= 'z')
@@ -461,7 +384,7 @@ bool CParserData::ParseIdentifiers(CTokenList &aTokens) {
     }
 
     CString strName = ExtractString(0);
-    AddToken(aTokens, CParserToken::TKN_IDENTIFIER, pos, strName);
+    AddToken(aTokens, CParserToken::TKN_KEY, pos, strName);
 
     return true;
   }
@@ -469,11 +392,11 @@ bool CParserData::ParseIdentifiers(CTokenList &aTokens) {
   return false;
 };
 
-void TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments) {
-  CParserData data(str);
+void CLikeParser::TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments) {
+  CLikeParser data(str);
 
   while (data.CanParse()) {
-    switch (*data.pchCur) {
+    switch (*data.GetCurrentChar()) {
       // Skip spaces
       case ' ': case '\t': case '\r': break;
 
@@ -483,14 +406,14 @@ void TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComme
       default: {
         // Special tokenizers
         bool bTokenized = data.ParseComments(aTokens, bTokenizeComments)
-          || data.ParseIdentifiers(aTokens)
+          || data.ParseKeys(aTokens)
           || data.ParseNumbers(aTokens)
           || data.ParseOperators(aTokens)
           || data.ParseCharSequences(aTokens, '"', '\'');
 
         if (!bTokenized) {
           // Tokenize every other character
-          AddToken(aTokens, (u32)*data.pchCur, data.pos, *data.pchCur);
+          AddToken(aTokens, (u32)*data.GetCurrentChar(), data.GetTokenPos(), *data.GetCurrentChar());
         }
       } break;
     }

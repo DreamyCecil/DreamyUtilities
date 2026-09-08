@@ -118,72 +118,22 @@ class CParserToken {
 public:
   // Token type
   enum EType {
-    TKN_INVALID = 0xFFFFFFFF,
+    TKN_INVALID = 0xFFFFFFFF, // Invalid token
+    TKN_DEFAULT_FIRST = 0, // First default token
 
-    // Individual tokens (from 0 to 31)
-    TKN_COMMENT = 0x00, // Information
+    TKN_COMMENT = 0x00, // Information (NUL)
+    TKN_KEY     = 0x01, // Identifier or keyword (SOH)
+    TKN_VALUE   = 0x02, // Any value (STX)
+    // Reserved = 0x03
+    TKN_EOF     = 0x04, // End of file/data (EOT)
+    // Reserved = 0x05 .. 0x09
+    TKN_NEWLINE = '\n', // End of line (LF)
+    // Reserved = 0x0B .. 0xFF
 
-    TKN_IDENTIFIER = 0x01, // Unique word
-    TKN_VALUE      = 0x02, // Any value
+    TKN_DEFAULT_LAST = TKN_NEWLINE, // Last default token
+    TKN_DEFAULT_MASK = 0xFF, // Bit mask that fits all of the default token types
 
-    TKN_KEYWORD    = 0x03, // Action word
-    TKN_OPERATOR   = 0x04, // Punctuation action
-    TKN_ASSIGNMENT = 0x05, // Assignment operation
-
-    TKN_NEWLINE = 0x0A, // Newline character (same as '\n')
-
-    // Pairs
-    TKN_BLOCK_OPEN  = '{',
-    TKN_BLOCK_CLOSE = '}',
-    TKN_GROUP_OPEN  = '[',
-    TKN_GROUP_CLOSE = ']',
-    TKN_PAR_OPEN    = '(',
-    TKN_PAR_CLOSE   = ')',
-
-    // Punctuation
-    TKN_EQUAL   = '=', // Assignment or comparison
-    TKN_PERCENT = '%',
-    TKN_LEFT  = '<', // To the left
-    TKN_RIGHT = '>', // To the right
-
-    TKN_EXCLAMATION = '!', // Negation or inversion
-    TKN_QUESTION    = '?', // Condition
-
-    TKN_PERIOD = '.', // Relation
-    TKN_COMMA  = ',', // Advancement
-
-    TKN_COLON   = ':', // Relation
-    TKN_SEMICOL = ';', // End
-
-    // Arithmetics
-    TKN_ADD = '+',
-    TKN_SUB = '-',
-    TKN_MUL = '*',
-    TKN_DIV = '/',
-
-    // Bitwise operators
-    TKN_OR  = '|', // "either"
-    TKN_AND = '&', // "and or within"
-    TKN_XOR = '^', // "both or neither"
-
-    // Unusual
-    TKN_HASH   = '#',
-    TKN_DOLLAR = '$',
-    TKN_AT     = '@',
-    TKN_UNDER  = '_', // Within the identifier name
-    TKN_GRAVE  = '`',
-    TKN_TILDE  = '~', // Bitwise inversion
-
-    // Special cases
-    TKN_QUOTE       = '"',  // Usually enclosing strings
-    TKN_SINGLEQUOTE = '\'', // Usually enclosing characters
-    TKN_BACKSLASH   = '\\', // Usually within context (e.g. escape characters)
-
-    // End of file/data
-    TKN_END = 256,
-
-    // Last token for offsetting (new tokens can be verified by ignoring the first 9 bits)
-    TKN_LASTTOKEN = 512,
+    TKN_CUSTOM_FIRST = TKN_DEFAULT_MASK + 1, // First custom token
   };
 
 protected:
@@ -217,7 +167,7 @@ public:
   };
 
   // Get token position
-  inline CTokenPos &TokenPos(void) {
+  inline CTokenPos &GetTokenPos(void) {
     return _pos;
   };
 
@@ -227,7 +177,7 @@ public:
   };
 
   // Get token value
-  inline CVariant &Value(void) {
+  inline CVariant &GetValue(void) {
     return _val;
   };
 
@@ -272,8 +222,7 @@ public:
 typedef std::vector<CParserToken> CTokenList;
 
 // Add one parser token
-inline void AddToken(CTokenList &aTokens, u32 iType,
-                      const CTokenPos &pos, const CVariant &val = CVariant()) {
+inline void AddToken(CTokenList &aTokens, u32 iType, const CTokenPos &pos, const CVariant &val = CVariant()) {
   aTokens.push_back(CParserToken(iType, pos, val));
 };
 
