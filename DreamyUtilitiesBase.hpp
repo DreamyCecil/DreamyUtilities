@@ -3,6 +3,9 @@
 
 #ifndef _DREAMYUTILITIES_INCL_BASE_H
 #define _DREAMYUTILITIES_INCL_BASE_H
+#ifdef _WIN32
+  #pragma once
+#endif
 
 // Platform switch
 #if defined(_WIN32) || defined(_MSC_VER)

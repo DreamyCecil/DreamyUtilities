@@ -3,6 +3,9 @@
 
 #ifndef _DREAMYUTILITIES_INCL_MATH_ALGEBRA_H
 #define _DREAMYUTILITIES_INCL_MATH_ALGEBRA_H
+#ifdef _WIN32
+  #pragma once
+#endif
 
 #include "../DreamyUtilitiesBase.hpp"
 

@@ -3,6 +3,9 @@
 
 #ifndef _DREAMYUTILITIES_INCL_UNORDEREDMAP_H
 #define _DREAMYUTILITIES_INCL_UNORDEREDMAP_H
+#ifdef _WIN32
+  #pragma once
+#endif
 
 #include "../DreamyUtilitiesBase.hpp"
 
@@ -23,7 +26,7 @@ public:
 
   // STL styled typedefs
   typedef std::pair<const Key, Type> value_type;
-  typedef std::list<value_type> _Myt;
+  typedef std::list<value_type, Allocator> _Myt;
   typedef typename _Myt::iterator iterator;
   typedef typename _Myt::const_iterator const_iterator;
   typedef std::pair<iterator, bool> _Pairib;
