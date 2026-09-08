@@ -11,11 +11,11 @@
 namespace dreamy {
 
 // C-like parser for parsing C/C++ styled syntax
-class CLikeParser : public GenericParser {
+class CCLikeParser : public CGenericParser {
 
 public:
   // Default constructor
-  CLikeParser(const CString &strSet) : GenericParser(strSet)
+  CCLikeParser(const CString &strSet) : CGenericParser(strSet)
   {
   };
 

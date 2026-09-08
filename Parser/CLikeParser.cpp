@@ -5,7 +5,7 @@
 
 namespace dreamy {
 
-bool CLikeParser::ParseComments(CTokenList &aTokens, bool bTokenize) {
+bool CCLikeParser::ParseComments(CTokenList &aTokens, bool bTokenize) {
   if (*pchCur != '/') {
     return false;
   }
@@ -69,7 +69,7 @@ bool CLikeParser::ParseComments(CTokenList &aTokens, bool bTokenize) {
   return false;
 };
 
-bool CLikeParser::ParseOperators(CTokenList &aTokens) {
+bool CCLikeParser::ParseOperators(CTokenList &aTokens) {
   switch (*pchCur) {
     // Operators
     case '+': {
@@ -175,7 +175,7 @@ bool CLikeParser::ParseOperators(CTokenList &aTokens) {
   return false;
 };
 
-bool CLikeParser::ParseString(CString &str, const c8 chEnclosed) {
+bool CCLikeParser::ParseString(CString &str, const c8 chEnclosed) {
   if (*pchCur != chEnclosed) {
     return false;
   }
@@ -239,7 +239,7 @@ bool CLikeParser::ParseString(CString &str, const c8 chEnclosed) {
   return true;
 };
 
-bool CLikeParser::ParseCharSequences(CTokenList &aTokens, const c8 chString, const c8 chCharSeq) {
+bool CCLikeParser::ParseCharSequences(CTokenList &aTokens, const c8 chString, const c8 chCharSeq) {
   CString str;
 
   // Add string
@@ -262,7 +262,7 @@ bool CLikeParser::ParseCharSequences(CTokenList &aTokens, const c8 chString, con
   return false;
 };
 
-bool CLikeParser::ParseNumbers(CTokenList &aTokens) {
+bool CCLikeParser::ParseNumbers(CTokenList &aTokens) {
   if (*pchCur < '0' || *pchCur > '9') {
     return false;
   }
@@ -361,7 +361,7 @@ bool CLikeParser::ParseNumbers(CTokenList &aTokens) {
   return true;
 };
 
-bool CLikeParser::ParseKeys(CTokenList &aTokens) {
+bool CCLikeParser::ParseKeys(CTokenList &aTokens) {
   // Start identifier names with an underscore or letters
   if (*pchCur == '_'
   || (*pchCur >= 'a' && *pchCur <= 'z')
@@ -392,8 +392,8 @@ bool CLikeParser::ParseKeys(CTokenList &aTokens) {
   return false;
 };
 
-void CLikeParser::TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments) {
-  CLikeParser data(str);
+void CCLikeParser::TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments) {
+  CCLikeParser data(str);
 
   while (data.CanParse()) {
     switch (*data.GetCurrentChar()) {

@@ -5,12 +5,12 @@
 
 namespace dreamy {
 
-GenericParser::GenericParser(const CString &strSet) : str(strSet), pchCur(&strSet[0]), pchNext(&strSet[1]),
+CGenericParser::CGenericParser(const CString &strSet) : str(strSet), pchCur(&strSet[0]), pchNext(&strSet[1]),
   iLineCur(0), iLineBeg(0), pos(0, 0, 0, 0)
 {
 };
 
-void GenericParser::Start(void) {
+void CGenericParser::Start(void) {
   // Starting position
   pos.iFirst = pos.iLast;
 
@@ -20,20 +20,20 @@ void GenericParser::Start(void) {
   SetPosition(pos.iLast);
 };
 
-bool GenericParser::AtEnd(void) {
+bool CGenericParser::AtEnd(void) {
   return pos.iLast >= (u32)str.length();
 };
 
-void GenericParser::SetToCurrent(void) {
+void CGenericParser::SetToCurrent(void) {
   pchCur = &str[pos.iLast];
   pchNext = pchCur + 1;
 };
 
-void GenericParser::Advance(u32 iOffset) {
+void CGenericParser::Advance(u32 iOffset) {
   pos.iLast += iOffset;
 };
 
-bool GenericParser::CanParse(void) {
+bool CGenericParser::CanParse(void) {
   // Already at the end
   if (AtEnd()) return false;
 
@@ -44,21 +44,21 @@ bool GenericParser::CanParse(void) {
   return true;
 };
 
-void GenericParser::CountLine(void) {
+void CGenericParser::CountLine(void) {
   ++iLineCur;
   iLineBeg = pos.iLast;
 };
 
-void GenericParser::SetPosition(u32 iPos) {
+void CGenericParser::SetPosition(u32 iPos) {
   pos.FormatPos(iPos, iLineCur, iLineBeg);
 };
 
-CString GenericParser::ExtractString(u32 iBeginOffset) {
+CString CGenericParser::ExtractString(u32 iBeginOffset) {
   iBeginOffset += pos.iFirst;
   return str.substr(iBeginOffset, pos.iLast - iBeginOffset);
 };
 
-void GenericParser::AddEOF(CTokenList &aTokens) {
+void CGenericParser::AddEOF(CTokenList &aTokens) {
   const u32 iEndPos = (u32)str.length();
 
   pos = CTokenPos(iEndPos, iEndPos, -1, -1);

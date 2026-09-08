@@ -12,7 +12,7 @@
 namespace dreamy {
 
 // Generic parser fit for any purpose when parsing manually
-class GenericParser {
+class CGenericParser {
 
 protected:
   // String data
@@ -29,7 +29,7 @@ protected:
 
 public:
   // Default constructor
-  GenericParser(const CString &strSet);
+  CGenericParser(const CString &strSet);
 
   // Get current character
   inline const c8 *GetCurrentChar(void) const {

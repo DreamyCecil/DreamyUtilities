@@ -14,7 +14,7 @@ const Constants _constants;
 
 // Tokenize JSON file contents
 void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants) {
-  CLikeParser data(strJSON);
+  CCLikeParser data(strJSON);
 
   while (data.CanParse()) {
     const c8 ch = *data.GetCurrentChar();
