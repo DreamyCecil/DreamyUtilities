@@ -11,7 +11,7 @@
 
 #include "GenericParser.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // C-like parser for parsing C/C++ styled syntax
 class CCLikeParser : public CGenericParser {
@@ -49,6 +49,6 @@ public:
   static void TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments = false);
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

@@ -12,7 +12,7 @@
 #include "Vector.hpp"
 #include "ScalarMatrices.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 #define QUAT TQuaternion<Type>
 
@@ -313,6 +313,6 @@ public:
 typedef TQuaternion<f32> quatf; // Single precision quaternion
 typedef TQuaternion<f64> quatd; // Double precision quaternion
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

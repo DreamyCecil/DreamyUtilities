@@ -13,7 +13,7 @@
 #include "../Types/Exception.hpp"
 #include "../Types/Variant.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Token position within the string
 class CTokenPos {
@@ -229,6 +229,6 @@ inline void AddToken(CTokenList &aTokens, u32 iType, const CTokenPos &pos, const
   aTokens.push_back(CParserToken(iType, pos, val));
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

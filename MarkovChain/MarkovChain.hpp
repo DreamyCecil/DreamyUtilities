@@ -14,7 +14,7 @@
 #include "Randomizer.hpp"
 #include "../Math/Random.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Markov chain dictionary
 template<typename Type> class CMarkovChain {
@@ -198,6 +198,6 @@ public:
   };
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

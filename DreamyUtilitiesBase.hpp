@@ -7,6 +7,10 @@
   #pragma once
 #endif
 
+// Dreamy Utilities namespace
+#define NAMESPACE_DREAMY_OPEN namespace dreamy {
+#define NAMESPACE_DREAMY_CLOSE };
+
 // Platform switch
 #if defined(_WIN32) || defined(_MSC_VER)
   #define _DREAMY_UNIX 0 // Building for Windows
@@ -35,15 +39,33 @@
 #if !_DREAMY_CPP11 // Old C++
 
   // Don't notify about truncation of identifiers and decorated names
-  #pragma warning(disable: 4786 4503)
+  #if !_DREAMY_UNIX
+    #pragma warning(disable: 4786 4503)
+  #endif
 
   // Define null pointer
-  #define nullptr 0
+  #if !defined(nullptr)
+    #define nullptr 0
+  #endif
 
   #if !defined(final)
     // Non-overridable function/non-derivable class specifier
     #define final
   #endif
+
+  // Regular enums
+  #define DREAMY_ENUM(_Name, _Type) enum _Name
+
+  // Regular enums
+  #define DREAMY_ENUM_CLASS(_Name, _Type) enum _Name
+
+#else // Modern C++
+
+  // Typed enums
+  #define DREAMY_ENUM(_Name, _Type) enum _Name : _Type
+
+  // Typed enum classes
+  #define DREAMY_ENUM_CLASS(_Name, _Type) enum class _Name : _Type
 
 #endif
 
@@ -52,6 +74,7 @@
 #define _DREAMY_BIG_ENDIAN    1
 
 #if !defined(_DREAMY_BYTE_ORDER)
+  // TODO: Add automatic detection based on the architecture
   // Assume little endian by default (x86 architecture)
   #define _DREAMY_BYTE_ORDER _DREAMY_LITTLE_ENDIAN
 #endif
@@ -135,7 +158,7 @@
   #define vswprintf _vsnwprintf
 #endif
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Scalar types
 typedef unsigned char u8; // Byte
@@ -164,6 +187,6 @@ typedef char c8; // ASCII character
 // Maximum value of size_t
 #define NULL_POS static_cast<size_t>(-1)
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

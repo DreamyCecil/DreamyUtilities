@@ -13,7 +13,7 @@
 
 #include <deque>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Unique order of values (std::deque abstraction)
 template<typename Type> class CUniqueOrder {
@@ -109,7 +109,7 @@ public:
   };
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #if _DREAMY_CPP11
 namespace std {

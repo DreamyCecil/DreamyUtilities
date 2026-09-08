@@ -12,7 +12,7 @@
 #include "Angles.hpp"
 #include "ScalarVectors.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 #define NUMVEC_CLASS TAngles
 
@@ -63,6 +63,6 @@ typedef TAngles<f64, 4> ang4d; // 4D double precision angles
 
 #undef NUMVEC_CLASS
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

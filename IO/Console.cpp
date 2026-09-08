@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault) {
   CString strInput;
@@ -43,4 +43,4 @@ CString ConsoleInput(const c8 *strPrompt) {
   return strInput;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

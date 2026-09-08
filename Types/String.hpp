@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Base class alias so as not to anger the ancients (i.e. MSVC 6.0)
 typedef std::string CStringBase;
@@ -244,7 +244,7 @@ public:
 // https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
 void StringToArgs(const c8 *str, std::vector<CString> &aArgs, int (*pIsSpace)(int) = &::isspace);
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #if _DREAMY_CPP11
 namespace std {

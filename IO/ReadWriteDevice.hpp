@@ -11,7 +11,7 @@
 
 #include "../Types/ByteArray.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Abstract interface for random-access device
 class IReadWriteDevice {
@@ -110,6 +110,6 @@ public:
   };
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

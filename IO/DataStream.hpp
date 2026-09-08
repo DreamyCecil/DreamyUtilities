@@ -13,7 +13,7 @@
 #include "../Types/String.hpp"
 #include "../Types/ByteArray.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 class CDataStream {
 
@@ -166,6 +166,6 @@ public:
   virtual CDataStream &operator>>(c8 *str);
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

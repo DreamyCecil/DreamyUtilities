@@ -11,7 +11,7 @@
 
 #include "Matrix.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Rotation matrix with position
 typedef TMatrix<f32, 3, 4> mat12f;
@@ -73,6 +73,6 @@ inline void Mat12toMat3D(const ROTMAT12 &m12,
 #undef ROTMAT3D
 #undef ROTMAT12
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

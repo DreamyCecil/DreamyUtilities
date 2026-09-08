@@ -3,7 +3,7 @@
 
 #include "SimpleHasher.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 CSimpleHasher::CSimpleHasher(u64 iSetFactor) : _result(0), _factor(iSetFactor)
 {
@@ -44,4 +44,4 @@ u64 CSimpleHasher::operator()(const c8 *pData, size_t iSize) {
   return _result;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

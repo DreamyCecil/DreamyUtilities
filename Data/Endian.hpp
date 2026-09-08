@@ -9,7 +9,7 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Check if operating in little-endian at runtime
 __forceinline bool IsLittleEndian(void) {
@@ -51,6 +51,6 @@ size_t ToBig(size_t iSrc);
 
 }; // namespace endian
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

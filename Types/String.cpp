@@ -8,7 +8,7 @@
 #include <list>
 #include <algorithm>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 void CString::VPrintF(const c8 *strFormat, va_list arg) {
   // Allocate new buffer
@@ -433,4 +433,4 @@ void StringToArgs(const c8 *str, std::vector<CString> &aArgs, int (*pIsSpace)(in
   }
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

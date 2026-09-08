@@ -13,7 +13,7 @@
 
 #include <vector>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Array types
 typedef std::vector<bool>    Bits_t;    // Array of bits
@@ -22,6 +22,6 @@ typedef std::vector<s64>     Ints_t;    // Array of integers
 typedef std::vector<f64>     Numbers_t; // Array of real numbers
 typedef std::vector<CString> Strings_t; // Array of strings
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

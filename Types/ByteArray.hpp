@@ -9,7 +9,7 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Class that reperesents array of bytes
 class CByteArray {
@@ -223,6 +223,6 @@ public:
   };
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

@@ -11,7 +11,7 @@
 
 #include "../Types/String.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Ask yes-or-no question in the console and wait for user input
 bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault);
@@ -19,6 +19,6 @@ bool ConsoleYN(const c8 *strQuestion, bool bYesByDefault);
 // Get user input from the console
 CString ConsoleInput(const c8 *strPrompt);
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

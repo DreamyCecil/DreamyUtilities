@@ -4,7 +4,7 @@
 #include "BufferDevice.hpp"
 #include "../Math/Algorithm.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 CBufferDevice::CBufferDevice() : _pData(nullptr), _iPos(0)
 {
@@ -118,4 +118,4 @@ const c8 *CBufferDevice::GetBuffer(void) const {
   return _pData->ConstData();
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

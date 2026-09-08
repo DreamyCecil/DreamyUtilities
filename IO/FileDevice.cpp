@@ -5,7 +5,7 @@
 #include "Files.hpp"
 #include "../Math/Algorithm.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Default constructor
 CFileDevice::CFileDevice() : _pFile(nullptr), _iSize(NULL_POS), _strFilename("")
@@ -67,6 +67,7 @@ void CFileDevice::Close(void) {
 };
 
 bool CFileDevice::AtEnd(void) const {
+  // FIXME: This is UB if the file is written into ("wb" or "rb+")
   return Pos() >= Size();
 };
 
@@ -141,4 +142,4 @@ bool CFileDevice::Rename(const CString &strName) {
   return (iResult == 0);
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

@@ -11,7 +11,7 @@
 
 #include "../Types/ByteArray.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 class IHasher {
 
@@ -26,6 +26,6 @@ public:
   virtual CByteArray GetBytes(void) const = 0;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

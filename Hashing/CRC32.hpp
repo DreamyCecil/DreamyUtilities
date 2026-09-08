@@ -11,7 +11,7 @@
 
 #include "HasherBase.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // CRC32 hash calculator
 class CCRC32Hasher : public IHasher {
@@ -46,6 +46,6 @@ public:
   void Finish(void);
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

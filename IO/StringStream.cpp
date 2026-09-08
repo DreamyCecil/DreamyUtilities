@@ -6,7 +6,7 @@
 
 #include <cstdlib>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 CStringStream::CStringStream() : CDataStream()
 {
@@ -107,4 +107,4 @@ WRITE_VAL(f64, "%g");
 
 #undef WRITE_VAL
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

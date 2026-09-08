@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <typeinfo>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 #define ANY_TEMP template<typename Type>
 
@@ -155,6 +155,6 @@ ANY_TEMP const Type &AnyCast(const CAny &value) {
 
 #undef ANY_TEMP
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

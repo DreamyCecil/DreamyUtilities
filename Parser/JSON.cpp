@@ -5,7 +5,7 @@
 
 #include "../Parser/CLikeParser.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 namespace json {
 
@@ -231,4 +231,4 @@ void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, cons
 
 }; // namespace json
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

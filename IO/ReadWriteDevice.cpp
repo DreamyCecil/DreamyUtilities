@@ -3,7 +3,7 @@
 
 #include "ReadWriteDevice.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 IReadWriteDevice::~IReadWriteDevice() {};
 
@@ -27,4 +27,4 @@ size_t IReadWriteDevice::Write(const CByteArray &baData) {
   return Write(baData.ConstData(), baData.Size());
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

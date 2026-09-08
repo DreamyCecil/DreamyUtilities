@@ -11,7 +11,7 @@
 
 #include <cmath>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 namespace math {
 
@@ -98,6 +98,6 @@ __forceinline f64 Abs(f64 x) {
 
 }; // namespace math
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

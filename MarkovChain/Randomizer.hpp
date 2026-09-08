@@ -22,7 +22,7 @@
   #include <random>
 #endif
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 #if defined(_DREAMY_BOOST_RANDOM_DEVICE)
   // Random seed type
@@ -68,6 +68,6 @@ namespace dreamy {
   };
 #endif
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

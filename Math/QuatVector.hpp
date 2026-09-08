@@ -13,7 +13,7 @@
 #include "Vector.hpp"
 #include "Matrix12.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Placement in 3D space using quaternions for rotation
 template<typename Type> class TQuatVec {
@@ -47,6 +47,6 @@ public:
 typedef TQuatVec<f32> qvecf; // Single precision qvector
 typedef TQuatVec<f64> qvecd; // Double precision qvector
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

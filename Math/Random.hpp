@@ -11,7 +11,7 @@
 
 #include <cstdlib>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Get random number between 0 and 1 (inclusive)
 inline f64 RandRatio(void) {
@@ -24,6 +24,6 @@ inline f64 RandRange(const f64 min, const f64 max) {
   return min + static_cast<f64>(rand()) / (static_cast<f64>(RAND_MAX) / (max - min));
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

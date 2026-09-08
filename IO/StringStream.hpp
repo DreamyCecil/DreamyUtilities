@@ -11,7 +11,7 @@
 
 #include "DataStream.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Class for serializing data as readable text
 class CStringStream : public CDataStream {
@@ -109,6 +109,6 @@ public:
   #undef WRITE_VAL
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

@@ -3,7 +3,7 @@
 
 #include "ByteArray.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 CByteArray::CByteArray() : _pBuffer(nullptr), _iSize(0)
 {
@@ -400,6 +400,7 @@ CByteArray CByteArray::ToHex(const c8 chDelimiter) const {
   size_t iElement = 0;
 
   for (size_t i = 0; i < Size(); ++i) {
+    // TODO: Check whether this behaves the same with big endianness
     baResult.Data()[iElement++] = strDigits[(ConstData()[i] & 0xF0) >> 4];
     baResult.Data()[iElement++] = strDigits[ConstData()[i] & 0x0F];
 
@@ -411,4 +412,4 @@ CByteArray CByteArray::ToHex(const c8 chDelimiter) const {
   return baResult;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

@@ -12,7 +12,7 @@
 #include "ReadWriteDevice.hpp"
 #include "../Types/String.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 class CFileDevice : public IReadWriteDevice {
 
@@ -88,6 +88,6 @@ public:
   bool Rename(const CString &strName);
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

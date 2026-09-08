@@ -9,7 +9,7 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 namespace math {
 
@@ -37,6 +37,6 @@ Type1 Clamp(Type1 x, Type2 min, Type3 max) {
 
 }; // namespace math
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

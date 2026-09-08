@@ -3,7 +3,7 @@
 
 #include "CRC32.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // CRC32 table of constants
 static const u32 _aCRC32Table[256] = {
@@ -84,4 +84,4 @@ void CCRC32Hasher::Finish(void) {
   _result ^= 0xFFFFFFFF;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

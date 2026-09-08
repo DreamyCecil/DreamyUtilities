@@ -12,7 +12,7 @@
 #include <list>
 #include <stdexcept>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Own simple implementation of std::unordered_map for C++98
 template<typename Key, typename Type, typename Hash_unused = int, typename KeyEqual_unused = int,
@@ -125,6 +125,6 @@ public:
   };
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

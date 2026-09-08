@@ -15,7 +15,7 @@
   #include <direct.h>
 #endif
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 bool FileExists(const c8 *strFileName) {
   FILE *file;
@@ -87,4 +87,4 @@ bool ReadTextFileIfPossible(const CString &strFilename, CString &strText) {
   return false;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

@@ -5,7 +5,7 @@
 
 #include <iomanip>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 void DumpDataChunks(CStringStream &out, void *pData, size_t iStartOffset, size_t iChunkSize, size_t iChunks) {
   // Pure byte array starting at some offset
@@ -102,4 +102,4 @@ CString DumpField(const c8 **pField, const c8 *strPrintAs) {
   return str;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

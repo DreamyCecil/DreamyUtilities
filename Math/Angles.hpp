@@ -13,7 +13,7 @@
 #include "Vector.hpp"
 #include "Trigonometry.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Vector template and type
 #define ANGLES_TEMP template<typename Type, const u32 iDimensions>
@@ -158,6 +158,6 @@ ANGLES ANGLES::RadToDeg(void) const {
 #undef ANGLES
 #undef ANGLES_TEMP
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

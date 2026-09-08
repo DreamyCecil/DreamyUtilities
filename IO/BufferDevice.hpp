@@ -11,7 +11,7 @@
 
 #include "ReadWriteDevice.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 class CBufferDevice : public IReadWriteDevice {
 
@@ -71,6 +71,6 @@ public:
   const c8 *GetBuffer(void) const;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

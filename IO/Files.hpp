@@ -14,7 +14,7 @@
 #include <fstream>
 #include <errno.h>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Wrapper method for opening files (alternative to fopen & fopen_s)
 __forceinline error_t FileOpen(FILE **file, const c8 *strFilename, const c8 *strMode) {
@@ -72,6 +72,6 @@ CString ReadTextFile(const CString &strFilename);
 // Open and read text file into a string if possible
 bool ReadTextFileIfPossible(const CString &strFilename, CString &strText);
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

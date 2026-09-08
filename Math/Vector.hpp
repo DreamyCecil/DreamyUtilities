@@ -13,7 +13,7 @@
 
 #include <cmath>
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Vector template and type
 #define NUMVEC_TEMP template<typename Type, const u32 iDimensions>
@@ -352,6 +352,6 @@ struct VecAxes {
   #define _DREAMY_DEFAULT_AXES VecAxes(2, 0, 1)
 #endif
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

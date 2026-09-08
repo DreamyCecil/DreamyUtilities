@@ -18,7 +18,7 @@
   #include <intrin.h>
 #endif
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Invert bytes of any structure
 template<typename Type> inline
@@ -122,6 +122,6 @@ void ResizeBuffer_realloc(Type **pBuffer, size_t iNewSize) {
   *pBuffer = (Type *)realloc(*pBuffer, iNewSize * sizeof(Type));
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

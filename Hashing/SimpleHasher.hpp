@@ -11,7 +11,7 @@
 
 #include "HasherBase.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Simple 64-bit hash calculator
 class CSimpleHasher : public IHasher {
@@ -47,6 +47,6 @@ public:
   u64 operator()(const c8 *pData, size_t iSize);
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

@@ -11,7 +11,7 @@
 
 #include "Matrix.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Single precision matrices
 typedef TMatrix<f32, 2, 2> mat2f; // 2x2 single precision matrix
@@ -33,6 +33,6 @@ typedef TMatrix<f64, 3, 3> mat3d; // 3x3 double precision matrix
 #include "MatrixOps/Matrix3D.inl"
 #undef MATRIX_TYPE
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

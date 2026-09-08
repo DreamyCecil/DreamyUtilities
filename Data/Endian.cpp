@@ -4,7 +4,7 @@
 #include "Endian.hpp"
 #include "Memory.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 namespace endian {
 
@@ -196,4 +196,4 @@ size_t ToBig(size_t iSrc)
 
 }; // namespace endian
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

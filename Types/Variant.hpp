@@ -22,7 +22,7 @@
 #include <vector>
 #include "UnorderedMap.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 class CVariant; // Pre-define variant
 
@@ -353,6 +353,6 @@ Type GetNumber(const CVariant &val)
   #define VARIANT_PRINT_INDENT(Level) CString((Level), '\t')
 #endif
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

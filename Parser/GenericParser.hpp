@@ -12,7 +12,7 @@
 #include "Token.hpp"
 #include "../Types/String.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Generic parser fit for any purpose when parsing manually
 class CGenericParser {
@@ -78,6 +78,6 @@ public:
   void AddEOF(CTokenList &aTokens);
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

@@ -11,7 +11,7 @@
 
 #include "../Hashing/SimpleHasher.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // String with its hash value
 class CHashedString {
@@ -79,6 +79,6 @@ public:
   };
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

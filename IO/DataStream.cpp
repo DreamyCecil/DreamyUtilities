@@ -7,7 +7,7 @@
 #include "../Types/Exception.hpp"
 #include "../IO/BufferDevice.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 CDataStream::CDataStream() : _pDevice(nullptr),
   _eByteOrder(BO_PLATFORM), _eStatus(STATUS_OK),
@@ -404,4 +404,4 @@ CDataStream &CDataStream::operator>>(c8 *str) {
   return *this;
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

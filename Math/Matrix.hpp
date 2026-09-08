@@ -12,7 +12,7 @@
 #include "Vector.hpp"
 #include "Trigonometry.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Matrix template and type
 #define ROTMAT_TEMP template<typename Type, const u32 iRows, const u32 iCols>
@@ -210,6 +210,6 @@ bool CompareMatrices(const ROTMAT &m1, const ROTMAT &m2) {
 #undef ROTMAT
 #undef ROTMAT_TEMP
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

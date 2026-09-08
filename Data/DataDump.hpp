@@ -12,7 +12,7 @@
 #include "../Types/String.hpp"
 #include "../IO/StringStream.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Display raw data divided into multiple byte chunks
 void DumpDataChunks(CStringStream &out, void *pData, size_t iStartOffset, size_t iChunkSize, size_t iChunks);
@@ -32,6 +32,6 @@ CString DumpField(const s64 *pField, const c8 *strPrintAs = "%lld");
 // Print string
 CString DumpField(const c8 **pField, const c8 *strPrintAs = "%s");
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

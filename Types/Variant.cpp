@@ -3,7 +3,7 @@
 
 #include "Variant.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Define global method for comparing variants
 #define VARIANT_COMPARE_METHOD(TypeName) \
@@ -321,4 +321,4 @@ VARIANT_DEFINE_PRINT(PrintMat3, val, strm, opts, strUndefined) {
   PrintArray(av, strm, opts, strUndefined);
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE

@@ -11,7 +11,7 @@
 
 #include "Algebra.hpp"
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 #define MATH_TEMP template<typename Type>
 
@@ -37,6 +37,6 @@ MATH_TEMP inline Type DegToRad(Type angle) {
 
 #undef MATH_TEMP
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #endif // (Dreamy Utilities Include Guard)

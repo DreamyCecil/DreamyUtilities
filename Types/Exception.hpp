@@ -22,7 +22,7 @@
   #define PARENT_EXCEPTION
 #endif
 
-namespace dreamy {
+NAMESPACE_DREAMY_OPEN
 
 // Generic exception type for all framework exceptions
 class CException PARENT_EXCEPTION {
@@ -104,7 +104,7 @@ public:
   };
 };
 
-}; // namespace dreamy
+NAMESPACE_DREAMY_CLOSE
 
 #undef PARENT_EXCEPTION
 
