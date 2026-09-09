@@ -10,7 +10,7 @@
 
 // Transpose the matrix using another matrix
 template<> inline
-ROTMAT &ROTMAT::operator!=(const ROTMAT &mOther) {
+ROTMAT &ROTMAT::TransposeTL2BR(const ROTMAT &mOther) {
   ROTMAT &m = *this;
 
   m(0, 0) = mOther(0, 0);

@@ -12,6 +12,7 @@
 #include "Any.hpp"
 #include "Arrays.hpp"
 #include "HashedString.hpp"
+#include "../Math/Algorithm.hpp"
 
 // Extra types
 #include "../IO/StringStream.hpp"
@@ -32,6 +33,8 @@ typedef std::pair<CHashedString, CVariant>             CValPair;   // Key-value 
 
 // Structure that handles options for specific printout of variant types
 struct ValPrintOpts {
+
+private:
   // Printout type
   enum EPrintType {
     // Single line (except when they contain newlines, e.g. strings)
@@ -41,83 +44,71 @@ struct ValPrintOpts {
 
     // JSON-like blocks with automatic indentation
     // [arg1 = indentation level : s32]
+    // [arg2 = indent with spaces : bool]
+    // [arg3 = spaces per tab : s32]
     E_FORMATTED,
   } eType;
 
   s32 aiArgs[3]; // Printout arguments
 
-  ValPrintOpts(const EPrintType eSetType = E_INLINE, s32 iArg1 = 0, s32 iArg2 = 0, s32 iArg3 = 0) : eType(eSetType) {
+  __forceinline ValPrintOpts(const EPrintType eSetType = E_INLINE, s32 iArg1 = 0, s32 iArg2 = 0, s32 iArg3 = 0) : eType(eSetType) {
     aiArgs[0] = iArg1; aiArgs[1] = iArg2; aiArgs[2] = iArg3;
   };
 
-  ValPrintOpts(const ValPrintOpts &optsOther) : eType(optsOther.eType) {
-    aiArgs[0] = optsOther.aiArgs[0]; aiArgs[1] = optsOther.aiArgs[1]; aiArgs[2] = optsOther.aiArgs[2];
+public:
+  __forceinline ValPrintOpts(const ValPrintOpts &optsOther) : eType(optsOther.eType) {
+    aiArgs[0] = optsOther.aiArgs[0];
+    aiArgs[1] = optsOther.aiArgs[1];
+    aiArgs[2] = optsOther.aiArgs[2];
+  };
+
+  static __forceinline ValPrintOpts Default(void) {
+    return ValPrintOpts();
+  };
+
+// Inline printing
+public:
+
+  static __forceinline ValPrintOpts Inline(bool bCompact, bool bStringsWithoutQuotes) {
+    return ValPrintOpts(E_INLINE, bCompact, bStringsWithoutQuotes);
   };
 
   __forceinline bool IsInline(void) const { return eType == E_INLINE; };
+
+  __forceinline bool IsCompact(void) const { D_ASSERT(IsInline()); return !!aiArgs[0]; };
+  __forceinline bool IsWithoutQuotes(void) const { D_ASSERT(IsInline()); return !!aiArgs[1]; };
+
+// Formatted printing
+public:
+
+  static __forceinline ValPrintOpts Formatted(s32 iIndentationLevel, bool bIndentWithSpaces = false, s32 iSpacesPerTab = 4) {
+    return ValPrintOpts(E_FORMATTED, math::Max(iIndentationLevel, 0), bIndentWithSpaces, math::Max(iSpacesPerTab, 1));
+  };
+
   __forceinline bool IsFormatted(void) const { return eType == E_FORMATTED; };
+
+  __forceinline s32 GetIndentLevel(void) const { D_ASSERT(IsFormatted()); return aiArgs[0]; };
+  __forceinline bool IsUsingSpaces(void) const { D_ASSERT(IsFormatted()); return !!aiArgs[1]; };
+  __forceinline s32 GetSpacesPerTab(void) const { D_ASSERT(IsFormatted()); return aiArgs[2]; };
+
+  inline void AddIndentation(s32 i) {
+    D_ASSERT(IsFormatted());
+    aiArgs[0] = math::Max(aiArgs[0] + i, 0);
+  };
+
+  inline CString GetIndentation(void) const {
+    D_ASSERT(IsFormatted());
+
+    // Indent values in the formatted printout with a specific amount of spaces
+    if (IsUsingSpaces()) {
+      return CString(GetIndentLevel() * GetSpacesPerTab(), ' ');
+
+    // Indent values in the formatted printout with tabs
+    } else {
+      return CString(GetIndentLevel(), '\t');
+    }
+  };
 };
-
-// Declare method for printing a variant into a stream
-#define VARIANT_DECLARE_PRINT(FuncName) \
-  void FuncName(const CVariant &val, CStringStream &strm, const ValPrintOpts &opts, const c8 *strUndefined)
-
-// Printing method function type
-typedef VARIANT_DECLARE_PRINT((*CVariantPrintFunc));
-
-// Declare type-specific printing methods
-VARIANT_DECLARE_PRINT(PrintInvalid);
-
-VARIANT_DECLARE_PRINT(PrintBool);
-VARIANT_DECLARE_PRINT(PrintFloat);
-VARIANT_DECLARE_PRINT(PrintInt);
-VARIANT_DECLARE_PRINT(PrintString);
-
-VARIANT_DECLARE_PRINT(PrintObject);
-VARIANT_DECLARE_PRINT(PrintPtr);
-
-VARIANT_DECLARE_PRINT(PrintVec2);
-VARIANT_DECLARE_PRINT(PrintVec3);
-VARIANT_DECLARE_PRINT(PrintMat2);
-VARIANT_DECLARE_PRINT(PrintMat3);
-
-VARIANT_DECLARE_PRINT(PrintArray);
-VARIANT_DECLARE_PRINT(PrintBoolArray);
-VARIANT_DECLARE_PRINT(PrintByteArray);
-VARIANT_DECLARE_PRINT(PrintIntArray);
-VARIANT_DECLARE_PRINT(PrintFloatArray);
-VARIANT_DECLARE_PRINT(PrintStrArray);
-VARIANT_DECLARE_PRINT(PrintVec2Array);
-VARIANT_DECLARE_PRINT(PrintVec3Array);
-
-// Define methods for a full type
-#define VARIANT_TYPE_METHODS(ArgumentType, ValueType, TypeIndex, FuncIdentifier) \
-  /* Type constructor */ \
-  __forceinline CVariant(ArgumentType valSet) { From##FuncIdentifier(valSet); } \
-  /* Type assignment (method instead of 'operator=' to avoid confusion between the class and its types) */ \
-  inline void From##FuncIdentifier(ArgumentType valSet) { _type = (EType)TypeIndex; _val = valSet; _print = &Print##FuncIdentifier; } \
-  /* Type casting */ \
-  inline       ValueType &To##FuncIdentifier(void)       { return AnyCast<ValueType>(_val); } \
-  inline const ValueType &To##FuncIdentifier(void) const { return AnyCast<ValueType>(_val); }
-
-// Define methods for a pointer type
-#define VARIANT_PTR_METHODS(ValueType, TypeIndex, FuncIdentifier) \
-  /* Type constructor */ \
-  __forceinline CVariant(ValueType valSet) { From##FuncIdentifier(valSet); } \
-  /* Type assignment (method instead of 'operator=' to avoid confusion between the class and its types) */ \
-  inline void From##FuncIdentifier(ValueType valSet) { _type = (EType)TypeIndex; _val = valSet; _print = &Print##FuncIdentifier; } \
-  /* Type casting */ \
-  inline ValueType To##FuncIdentifier(void) const { return AnyCast<ValueType>(_val); }
-
-// Define a global method for converting arrays of some type into an array of variants
-#define VARIANT_CONVERT_ARRAY_METHOD(ArrayType, TypeName) \
-  inline void ToAnyArray(CValArray &aToArray, const ArrayType &aFromArray) { \
-    /* Allocate enough space */ \
-    s32 iElements = (s32)aFromArray.size(); \
-    aToArray.resize(iElements); \
-    /* Copy elements one by one */ \
-    while (--iElements >= 0) aToArray[iElements].From##TypeName(aFromArray[iElements]); \
-  }
 
 // Class that houses a value of any valid type
 class CVariant {
@@ -134,17 +125,14 @@ public:
     VAL_INT,    // 64-bit signed integer
     VAL_STRING, // ASCII string
 
-    // Special types
-    VAL_OBJ, // Object of string-variant pairs
-    VAL_PTR, // Pointer to another variant
-
     // Math types
     VAL_VEC2,
     VAL_VEC3,
     VAL_MAT2,
     VAL_MAT3,
 
-    // Array types
+    // Container types
+    VAL_OBJ,       // Object of string-variant pairs
     VAL_ARR,       // Variants
     VAL_ARR_BOOL,  // Space-efficient bits
     VAL_ARR_BYTE,  // Bytes
@@ -161,55 +149,102 @@ public:
 protected:
   EType _type; // Value type index
   CAny _val; // Actual value
-  CVariantPrintFunc _print; // Printing method associated with the type
 
 public:
   // Default constructor
-  CVariant() : _type(VAL_INVALID), _val(s64(0)), _print(&PrintInvalid)
+  CVariant() : _type(VAL_INVALID), _val(s64(0))
   {
   };
 
   // Copy constructor
-  CVariant(const CVariant &valOther) :
-    _type(valOther._type), _val(valOther._val), _print(valOther._print)
+  CVariant(const CVariant &valOther) : _type(valOther._type), _val(valOther._val)
   {
   };
 
-  // Type-specific methods
-  VARIANT_TYPE_METHODS(f64,  f64,  VAL_FLOAT, Float);
-  VARIANT_TYPE_METHODS(bool, bool, VAL_BOOL,  Bool);
-  VARIANT_TYPE_METHODS(s64,  s64,  VAL_INT,   Int);
-
-  // Different integer types
-  __forceinline CVariant(u8  i) { FromInt(i); };
-  __forceinline CVariant(s8  i) { FromInt(i); };
-  __forceinline CVariant(u16 i) { FromInt(i); };
-  __forceinline CVariant(s16 i) { FromInt(i); };
-  __forceinline CVariant(u32 i) { FromInt(i); };
-  __forceinline CVariant(s32 i) { FromInt(i); };
-  __forceinline CVariant(u64 i) { FromInt(i); };
+  // Constructors per valid type
+  __forceinline CVariant(bool b) { FromBool(b); };
+  __forceinline CVariant(f64  f) { FromFloat(f); };
+  __forceinline CVariant(u8   i) { FromInt(i); };
+  __forceinline CVariant(s8   i) { FromInt(i); };
+  __forceinline CVariant(u16  i) { FromInt(i); };
+  __forceinline CVariant(s16  i) { FromInt(i); };
+  __forceinline CVariant(u32  i) { FromInt(i); };
+  __forceinline CVariant(s32  i) { FromInt(i); };
+  __forceinline CVariant(u64  i) { FromInt(i); };
+  __forceinline CVariant(s64  i) { FromInt(i); };
   __forceinline CVariant(unsigned long i) { FromInt(i); }; // Unusual case
+  __forceinline CVariant(const CString &s) { FromString(s); };
+  __forceinline CVariant(const c8 *s) { FromString(s); };
+  __forceinline CVariant(const vec2d &v) { FromVec2(v); };
+  __forceinline CVariant(const vec3d &v) { FromVec3(v); };
+  __forceinline CVariant(const mat2d &m) { FromMat2(m); };
+  __forceinline CVariant(const mat3d &m) { FromMat3(m); };
+  __forceinline CVariant(const CValObject &o) { FromObject(o); };
+  __forceinline CVariant(const CValArray   &a) { FromArray(a); };
+  __forceinline CVariant(const Bits_t      &a) { FromBoolArray(a); };
+  __forceinline CVariant(const Bytes_t     &a) { FromByteArray(a); };
+  __forceinline CVariant(const Ints_t      &a) { FromIntArray(a); };
+  __forceinline CVariant(const Numbers_t   &a) { FromFloatArray(a); };
+  __forceinline CVariant(const Strings_t   &a) { FromStrArray(a); };
+  __forceinline CVariant(const Vec2Array_t &a) { FromVec2Array(a); };
+  __forceinline CVariant(const Vec3Array_t &a) { FromVec3Array(a); };
 
-  // Strings
-  VARIANT_TYPE_METHODS(const CString &, CString, VAL_STRING, String);
-  __forceinline CVariant(const c8 *str) { FromString(str); };
+  // Creation from valid types
+  inline void FromBool      (const bool         b) { _type = VAL_BOOL;      _val = b; };
+  inline void FromFloat     (const f64          f) { _type = VAL_FLOAT;     _val = f; };
+  inline void FromInt       (const s64          i) { _type = VAL_INT;       _val = i; };
+  inline void FromString    (const CString     &s) { _type = VAL_STRING;    _val = s; };
+  inline void FromVec2      (const vec2d       &v) { _type = VAL_VEC2;      _val = v; };
+  inline void FromVec3      (const vec3d       &v) { _type = VAL_VEC3;      _val = v; };
+  inline void FromMat2      (const mat2d       &v) { _type = VAL_MAT2;      _val = v; };
+  inline void FromMat3      (const mat3d       &v) { _type = VAL_MAT3;      _val = v; };
+  inline void FromObject    (const CValObject  &o) { _type = VAL_OBJ;       _val = o; };
+  inline void FromArray     (const CValArray   &a) { _type = VAL_ARR;       _val = a; };
+  inline void FromBoolArray (const Bits_t      &a) { _type = VAL_ARR_BOOL;  _val = a; };
+  inline void FromByteArray (const Bytes_t     &a) { _type = VAL_ARR_BYTE;  _val = a; };
+  inline void FromIntArray  (const Ints_t      &a) { _type = VAL_ARR_INT;   _val = a; };
+  inline void FromFloatArray(const Numbers_t   &a) { _type = VAL_ARR_FLOAT; _val = a; };
+  inline void FromStrArray  (const Strings_t   &a) { _type = VAL_ARR_STR;   _val = a; };
+  inline void FromVec2Array (const Vec2Array_t &a) { _type = VAL_ARR_VEC2;  _val = a; };
+  inline void FromVec3Array (const Vec3Array_t &a) { _type = VAL_ARR_VEC3;  _val = a; };
 
-  VARIANT_TYPE_METHODS(const CValObject &, CValObject, VAL_OBJ, Object);
-  VARIANT_PTR_METHODS(CVariant *, VAL_PTR, Ptr);
+  // Direct casting to values
+  inline bool         &GetBool      (void) { return AnyCast<bool>(_val); };
+  inline f64          &GetFloat     (void) { return AnyCast<f64>(_val); };
+  inline s64          &GetInt       (void) { return AnyCast<s64>(_val); };
+  inline CString      &GetString    (void) { return AnyCast<CString>(_val); };
+  inline vec2d        &GetVec2      (void) { return AnyCast<vec2d>(_val); };
+  inline vec3d        &GetVec3      (void) { return AnyCast<vec3d>(_val); };
+  inline mat2d        &GetMat2      (void) { return AnyCast<mat2d>(_val); };
+  inline mat3d        &GetMat3      (void) { return AnyCast<mat3d>(_val); };
+  inline CValObject   &GetObject    (void) { return AnyCast<CValObject>(_val); };
+  inline CValArray    &GetArray     (void) { return AnyCast<CValArray>(_val); };
+  inline Bits_t       &GetBoolArray (void) { return AnyCast<Bits_t>(_val); };
+  inline Bytes_t      &GetByteArray (void) { return AnyCast<Bytes_t>(_val); };
+  inline Ints_t       &GetIntArray  (void) { return AnyCast<Ints_t>(_val); };
+  inline Numbers_t    &GetFloatArray(void) { return AnyCast<Numbers_t>(_val); };
+  inline Strings_t    &GetStrArray  (void) { return AnyCast<Strings_t>(_val); };
+  inline Vec2Array_t  &GetVec2Array (void) { return AnyCast<Vec2Array_t>(_val); };
+  inline Vec3Array_t  &GetVec3Array (void) { return AnyCast<Vec3Array_t>(_val); };
 
-  VARIANT_TYPE_METHODS(const vec2d &, vec2d, VAL_VEC2, Vec2);
-  VARIANT_TYPE_METHODS(const vec3d &, vec3d, VAL_VEC3, Vec3);
-  VARIANT_TYPE_METHODS(const mat2d &, mat2d, VAL_MAT2, Mat2);
-  VARIANT_TYPE_METHODS(const mat3d &, mat3d, VAL_MAT3, Mat3);
-
-  VARIANT_TYPE_METHODS(const CValArray   &, CValArray,   VAL_ARR,       Array);
-  VARIANT_TYPE_METHODS(const Bits_t      &, Bits_t,      VAL_ARR_BOOL,  BoolArray);
-  VARIANT_TYPE_METHODS(const Bytes_t     &, Bytes_t,     VAL_ARR_BYTE,  ByteArray);
-  VARIANT_TYPE_METHODS(const Ints_t      &, Ints_t,      VAL_ARR_INT,   IntArray);
-  VARIANT_TYPE_METHODS(const Numbers_t   &, Numbers_t,   VAL_ARR_FLOAT, FloatArray);
-  VARIANT_TYPE_METHODS(const Strings_t   &, Strings_t,   VAL_ARR_STR,   StrArray);
-  VARIANT_TYPE_METHODS(const Vec2Array_t &, Vec2Array_t, VAL_ARR_VEC2,  Vec2Array);
-  VARIANT_TYPE_METHODS(const Vec3Array_t &, Vec3Array_t, VAL_ARR_VEC3,  Vec3Array);
+  // Casting to read-only values
+  inline       bool          ToBool      (void) const { return AnyCast<bool>(_val); };
+  inline       f64           ToFloat     (void) const { return AnyCast<f64>(_val); };
+  inline       s64           ToInt       (void) const { return AnyCast<s64>(_val); };
+  inline const CString      &ToString    (void) const { return AnyCast<CString>(_val); };
+  inline const vec2d        &ToVec2      (void) const { return AnyCast<vec2d>(_val); };
+  inline const vec3d        &ToVec3      (void) const { return AnyCast<vec3d>(_val); };
+  inline const mat2d        &ToMat2      (void) const { return AnyCast<mat2d>(_val); };
+  inline const mat3d        &ToMat3      (void) const { return AnyCast<mat3d>(_val); };
+  inline const CValObject   &ToObject    (void) const { return AnyCast<CValObject>(_val); };
+  inline const CValArray    &ToArray     (void) const { return AnyCast<CValArray>(_val); };
+  inline const Bits_t       &ToBoolArray (void) const { return AnyCast<Bits_t>(_val); };
+  inline const Bytes_t      &ToByteArray (void) const { return AnyCast<Bytes_t>(_val); };
+  inline const Ints_t       &ToIntArray  (void) const { return AnyCast<Ints_t>(_val); };
+  inline const Numbers_t    &ToFloatArray(void) const { return AnyCast<Numbers_t>(_val); };
+  inline const Strings_t    &ToStrArray  (void) const { return AnyCast<Strings_t>(_val); };
+  inline const Vec2Array_t  &ToVec2Array (void) const { return AnyCast<Vec2Array_t>(_val); };
+  inline const Vec3Array_t  &ToVec3Array (void) const { return AnyCast<Vec3Array_t>(_val); };
 
 public:
   // Get value type
@@ -223,10 +258,9 @@ public:
   };
 
   // Custom assignment
-  inline void Set(s32 iType, const CAny &valSet, CVariantPrintFunc pPrintSet) {
+  inline void Set(s32 iType, const CAny &valSet) {
     _type = (EType)iType;
     _val = valSet;
-    _print = pPrintSet;
   };
 
   // Check for a distinctive number type (float, integer or invalid)
@@ -243,9 +277,7 @@ public:
   };
 
   // Print variant value ('null' is used in place of undefined values in JSON)
-  inline void Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *strUndefined = "null") const {
-    _print(*this, strm, opts, strUndefined);
-  };
+  void Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *strUndefined = "null") const;
 
   // Compare vanilla types directly
   bool Compare(const CVariant &valOther) const;
@@ -264,19 +296,74 @@ public:
 
     _type = valOther._type;
     _val = valOther._val;
-    _print = valOther._print;
     return *this;
   };
 };
 
 // ToAnyArray() methods for converting typed arrays into variant arrays
-VARIANT_CONVERT_ARRAY_METHOD(Bits_t,      Bool);
-VARIANT_CONVERT_ARRAY_METHOD(Bytes_t,     Int);
-VARIANT_CONVERT_ARRAY_METHOD(Ints_t,      Int);
-VARIANT_CONVERT_ARRAY_METHOD(Numbers_t,   Float);
-VARIANT_CONVERT_ARRAY_METHOD(Strings_t,   String);
-VARIANT_CONVERT_ARRAY_METHOD(Vec2Array_t, Vec2);
-VARIANT_CONVERT_ARRAY_METHOD(Vec3Array_t, Vec3);
+
+inline void ToAnyArray(CValArray &aToArray, const Bits_t &aFromArray) {
+  s32 iElements = (s32)aFromArray.size();
+  aToArray.resize(iElements);
+
+  while (--iElements >= 0) {
+    aToArray[iElements].FromInt(aFromArray[iElements]);
+  }
+};
+
+inline void ToAnyArray(CValArray &aToArray, const Bytes_t &aFromArray) {
+  s32 iElements = (s32)aFromArray.size();
+  aToArray.resize(iElements);
+
+  while (--iElements >= 0) {
+    aToArray[iElements].FromBool(aFromArray[iElements]);
+  }
+};
+
+inline void ToAnyArray(CValArray &aToArray, const Ints_t &aFromArray) {
+  s32 iElements = (s32)aFromArray.size();
+  aToArray.resize(iElements);
+
+  while (--iElements >= 0) {
+    aToArray[iElements].FromInt(aFromArray[iElements]);
+  }
+};
+
+inline void ToAnyArray(CValArray &aToArray, const Numbers_t &aFromArray) {
+  s32 iElements = (s32)aFromArray.size();
+  aToArray.resize(iElements);
+
+  while (--iElements >= 0) {
+    aToArray[iElements].FromFloat(aFromArray[iElements]);
+  }
+};
+
+inline void ToAnyArray(CValArray &aToArray, const Strings_t &aFromArray) {
+  s32 iElements = (s32)aFromArray.size();
+  aToArray.resize(iElements);
+
+  while (--iElements >= 0) {
+    aToArray[iElements].FromString(aFromArray[iElements]);
+  }
+};
+
+inline void ToAnyArray(CValArray &aToArray, const Vec2Array_t &aFromArray) {
+  s32 iElements = (s32)aFromArray.size();
+  aToArray.resize(iElements);
+
+  while (--iElements >= 0) {
+    aToArray[iElements].FromVec2(aFromArray[iElements]);
+  }
+};
+
+inline void ToAnyArray(CValArray &aToArray, const Vec3Array_t &aFromArray) {
+  s32 iElements = (s32)aFromArray.size();
+  aToArray.resize(iElements);
+
+  while (--iElements >= 0) {
+    aToArray[iElements].FromVec3(aFromArray[iElements]);
+  }
+};
 
 // Retrieve value from a variant of a specific number type
 template<typename Type> inline
@@ -289,40 +376,6 @@ Type GetNumber(const CVariant &val)
     default: return static_cast<Type>(val.ToInt()); // Throw CBadAnyCastException
   }
 };
-
-// Define method for printing a variant into a stream with specific function arguments
-#define VARIANT_DEFINE_PRINT(FuncName, ArgVal, ArgStrm, ArgOpts, ArgUndefined) \
-  void FuncName(const CVariant &ArgVal, CStringStream &ArgStrm, const ValPrintOpts &ArgOpts, const c8 *ArgUndefined)
-
-// Define global method for printing out the variant
-#define VARIANT_PRINT_METHOD(TypeName) \
-  VARIANT_DEFINE_PRINT(Print##TypeName, val, strm, opts, strUndefined) { \
-    strm << val.To##TypeName(); \
-  }
-
-// Define global method for printing out the variant with extras
-#define VARIANT_PRINT_METHOD_CUSTOM(TypeName, Printout) \
-  VARIANT_DEFINE_PRINT(Print##TypeName, val, strm, opts, strUndefined) { \
-    strm << Printout; \
-  }
-
-// Define global method for printing out the type array variant
-#define VARIANT_PRINT_METHOD_ARRAY(TypeName, ArrayPrefix) \
-  VARIANT_DEFINE_PRINT(Print##TypeName, val, strm, opts, strUndefined) { \
-    /* Add array prefix and convert to array of any type */ \
-    strm << ArrayPrefix; \
-    CValArray aPrint; \
-    ToAnyArray(aPrint, val.To##TypeName()); \
-    PrintArray(aPrint, strm, opts, strUndefined); \
-  }
-
-#if defined(_DREAMY_INDENT_WITH_SPACES) && _DREAMY_INDENT_WITH_SPACES >= 0
-  // Indent values in the formatted printout with a specific amount of spaces
-  #define VARIANT_PRINT_INDENT(Level) CString((Level) * _DREAMY_INDENT_WITH_SPACES, ' ')
-#else
-  // Indent values in the formatted printout with tabs
-  #define VARIANT_PRINT_INDENT(Level) CString((Level), '\t')
-#endif
 
 NAMESPACE_DREAMY_CLOSE
 

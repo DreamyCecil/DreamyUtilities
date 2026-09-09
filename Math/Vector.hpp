@@ -147,13 +147,7 @@ public:
 
   // Check if vectors are different
   __forceinline bool operator!=(const NUMVEC &vOther) const {
-    s32 i = iDimensions;
-    while (--i >= 0) {
-      if (_values[i] != vOther[i]) {
-        return true;
-      }
-    }
-    return false;
+    return !operator==(vOther);
   };
 
 // Arithmetic operations with another vector

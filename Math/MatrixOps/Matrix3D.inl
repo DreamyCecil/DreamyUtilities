@@ -10,7 +10,7 @@
 
 // Transpose the matrix using another matrix (top-left to bottom-right mirroring)
 template<> inline
-ROTMAT &ROTMAT::operator!=(const ROTMAT &mOther) {
+ROTMAT &ROTMAT::TransposeTL2BR(const ROTMAT &mOther) {
   ROTMAT &m = *this;
 
   // Mirror by | \.. |
@@ -33,7 +33,7 @@ ROTMAT &ROTMAT::operator!=(const ROTMAT &mOther) {
 
 // Transpose the matrix using another matrix (top-right to bottom-left mirroring)
 template<> inline
-ROTMAT &ROTMAT::operator%=(const ROTMAT &mOther) {
+ROTMAT &ROTMAT::TransposeTR2BL(const ROTMAT &mOther) {
   ROTMAT &m = *this;
 
   // Mirror by | ../ |

@@ -63,12 +63,12 @@ public:
   };
 
   // Transpose the matrix (top-left to bottom-right mirroring)
-  __forceinline ROTMAT operator!(void) const {
-    return ROTMAT() != *this;
+  __forceinline ROTMAT TransposeTL2BR(void) const {
+    return ROTMAT().TransposeTL2BR(*this);
   };
 
   // Transpose the matrix using another matrix (top-left to bottom-right mirroring)
-  __forceinline ROTMAT &operator!=(const ROTMAT &mOther) {
+  __forceinline ROTMAT &TransposeTL2BR(const ROTMAT &mOther) {
     for (u32 iRow = 0; iRow < iRows; ++iRow)
     {
       for (u32 iCol = 0; iCol < iCols; ++iCol)
@@ -81,7 +81,7 @@ public:
   };
 
   // Transpose the matrix using another matrix (top-right to bottom-left mirroring)
-  __forceinline ROTMAT &operator%=(const ROTMAT &mOther) {
+  __forceinline ROTMAT &TransposeTR2BL(const ROTMAT &mOther) {
     for (u32 iRow = 0; iRow < iRows; ++iRow)
     {
       for (u32 iCol = 0; iCol < iCols; ++iCol)
@@ -128,6 +128,26 @@ public:
     }
 
     return vRow;
+  };
+
+// Comparison
+public:
+
+  // Check if matrices are the same
+  __forceinline bool operator==(const ROTMAT &mOther) const {
+    s32 i = iRows;
+    while (--i >= 0) {
+      // At least one row doesn't match
+      if (_matrix[i] != mOther[i]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Check if matrices are different
+  __forceinline bool operator!=(const ROTMAT &mOther) const {
+    return !operator==(mOther);
   };
 
 // Arithmetic operations
@@ -190,21 +210,6 @@ ROTMAT_TEMP inline
 ROTMAT &ROTMAT::operator*=(const ROTMAT &mOther) {
   (*this) = (*this) * mOther;
   return *this;
-};
-
-// Compare two matrices
-ROTMAT_TEMP
-bool CompareMatrices(const ROTMAT &m1, const ROTMAT &m2) {
-  s32 i = iRows;
-
-  while (--i >= 0) {
-    // At least one row doesn't match
-    if (m1[i] != m2[i]) {
-      return false;
-    }
-  }
-
-  return true;
 };
 
 #undef ROTMAT
