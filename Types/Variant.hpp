@@ -46,36 +46,16 @@ struct ValPrintOpts {
 
   s32 aiArgs[3]; // Printout arguments
 
-  // Default constructor
-  ValPrintOpts(const EPrintType eSetType = E_INLINE, s32 iArg1 = 0, s32 iArg2 = 0, s32 iArg3 = 0) :
-    eType(eSetType)
-  {
-    aiArgs[0] = iArg1;
-    aiArgs[1] = iArg2;
-    aiArgs[2] = iArg3;
+  ValPrintOpts(const EPrintType eSetType = E_INLINE, s32 iArg1 = 0, s32 iArg2 = 0, s32 iArg3 = 0) : eType(eSetType) {
+    aiArgs[0] = iArg1; aiArgs[1] = iArg2; aiArgs[2] = iArg3;
   };
 
-  // Copy constructor
   ValPrintOpts(const ValPrintOpts &optsOther) : eType(optsOther.eType) {
-    aiArgs[0] = optsOther.aiArgs[0];
-    aiArgs[1] = optsOther.aiArgs[1];
-    aiArgs[2] = optsOther.aiArgs[2];
+    aiArgs[0] = optsOther.aiArgs[0]; aiArgs[1] = optsOther.aiArgs[1]; aiArgs[2] = optsOther.aiArgs[2];
   };
 
-  // Get printout type
-  __forceinline EPrintType GetType(void) const {
-    return eType;
-  };
-
-  // Check if inline printout
-  __forceinline bool IsInline(void) const {
-    return GetType() == E_INLINE;
-  };
-
-  // Check if formatted printout
-  __forceinline bool IsFormatted(void) const {
-    return GetType() == E_FORMATTED;
-  };
+  __forceinline bool IsInline(void) const { return eType == E_INLINE; };
+  __forceinline bool IsFormatted(void) const { return eType == E_FORMATTED; };
 };
 
 // Declare method for printing a variant into a stream
@@ -113,7 +93,7 @@ VARIANT_DECLARE_PRINT(PrintVec3Array);
 // Define methods for a full type
 #define VARIANT_TYPE_METHODS(ArgumentType, ValueType, TypeIndex, FuncIdentifier) \
   /* Type constructor */ \
-  CVariant(ArgumentType valSet) { From##FuncIdentifier(valSet); } \
+  __forceinline CVariant(ArgumentType valSet) { From##FuncIdentifier(valSet); } \
   /* Type assignment (method instead of 'operator=' to avoid confusion between the class and its types) */ \
   inline void From##FuncIdentifier(ArgumentType valSet) { _type = (EType)TypeIndex; _val = valSet; _print = &Print##FuncIdentifier; } \
   /* Type casting */ \
@@ -123,7 +103,7 @@ VARIANT_DECLARE_PRINT(PrintVec3Array);
 // Define methods for a pointer type
 #define VARIANT_PTR_METHODS(ValueType, TypeIndex, FuncIdentifier) \
   /* Type constructor */ \
-  CVariant(ValueType valSet) { From##FuncIdentifier(valSet); } \
+  __forceinline CVariant(ValueType valSet) { From##FuncIdentifier(valSet); } \
   /* Type assignment (method instead of 'operator=' to avoid confusion between the class and its types) */ \
   inline void From##FuncIdentifier(ValueType valSet) { _type = (EType)TypeIndex; _val = valSet; _print = &Print##FuncIdentifier; } \
   /* Type casting */ \
@@ -139,8 +119,8 @@ VARIANT_DECLARE_PRINT(PrintVec3Array);
     while (--iElements >= 0) aToArray[iElements].From##TypeName(aFromArray[iElements]); \
   }
 
-// Class that houses a value of any type
-class CAbstractValue {
+// Class that houses a value of any valid type
+class CVariant {
 
 public:
   // Main value types
@@ -185,50 +165,13 @@ protected:
 
 public:
   // Default constructor
-  CAbstractValue() : _type(VAL_INVALID), _val(s64(0)), _print(&PrintInvalid)
+  CVariant() : _type(VAL_INVALID), _val(s64(0)), _print(&PrintInvalid)
   {
   };
 
   // Copy constructor
-  CAbstractValue(const CAbstractValue &valOther) :
+  CVariant(const CVariant &valOther) :
     _type(valOther._type), _val(valOther._val), _print(valOther._print)
-  {
-  };
-
-  // Get value type
-  inline EType GetType(void) const {
-    return _type;
-  };
-
-  // Get actual value
-  inline const CAny &GetValue(void) const {
-    return _val;
-  };
-
-  // Custom assignment
-  inline void Set(s32 iType, const CAny &valSet, CVariantPrintFunc pPrintSet) {
-    _type = (EType)iType;
-    _val = valSet;
-    _print = pPrintSet;
-  };
-
-  // Assignment
-  CAbstractValue &operator=(const CAbstractValue &valOther) {
-    if (&valOther == this) return *this;
-
-    _type = valOther._type;
-    _val = valOther._val;
-    _print = valOther._print;
-    return *this;
-  };
-};
-
-// Class that houses a value of any valid type
-class CVariant : public CAbstractValue {
-
-public:
-  // Default constructor
-  CVariant() : CAbstractValue()
   {
   };
 
@@ -238,18 +181,18 @@ public:
   VARIANT_TYPE_METHODS(s64,  s64,  VAL_INT,   Int);
 
   // Different integer types
-  CVariant(u8  i) { FromInt(i); };
-  CVariant(s8  i) { FromInt(i); };
-  CVariant(u16 i) { FromInt(i); };
-  CVariant(s16 i) { FromInt(i); };
-  CVariant(u32 i) { FromInt(i); };
-  CVariant(s32 i) { FromInt(i); };
-  CVariant(u64 i) { FromInt(i); };
-  CVariant(unsigned long i) { FromInt(i); }; // Unusual case
+  __forceinline CVariant(u8  i) { FromInt(i); };
+  __forceinline CVariant(s8  i) { FromInt(i); };
+  __forceinline CVariant(u16 i) { FromInt(i); };
+  __forceinline CVariant(s16 i) { FromInt(i); };
+  __forceinline CVariant(u32 i) { FromInt(i); };
+  __forceinline CVariant(s32 i) { FromInt(i); };
+  __forceinline CVariant(u64 i) { FromInt(i); };
+  __forceinline CVariant(unsigned long i) { FromInt(i); }; // Unusual case
 
   // Strings
   VARIANT_TYPE_METHODS(const CString &, CString, VAL_STRING, String);
-  CVariant(const c8 *str) { FromString(str); };
+  __forceinline CVariant(const c8 *str) { FromString(str); };
 
   VARIANT_TYPE_METHODS(const CValObject &, CValObject, VAL_OBJ, Object);
   VARIANT_PTR_METHODS(CVariant *, VAL_PTR, Ptr);
@@ -267,6 +210,24 @@ public:
   VARIANT_TYPE_METHODS(const Strings_t   &, Strings_t,   VAL_ARR_STR,   StrArray);
   VARIANT_TYPE_METHODS(const Vec2Array_t &, Vec2Array_t, VAL_ARR_VEC2,  Vec2Array);
   VARIANT_TYPE_METHODS(const Vec3Array_t &, Vec3Array_t, VAL_ARR_VEC3,  Vec3Array);
+
+public:
+  // Get value type
+  inline EType GetType(void) const {
+    return _type;
+  };
+
+  // Get actual value
+  inline const CAny &GetValue(void) const {
+    return _val;
+  };
+
+  // Custom assignment
+  inline void Set(s32 iType, const CAny &valSet, CVariantPrintFunc pPrintSet) {
+    _type = (EType)iType;
+    _val = valSet;
+    _print = pPrintSet;
+  };
 
   // Check for a distinctive number type (float, integer or invalid)
   inline EType GetNumberType(void) const {
@@ -295,6 +256,16 @@ public:
   // Difference comparison
   inline bool operator!=(const CVariant &valOther) const {
     return !operator==(valOther);
+  };
+
+  // Assignment
+  CVariant &operator=(const CVariant &valOther) {
+    if (&valOther == this) return *this;
+
+    _type = valOther._type;
+    _val = valOther._val;
+    _print = valOther._print;
+    return *this;
   };
 };
 
