@@ -27,9 +27,9 @@ NAMESPACE_DREAMY_OPEN
 
 class CVariant; // Pre-define variant
 
-typedef std::vector<CVariant>                          CValArray;  // Array of values
-typedef dreamy::unordered_map<CHashedString, CVariant> CValObject; // Variable map
-typedef std::pair<CHashedString, CVariant>             CValPair;   // Key-value pair
+typedef std::vector<CVariant>                     CArray; // Array of variants
+typedef dreamy::unordered_map<CVariant, CVariant> CDictionary; // Dictionary of key-value pairs
+typedef std::pair<CVariant, CVariant>             CPair; // Key-value pair
 
 // Structure that handles options for specific printout of variant types
 struct ValPrintOpts {
@@ -39,7 +39,6 @@ private:
   enum EPrintType {
     // Single line (except when they contain newlines, e.g. strings)
     // [arg1 = compact : bool]
-    // [arg2 = strings without quotes : bool]
     E_INLINE,
 
     // JSON-like blocks with automatic indentation
@@ -69,14 +68,13 @@ public:
 // Inline printing
 public:
 
-  static __forceinline ValPrintOpts Inline(bool bCompact, bool bStringsWithoutQuotes) {
-    return ValPrintOpts(E_INLINE, bCompact, bStringsWithoutQuotes);
+  static __forceinline ValPrintOpts Inline(bool bCompact) {
+    return ValPrintOpts(E_INLINE, bCompact);
   };
 
   __forceinline bool IsInline(void) const { return eType == E_INLINE; };
 
   __forceinline bool IsCompact(void) const { D_ASSERT(IsInline()); return !!aiArgs[0]; };
-  __forceinline bool IsWithoutQuotes(void) const { D_ASSERT(IsInline()); return !!aiArgs[1]; };
 
 // Formatted printing
 public:
@@ -132,7 +130,7 @@ public:
     VAL_MAT3,
 
     // Container types
-    VAL_OBJ,       // Object of string-variant pairs
+    VAL_DICT,      // Dictionary of variant-variant pairs
     VAL_ARR,       // Variants
     VAL_ARR_BOOL,  // Space-efficient bits
     VAL_ARR_BYTE,  // Bytes
@@ -179,8 +177,8 @@ public:
   __forceinline CVariant(const vec3d &v) { FromVec3(v); };
   __forceinline CVariant(const mat2d &m) { FromMat2(m); };
   __forceinline CVariant(const mat3d &m) { FromMat3(m); };
-  __forceinline CVariant(const CValObject &o) { FromObject(o); };
-  __forceinline CVariant(const CValArray   &a) { FromArray(a); };
+  __forceinline CVariant(const CDictionary &d) { FromDictionary(d); };
+  __forceinline CVariant(const CArray      &a) { FromArray(a); };
   __forceinline CVariant(const Bits_t      &a) { FromBoolArray(a); };
   __forceinline CVariant(const Bytes_t     &a) { FromByteArray(a); };
   __forceinline CVariant(const Ints_t      &a) { FromIntArray(a); };
@@ -198,8 +196,8 @@ public:
   inline void FromVec3      (const vec3d       &v) { _type = VAL_VEC3;      _val = v; };
   inline void FromMat2      (const mat2d       &v) { _type = VAL_MAT2;      _val = v; };
   inline void FromMat3      (const mat3d       &v) { _type = VAL_MAT3;      _val = v; };
-  inline void FromObject    (const CValObject  &o) { _type = VAL_OBJ;       _val = o; };
-  inline void FromArray     (const CValArray   &a) { _type = VAL_ARR;       _val = a; };
+  inline void FromDictionary(const CDictionary &d) { _type = VAL_DICT;      _val = d; };
+  inline void FromArray     (const CArray      &a) { _type = VAL_ARR;       _val = a; };
   inline void FromBoolArray (const Bits_t      &a) { _type = VAL_ARR_BOOL;  _val = a; };
   inline void FromByteArray (const Bytes_t     &a) { _type = VAL_ARR_BYTE;  _val = a; };
   inline void FromIntArray  (const Ints_t      &a) { _type = VAL_ARR_INT;   _val = a; };
@@ -209,42 +207,42 @@ public:
   inline void FromVec3Array (const Vec3Array_t &a) { _type = VAL_ARR_VEC3;  _val = a; };
 
   // Direct casting to values
-  inline bool         &GetBool      (void) { return AnyCast<bool>(_val); };
-  inline f64          &GetFloat     (void) { return AnyCast<f64>(_val); };
-  inline s64          &GetInt       (void) { return AnyCast<s64>(_val); };
-  inline CString      &GetString    (void) { return AnyCast<CString>(_val); };
-  inline vec2d        &GetVec2      (void) { return AnyCast<vec2d>(_val); };
-  inline vec3d        &GetVec3      (void) { return AnyCast<vec3d>(_val); };
-  inline mat2d        &GetMat2      (void) { return AnyCast<mat2d>(_val); };
-  inline mat3d        &GetMat3      (void) { return AnyCast<mat3d>(_val); };
-  inline CValObject   &GetObject    (void) { return AnyCast<CValObject>(_val); };
-  inline CValArray    &GetArray     (void) { return AnyCast<CValArray>(_val); };
-  inline Bits_t       &GetBoolArray (void) { return AnyCast<Bits_t>(_val); };
-  inline Bytes_t      &GetByteArray (void) { return AnyCast<Bytes_t>(_val); };
-  inline Ints_t       &GetIntArray  (void) { return AnyCast<Ints_t>(_val); };
-  inline Numbers_t    &GetFloatArray(void) { return AnyCast<Numbers_t>(_val); };
-  inline Strings_t    &GetStrArray  (void) { return AnyCast<Strings_t>(_val); };
-  inline Vec2Array_t  &GetVec2Array (void) { return AnyCast<Vec2Array_t>(_val); };
-  inline Vec3Array_t  &GetVec3Array (void) { return AnyCast<Vec3Array_t>(_val); };
+  inline bool        &AsBool      (void) { return AnyCast<bool>(_val); };
+  inline f64         &AsFloat     (void) { return AnyCast<f64>(_val); };
+  inline s64         &AsInt       (void) { return AnyCast<s64>(_val); };
+  inline CString     &AsString    (void) { return AnyCast<CString>(_val); };
+  inline vec2d       &AsVec2      (void) { return AnyCast<vec2d>(_val); };
+  inline vec3d       &AsVec3      (void) { return AnyCast<vec3d>(_val); };
+  inline mat2d       &AsMat2      (void) { return AnyCast<mat2d>(_val); };
+  inline mat3d       &AsMat3      (void) { return AnyCast<mat3d>(_val); };
+  inline CDictionary &AsDictionary(void) { return AnyCast<CDictionary>(_val); };
+  inline CArray      &AsArray     (void) { return AnyCast<CArray>(_val); };
+  inline Bits_t      &AsBoolArray (void) { return AnyCast<Bits_t>(_val); };
+  inline Bytes_t     &AsByteArray (void) { return AnyCast<Bytes_t>(_val); };
+  inline Ints_t      &AsIntArray  (void) { return AnyCast<Ints_t>(_val); };
+  inline Numbers_t   &AsFloatArray(void) { return AnyCast<Numbers_t>(_val); };
+  inline Strings_t   &AsStrArray  (void) { return AnyCast<Strings_t>(_val); };
+  inline Vec2Array_t &AsVec2Array (void) { return AnyCast<Vec2Array_t>(_val); };
+  inline Vec3Array_t &AsVec3Array (void) { return AnyCast<Vec3Array_t>(_val); };
 
   // Casting to read-only values
-  inline       bool          ToBool      (void) const { return AnyCast<bool>(_val); };
-  inline       f64           ToFloat     (void) const { return AnyCast<f64>(_val); };
-  inline       s64           ToInt       (void) const { return AnyCast<s64>(_val); };
-  inline const CString      &ToString    (void) const { return AnyCast<CString>(_val); };
-  inline const vec2d        &ToVec2      (void) const { return AnyCast<vec2d>(_val); };
-  inline const vec3d        &ToVec3      (void) const { return AnyCast<vec3d>(_val); };
-  inline const mat2d        &ToMat2      (void) const { return AnyCast<mat2d>(_val); };
-  inline const mat3d        &ToMat3      (void) const { return AnyCast<mat3d>(_val); };
-  inline const CValObject   &ToObject    (void) const { return AnyCast<CValObject>(_val); };
-  inline const CValArray    &ToArray     (void) const { return AnyCast<CValArray>(_val); };
-  inline const Bits_t       &ToBoolArray (void) const { return AnyCast<Bits_t>(_val); };
-  inline const Bytes_t      &ToByteArray (void) const { return AnyCast<Bytes_t>(_val); };
-  inline const Ints_t       &ToIntArray  (void) const { return AnyCast<Ints_t>(_val); };
-  inline const Numbers_t    &ToFloatArray(void) const { return AnyCast<Numbers_t>(_val); };
-  inline const Strings_t    &ToStrArray  (void) const { return AnyCast<Strings_t>(_val); };
-  inline const Vec2Array_t  &ToVec2Array (void) const { return AnyCast<Vec2Array_t>(_val); };
-  inline const Vec3Array_t  &ToVec3Array (void) const { return AnyCast<Vec3Array_t>(_val); };
+  inline       bool         AsBool      (void) const { return AnyCast<bool>(_val); };
+  inline       f64          AsFloat     (void) const { return AnyCast<f64>(_val); };
+  inline       s64          AsInt       (void) const { return AnyCast<s64>(_val); };
+  inline const CString     &AsString    (void) const { return AnyCast<CString>(_val); };
+  inline const vec2d       &AsVec2      (void) const { return AnyCast<vec2d>(_val); };
+  inline const vec3d       &AsVec3      (void) const { return AnyCast<vec3d>(_val); };
+  inline const mat2d       &AsMat2      (void) const { return AnyCast<mat2d>(_val); };
+  inline const mat3d       &AsMat3      (void) const { return AnyCast<mat3d>(_val); };
+  inline const CDictionary &AsDictionary(void) const { return AnyCast<CDictionary>(_val); };
+  inline const CArray      &AsArray     (void) const { return AnyCast<CArray>(_val); };
+  inline const Bits_t      &AsBoolArray (void) const { return AnyCast<Bits_t>(_val); };
+  inline const Bytes_t     &AsByteArray (void) const { return AnyCast<Bytes_t>(_val); };
+  inline const Ints_t      &AsIntArray  (void) const { return AnyCast<Ints_t>(_val); };
+  inline const Numbers_t   &AsFloatArray(void) const { return AnyCast<Numbers_t>(_val); };
+  inline const Strings_t   &AsStrArray  (void) const { return AnyCast<Strings_t>(_val); };
+  inline const Vec2Array_t &AsVec2Array (void) const { return AnyCast<Vec2Array_t>(_val); };
+  inline const Vec3Array_t &AsVec3Array (void) const { return AnyCast<Vec3Array_t>(_val); };
 
 public:
   // Get value type
@@ -276,8 +274,8 @@ public:
     return VAL_INVALID;
   };
 
-  // Print variant value ('null' is used in place of undefined values in JSON)
-  void Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *strUndefined = "null") const;
+  // Print variant value into a string stream
+  void Print(CStringStream &strm, const ValPrintOpts &opts = ValPrintOpts::Default()) const;
 
   // Compare vanilla types directly
   bool Compare(const CVariant &valOther) const;
@@ -302,16 +300,7 @@ public:
 
 // ToAnyArray() methods for converting typed arrays into variant arrays
 
-inline void ToAnyArray(CValArray &aToArray, const Bits_t &aFromArray) {
-  s32 iElements = (s32)aFromArray.size();
-  aToArray.resize(iElements);
-
-  while (--iElements >= 0) {
-    aToArray[iElements].FromInt(aFromArray[iElements]);
-  }
-};
-
-inline void ToAnyArray(CValArray &aToArray, const Bytes_t &aFromArray) {
+inline void ToAnyArray(CArray &aToArray, const Bits_t &aFromArray) {
   s32 iElements = (s32)aFromArray.size();
   aToArray.resize(iElements);
 
@@ -320,7 +309,7 @@ inline void ToAnyArray(CValArray &aToArray, const Bytes_t &aFromArray) {
   }
 };
 
-inline void ToAnyArray(CValArray &aToArray, const Ints_t &aFromArray) {
+inline void ToAnyArray(CArray &aToArray, const Bytes_t &aFromArray) {
   s32 iElements = (s32)aFromArray.size();
   aToArray.resize(iElements);
 
@@ -329,7 +318,16 @@ inline void ToAnyArray(CValArray &aToArray, const Ints_t &aFromArray) {
   }
 };
 
-inline void ToAnyArray(CValArray &aToArray, const Numbers_t &aFromArray) {
+inline void ToAnyArray(CArray &aToArray, const Ints_t &aFromArray) {
+  s32 iElements = (s32)aFromArray.size();
+  aToArray.resize(iElements);
+
+  while (--iElements >= 0) {
+    aToArray[iElements].FromInt(aFromArray[iElements]);
+  }
+};
+
+inline void ToAnyArray(CArray &aToArray, const Numbers_t &aFromArray) {
   s32 iElements = (s32)aFromArray.size();
   aToArray.resize(iElements);
 
@@ -338,7 +336,7 @@ inline void ToAnyArray(CValArray &aToArray, const Numbers_t &aFromArray) {
   }
 };
 
-inline void ToAnyArray(CValArray &aToArray, const Strings_t &aFromArray) {
+inline void ToAnyArray(CArray &aToArray, const Strings_t &aFromArray) {
   s32 iElements = (s32)aFromArray.size();
   aToArray.resize(iElements);
 
@@ -347,7 +345,7 @@ inline void ToAnyArray(CValArray &aToArray, const Strings_t &aFromArray) {
   }
 };
 
-inline void ToAnyArray(CValArray &aToArray, const Vec2Array_t &aFromArray) {
+inline void ToAnyArray(CArray &aToArray, const Vec2Array_t &aFromArray) {
   s32 iElements = (s32)aFromArray.size();
   aToArray.resize(iElements);
 
@@ -356,7 +354,7 @@ inline void ToAnyArray(CValArray &aToArray, const Vec2Array_t &aFromArray) {
   }
 };
 
-inline void ToAnyArray(CValArray &aToArray, const Vec3Array_t &aFromArray) {
+inline void ToAnyArray(CArray &aToArray, const Vec3Array_t &aFromArray) {
   s32 iElements = (s32)aFromArray.size();
   aToArray.resize(iElements);
 
@@ -366,14 +364,13 @@ inline void ToAnyArray(CValArray &aToArray, const Vec3Array_t &aFromArray) {
 };
 
 // Retrieve value from a variant of a specific number type
-template<typename Type> inline
-Type GetNumber(const CVariant &val)
-{
+template<typename Type>
+inline Type ToNumber(const CVariant &val) {
   switch (val.GetType()) {
-    case CVariant::VAL_BOOL: return static_cast<Type>(val.ToBool());
-    case CVariant::VAL_FLOAT: return static_cast<Type>(val.ToFloat());
-    case CVariant::VAL_INT: return static_cast<Type>(val.ToInt());
-    default: return static_cast<Type>(val.ToInt()); // Throw CBadAnyCastException
+    case CVariant::VAL_BOOL: return static_cast<Type>(val.AsBool());
+    case CVariant::VAL_FLOAT: return static_cast<Type>(val.AsFloat());
+    case CVariant::VAL_INT: return static_cast<Type>(val.AsInt());
+    default: return static_cast<Type>(val.AsInt()); // Throw CBadAnyCastException
   }
 };
 

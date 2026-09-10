@@ -18,7 +18,7 @@ namespace json {
 
 // Default JSON constants created at runtime
 struct Constants {
-  CValObject list;
+  CDictionary list;
 
   // Default constructor
   inline Constants(void) {
@@ -31,10 +31,10 @@ struct Constants {
 extern const Constants _constants;
 
 // Tokenize JSON file contents
-void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants = _constants.list);
+void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &dictConstants = _constants.list);
 
 // Build a JSON array
-void BuildArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd);
+void BuildArray(CVariant &valArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd);
 
 // Build a JSON object
 void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::const_iterator &it);
@@ -43,13 +43,13 @@ void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::con
 void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iterator &it);
 
 // Build one key-value pair
-void BuildPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it);
+void BuildPair(CPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it);
 
 // Build a tree of values from a tokenized JSON file
 void Build(CVariant &valJSON, const CTokenList &aTokens);
 
 // Parse JSON string and output it in a variant with optional token list
-void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CValObject &oConstants = _constants.list);
+void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CDictionary &dictConstants = _constants.list);
 
 }; // namespace json
 

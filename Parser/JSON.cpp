@@ -13,7 +13,7 @@ namespace json {
 const Constants _constants;
 
 // Tokenize JSON file contents
-void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oConstants) {
+void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &dictConstants) {
   CCLikeParser data(strJSON);
 
   while (data.CanParse()) {
@@ -39,15 +39,15 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oCo
         if (data.ParseKeys(aTokens)) {
           // Assume it's an identifier
           CParserToken &tkn = aTokens[aTokens.size() - 1];
-          const CString &strName = tkn.GetValue().ToString();
+          const CVariant &valIdentifier = tkn.GetValue();
 
           // Find constant in the list and retrieve its value
-          CValObject::const_iterator itConst = oConstants.find(strName);
+          CDictionary::const_iterator itConst = dictConstants.find(valIdentifier);
 
-          if (itConst != oConstants.end()) {
+          if (itConst != dictConstants.end()) {
             tkn = CParserToken(CParserToken::TKN_VALUE, tkn.GetTokenPos(), itConst->second);
           } else {
-            CTokenException::Throw(data.GetTokenPos(), "Invalid constant '%s'", strName.c_str());
+            CTokenException::Throw(data.GetTokenPos(), "Invalid constant '%s'", valIdentifier.AsString().c_str());
           }
 
         // Special tokenizers
@@ -66,7 +66,9 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CValObject &oCo
 };
 
 // Build a JSON array
-void BuildArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd) {
+void BuildArray(CVariant &valArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd) {
+  // FIXME: This may be wrong if the array has other arrays or objects inside of it!
+  //        Iterate in the loop below the same way as for the objects!
   CTokenList::const_iterator itClosing = std::find(itCurrent, itEnd, CParserToken(']'));
 
   // Unclosed array
@@ -74,7 +76,10 @@ void BuildArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenL
     throw CTokenException(itCurrent->GetTokenPos(), "Unclosed array");
   }
 
-  CValArray aValues;
+  // Create an empty array beforehand and retrieve it
+  valArray.FromArray(CArray());
+  CArray &aValues = valArray.AsArray();
+
   bool bNext = false; // Search for the next array entry
 
   while (itCurrent != itClosing) {
@@ -88,25 +93,26 @@ void BuildArray(CVariant &aArray, CTokenList::const_iterator &itCurrent, CTokenL
     bNext = !bNext;
     ++itCurrent;
   }
-
-  aArray.FromArray(aValues);
 };
 
 // Build a JSON object
 void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::const_iterator &it) {
   const CTokenList::const_iterator itStart = it;
 
-  CValObject oValues;
+  // Create an empty dictionary beforehand and retrieve it
+  valObject.FromDictionary(CDictionary());
+  CDictionary &dictValues = valObject.AsDictionary();
+
   bool bNext = false; // Search for the next array entry
 
   while (it != aTokens.end()) {
     // The next token should be a key string
     if (!bNext) {
       // Add one key-value pair
-      CValPair pair;
+      CPair pair;
       BuildPair(pair, aTokens, it);
 
-      oValues.insert(pair);
+      dictValues.insert(pair);
       ++it;
 
     // The next token should be a comma
@@ -126,8 +132,6 @@ void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::con
   if (it == aTokens.end()) {
     throw CTokenException(itStart->GetTokenPos(), "Unclosed object");
   }
-
-  valObject.FromObject(oValues);
 };
 
 // Build one value
@@ -154,12 +158,12 @@ void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iter
     case '+': case '-': {
       switch (it->GetValue().GetType()) {
         case CVariant::VAL_INT: {
-          s64 iNumber = it->GetValue().ToInt();
+          s64 iNumber = it->GetValue().AsInt();
           val.FromInt(iToken == '-' ? -iNumber : iNumber);
         }
 
         case CVariant::VAL_FLOAT: {
-          f64 fNumber = it->GetValue().ToFloat();
+          f64 fNumber = it->GetValue().AsFloat();
           val.FromFloat(iToken == '-' ? -fNumber : fNumber);
         }
 
@@ -176,7 +180,7 @@ void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iter
 };
 
 // Build one key-value pair
-void BuildPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it) {
+void BuildPair(CPair &pair, const CTokenList &aTokens, CTokenList::const_iterator &it) {
   const CParserToken &tknKey = *(it++);
 
   // Expect a name (e.g. "key")
@@ -195,11 +199,10 @@ void BuildPair(CValPair &pair, const CTokenList &aTokens, CTokenList::const_iter
   (*(it++))(':');
 
   // Build the value and make the pair
-  CHashedString hsKey(tknKey.GetValue().ToString());
   CVariant val;
   BuildValue(val, aTokens, it);
 
-  pair = std::make_pair(hsKey, val);
+  pair = std::make_pair(tknKey.GetValue(), val);
 };
 
 // Build a tree of values from a tokenized JSON file
@@ -215,7 +218,7 @@ void Build(CVariant &valJSON, const CTokenList &aTokens) {
 };
 
 // Parse JSON string and output it in a variant with optional token list
-void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CValObject &oConstants) {
+void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CDictionary &dictConstants) {
   static CTokenList aTokenList;
 
   // Supply local token list if none specified
@@ -225,7 +228,7 @@ void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, cons
   }
 
   // Tokenize JSON string and build a value out of it
-  Tokenize(*paTokens, strJSON, oConstants);
+  Tokenize(*paTokens, strJSON, dictConstants);
   Build(valJSON, *paTokens);
 };
 

@@ -5,31 +5,27 @@
 
 NAMESPACE_DREAMY_OPEN
 
-// Print variant value ('null' is used in place of undefined values in JSON)
-void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *strUndefined) const {
+// Print variant value into a string stream
+void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts) const {
   switch (GetType()) {
     case VAL_BOOL: {
-      strm << (ToBool() ? "true" : "false");
+      strm << (AsBool() ? "true" : "false");
     } break;
 
     case VAL_FLOAT: {
-      strm << ToFloat();
+      strm << AsFloat();
     } break;
 
     case VAL_INT: {
-      strm << ToInt();
+      strm << AsInt();
     } break;
 
     case VAL_STRING: {
-      if (opts.IsInline() && opts.IsWithoutQuotes()) {
-        strm << ToString();
-      } else {
-        strm << '"' << ToString() << '"';
-      }
+      strm << AsString();
     } break;
 
     case VAL_VEC2: {
-      const vec2d &v = ToVec2();
+      const vec2d &v = AsVec2();
 
       if (opts.IsInline() && opts.IsCompact()) {
         strm << '[' << v[0] << ',' << v[1] << ']';
@@ -39,7 +35,7 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *st
     } break;
 
     case VAL_VEC3: {
-      const vec3d &v = ToVec3();
+      const vec3d &v = AsVec3();
 
       if (opts.IsInline() && opts.IsCompact()) {
         strm << '[' << v[0] << ',' << v[1] << ',' << v[2] << ']';
@@ -49,7 +45,7 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *st
     } break;
 
     case VAL_MAT2: {
-      const mat2d &m = ToMat2();
+      const mat2d &m = AsMat2();
       const vec2d &v0 = m[0];
       const vec2d &v1 = m[1];
 
@@ -63,7 +59,7 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *st
     } break;
 
     case VAL_MAT3: {
-      const mat3d &m = ToMat3();
+      const mat3d &m = AsMat3();
       const vec3d &v0 = m[0];
       const vec3d &v1 = m[1];
       const vec3d &v2 = m[2];
@@ -79,16 +75,16 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *st
       }
     } break;
 
-    case VAL_OBJ: {
-      const CValObject &oObject = ToObject();
+    case VAL_DICT: {
+      const CDictionary &dict = AsDictionary();
 
       // No entries
-      if (oObject.size() == 0) {
+      if (dict.size() == 0) {
         strm << "{}";
         break;
       }
 
-      // Open the object
+      // Open the dictionary
       strm << '{';
 
       // Character to print after individual elements (newline for the formatted type)
@@ -103,45 +99,67 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *st
       strm << strNext;
 
       // Print entries in order
-      CValObject::const_iterator it;
+      CDictionary::const_iterator it;
 
-      for (it = oObject.begin(); it != oObject.end(); ++it) {
+      for (it = dict.begin(); it != dict.end(); ++it) {
         // Separate values
-        if (it != oObject.begin()) {
+        if (it != dict.begin()) {
           strm << ',';
           strm << strNext;
         }
 
         ValPrintOpts optsNext(opts);
 
+        const CVariant &valKey = it->first;
+        bool bStringKey = (valKey.GetType() == VAL_STRING);
+
         // Print key name
         if (opts.IsInline()) {
-          strm << '"' << it->first.GetString() << '"' << (opts.IsCompact() ? ":" : " : ");
+          if (bStringKey) strm << '"';
+          valKey.Print(strm);
+          if (bStringKey) strm << '"';
+
+          if (opts.IsCompact()) {
+            strm << ':';
+          } else {
+            strm << " : ";
+          }
 
         } else {
           // Indent values in the formatted printout
           optsNext.AddIndentation(1);
-          strm << optsNext.GetIndentation() << '"' << it->first.GetString() << "\" : ";
+          strm << optsNext.GetIndentation();
+
+          if (bStringKey) strm << '"';
+          valKey.Print(strm);
+          if (bStringKey) strm << '"';
+
+          strm << " : ";
         }
 
         // "key" : <value>, "key" : <value>...
-        it->second.Print(strm, optsNext, strUndefined);
+        const CVariant &valValue = it->second;
+        bool bStringValue = (valValue.GetType() == VAL_STRING);
+
+        if (bStringValue) strm << '"';
+        valValue.Print(strm, optsNext);
+        if (bStringValue) strm << '"';
       }
 
       strm << strNext;
 
-      // Original indentation before closing the object
+      // Original indentation before closing the dictionary
       if (opts.IsFormatted()) strm << opts.GetIndentation();
 
-      // Close the object
+      // Close the dictionary
       strm << '}';
     } break;
 
     case VAL_ARR: {
-      const CValArray &aArray = ToArray();
+      const CArray &a = AsArray();
 
       // No entries
-      if (aArray.size() == 0) {
+      if (a.size() == 0) {
         strm << "[]";
         break;
       }
@@ -161,11 +179,11 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *st
       strm << strNext;
 
       // Print entries in order
-      CValArray::const_iterator it;
+      CArray::const_iterator it;
 
-      for (it = aArray.begin(); it != aArray.end(); ++it) {
+      for (it = a.begin(); it != a.end(); ++it) {
         // Separate values
-        if (it != aArray.begin()) {
+        if (it != a.begin()) {
           strm << ',';
           strm << strNext;
         }
@@ -179,7 +197,11 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *st
         }
 
         // <value>, <value>...
-        it->Print(strm, optsNext, strUndefined);
+        bool bString = (it->GetType() == VAL_STRING);
+
+        if (bString) strm << '"';
+        it->Print(strm, optsNext);
+        if (bString) strm << '"';
       }
 
       strm << strNext;
@@ -192,64 +214,50 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts, const c8 *st
     } break;
 
     case VAL_ARR_BOOL: {
-      // Add array prefix and convert to array of any type
-      strm << "ab";
-      CValArray aPrint;
-      ToAnyArray(aPrint, ToBoolArray());
-      CVariant(aPrint).Print(strm, opts, strUndefined);
+      CArray aPrint;
+      ToAnyArray(aPrint, AsBoolArray());
+      CVariant(aPrint).Print(strm, opts);
     } break;
 
     case VAL_ARR_BYTE: {
-      // Add array prefix and convert to array of any type
-      strm << "ac";
-      CValArray aPrint;
-      ToAnyArray(aPrint, ToByteArray());
-      CVariant(aPrint).Print(strm, opts, strUndefined);
+      CArray aPrint;
+      ToAnyArray(aPrint, AsByteArray());
+      CVariant(aPrint).Print(strm, opts);
     } break;
 
     case VAL_ARR_INT: {
-      // Add array prefix and convert to array of any type
-      strm << "ai";
-      CValArray aPrint;
-      ToAnyArray(aPrint, ToIntArray());
-      CVariant(aPrint).Print(strm, opts, strUndefined);
+      CArray aPrint;
+      ToAnyArray(aPrint, AsIntArray());
+      CVariant(aPrint).Print(strm, opts);
     } break;
 
     case VAL_ARR_FLOAT: {
-      // Add array prefix and convert to array of any type
-      strm << "af";
-      CValArray aPrint;
-      ToAnyArray(aPrint, ToFloatArray());
-      CVariant(aPrint).Print(strm, opts, strUndefined);
+      CArray aPrint;
+      ToAnyArray(aPrint, AsFloatArray());
+      CVariant(aPrint).Print(strm, opts);
     } break;
 
     case VAL_ARR_STR: {
-      // Add array prefix and convert to array of any type
-      strm << "as";
-      CValArray aPrint;
-      ToAnyArray(aPrint, ToStrArray());
-      CVariant(aPrint).Print(strm, opts, strUndefined);
+      CArray aPrint;
+      ToAnyArray(aPrint, AsStrArray());
+      CVariant(aPrint).Print(strm, opts);
     } break;
 
     case VAL_ARR_VEC2: {
-      // Add array prefix and convert to array of any type
-      strm << "av";
-      CValArray aPrint;
-      ToAnyArray(aPrint, ToVec2Array());
-      CVariant(aPrint).Print(strm, opts, strUndefined);
+      CArray aPrint;
+      ToAnyArray(aPrint, AsVec2Array());
+      CVariant(aPrint).Print(strm, opts);
     } break;
 
     case VAL_ARR_VEC3: {
-      // Add array prefix and convert to array of any type
-      strm << "av";
-      CValArray aPrint;
-      ToAnyArray(aPrint, ToVec3Array());
-      CVariant(aPrint).Print(strm, opts, strUndefined);
+      CArray aPrint;
+      ToAnyArray(aPrint, AsVec3Array());
+      CVariant(aPrint).Print(strm, opts);
     } break;
 
     case VAL_INVALID:
     default: {
-      strm << strUndefined;
+      strm << "null";
     } break;
   }
 };
@@ -265,28 +273,25 @@ bool CVariant::Compare(const CVariant &valOther) const {
   // Compare values of the same type
   switch (eThis) {
     case VAL_INVALID:   return true;
-    case VAL_BOOL:      return ToBool()       == valOther.ToBool();
-    case VAL_FLOAT:     return ToFloat()      == valOther.ToFloat();
-    case VAL_INT:       return ToInt()        == valOther.ToInt();
-    case VAL_STRING:    return ToString()     == valOther.ToString();
-    case VAL_VEC2:      return ToVec2()       == valOther.ToVec2();
-    case VAL_VEC3:      return ToVec3()       == valOther.ToVec3();
-    case VAL_MAT2:      return ToMat2()       == valOther.ToMat2();
-    case VAL_MAT3:      return ToMat3()       == valOther.ToMat3();
-    case VAL_OBJ:       return ToObject()     == valOther.ToObject();
-    case VAL_ARR:       return ToArray()      == valOther.ToArray();
-    case VAL_ARR_BOOL:  return ToBoolArray()  == valOther.ToBoolArray();
-    case VAL_ARR_BYTE:  return ToByteArray()  == valOther.ToByteArray();
-    case VAL_ARR_INT:   return ToIntArray()   == valOther.ToIntArray();
-    case VAL_ARR_FLOAT: return ToFloatArray() == valOther.ToFloatArray();
-    case VAL_ARR_STR:   return ToStrArray()   == valOther.ToStrArray();
-    case VAL_ARR_VEC2:  return ToVec2Array()  == valOther.ToVec2Array();
-    case VAL_ARR_VEC3:  return ToVec3Array()  == valOther.ToVec3Array();
-    default: break;
+    case VAL_BOOL:      return AsBool()       == valOther.AsBool();
+    case VAL_FLOAT:     return AsFloat()      == valOther.AsFloat();
+    case VAL_INT:       return AsInt()        == valOther.AsInt();
+    case VAL_STRING:    return AsString()     == valOther.AsString();
+    case VAL_VEC2:      return AsVec2()       == valOther.AsVec2();
+    case VAL_VEC3:      return AsVec3()       == valOther.AsVec3();
+    case VAL_MAT2:      return AsMat2()       == valOther.AsMat2();
+    case VAL_MAT3:      return AsMat3()       == valOther.AsMat3();
+    case VAL_DICT:      return AsDictionary() == valOther.AsDictionary();
+    case VAL_ARR:       return AsArray()      == valOther.AsArray();
+    case VAL_ARR_BOOL:  return AsBoolArray()  == valOther.AsBoolArray();
+    case VAL_ARR_BYTE:  return AsByteArray()  == valOther.AsByteArray();
+    case VAL_ARR_INT:   return AsIntArray()   == valOther.AsIntArray();
+    case VAL_ARR_FLOAT: return AsFloatArray() == valOther.AsFloatArray();
+    case VAL_ARR_STR:   return AsStrArray()   == valOther.AsStrArray();
+    case VAL_ARR_VEC2:  return AsVec2Array()  == valOther.AsVec2Array();
+    case VAL_ARR_VEC3:  return AsVec3Array()  == valOther.AsVec3Array();
+    default: return false; // Invalid comparison
   }
-
-  // Invalid comparison
-  return false;
 };
 
 // Comparison
@@ -298,11 +303,11 @@ bool CVariant::operator==(const CVariant &valOther) const {
   if (eThis != VAL_INVALID && eOther != VAL_INVALID) {
     // Prioritize real numbers
     if (eThis == VAL_FLOAT || eOther == VAL_FLOAT) {
-      return GetNumber<f64>(*this) == GetNumber<f64>(valOther);
+      return ToNumber<f64>(*this) == ToNumber<f64>(valOther);
     }
 
     // Integer types
-    return GetNumber<s64>(*this) == GetNumber<s64>(valOther);
+    return ToNumber<s64>(*this) == ToNumber<s64>(valOther);
   }
 
   // Compare values of the same main type
