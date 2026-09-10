@@ -20,8 +20,8 @@ inline void Mat2DFromAngle(ROTMAT &m, const MATRIX_TYPE angle) {
 };
 
 // Multiply by another matrix
-template<> inline
-ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
+template<>
+inline ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
   ROTMAT mResult;
 
   mResult(0, 0) = (*this)(0, 0) * mOther(0, 0) + (*this)(0, 1) * mOther(1, 0);

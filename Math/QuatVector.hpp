@@ -16,7 +16,8 @@
 NAMESPACE_DREAMY_OPEN
 
 // Placement in 3D space using quaternions for rotation
-template<typename Type> class TQuatVec {
+template<typename Type>
+class TQuatVec {
 
 public:
   typedef Type T; // Template type

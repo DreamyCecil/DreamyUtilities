@@ -6,8 +6,8 @@
 #include "OpsDefine.inl"
 
 // Convert values from degrees to radians
-template<> inline
-NUMVEC NUMVEC::DegToRad(void) const {
+template<>
+inline NUMVEC NUMVEC::DegToRad(void) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, =, _values);
   return v;
@@ -20,8 +20,8 @@ NUMVEC NUMVEC::DegToRad(void) const {
 #include "OpsDefine.inl"
 
 // Convert values from radians to degrees
-template<> inline
-NUMVEC NUMVEC::RadToDeg(void) const {
+template<>
+inline NUMVEC NUMVEC::RadToDeg(void) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, =, _values);
   return v;

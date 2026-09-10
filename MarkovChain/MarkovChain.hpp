@@ -17,7 +17,8 @@
 NAMESPACE_DREAMY_OPEN
 
 // Markov chain dictionary
-template<typename Type> class CMarkovChain {
+template<typename Type>
+class CMarkovChain {
 
 public:
   typedef Type T; // Template type

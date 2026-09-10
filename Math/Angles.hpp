@@ -15,12 +15,11 @@
 
 NAMESPACE_DREAMY_OPEN
 
-// Vector template and type
-#define ANGLES_TEMP template<typename Type, const u32 iDimensions>
+// Vector type
 #define ANGLES TAngles<Type, iDimensions>
 
 // Fixed array of rotation angles
-ANGLES_TEMP
+template<typename Type, const u32 iDimensions>
 class TAngles : public TVector<Type, iDimensions> {
 
 public:
@@ -132,8 +131,8 @@ public:
 };
 
 // Convert values from degrees to radians
-ANGLES_TEMP inline
-ANGLES ANGLES::DegToRad(void) const {
+template<typename Type, const u32 iDimensions>
+inline ANGLES ANGLES::DegToRad(void) const {
   ANGLES v(*this);
 
   s32 i = iDimensions;
@@ -144,8 +143,8 @@ ANGLES ANGLES::DegToRad(void) const {
 };
 
 // Convert values from radians to degrees
-ANGLES_TEMP inline
-ANGLES ANGLES::RadToDeg(void) const {
+template<typename Type, const u32 iDimensions>
+inline ANGLES ANGLES::RadToDeg(void) const {
   ANGLES v(*this);
 
   s32 i = iDimensions;
@@ -156,7 +155,6 @@ ANGLES ANGLES::RadToDeg(void) const {
 };
 
 #undef ANGLES
-#undef ANGLES_TEMP
 
 NAMESPACE_DREAMY_CLOSE
 

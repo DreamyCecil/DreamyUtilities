@@ -14,8 +14,7 @@
 
 NAMESPACE_DREAMY_OPEN
 
-// Matrix template and type
-#define ROTMAT_TEMP template<typename Type, const u32 iRows, const u32 iCols>
+// Matrix type
 #define ROTMAT TMatrix<Type, iRows, iCols>
 
 // Set all dimensions in the matrix to a certain value
@@ -30,7 +29,8 @@ NAMESPACE_DREAMY_OPEN
   while (--i >= 0) _matrix[i % iRows][i / iRows] = OtherMatrix[i % iRows][i / iRows]; \
 }
 
-ROTMAT_TEMP class TMatrix {
+template<typename Type, const u32 iRows, const u32 iCols>
+class TMatrix {
 
 public:
   typedef Type T; // Template type
@@ -188,8 +188,8 @@ public:
 };
 
 // Multiply by another matrix
-ROTMAT_TEMP inline
-ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
+template<typename Type, const u32 iRows, const u32 iCols>
+inline ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
   ROTMAT mResult;
 
   for (u32 iRow = 0; iRow < iRows; ++iRow) {
@@ -206,14 +206,13 @@ ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
 };
 
 // Multiply by another matrix
-ROTMAT_TEMP inline
-ROTMAT &ROTMAT::operator*=(const ROTMAT &mOther) {
+template<typename Type, const u32 iRows, const u32 iCols>
+inline ROTMAT &ROTMAT::operator*=(const ROTMAT &mOther) {
   (*this) = (*this) * mOther;
   return *this;
 };
 
 #undef ROTMAT
-#undef ROTMAT_TEMP
 
 NAMESPACE_DREAMY_CLOSE
 

@@ -9,8 +9,8 @@
 #define ROTMAT TMatrix<MATRIX_TYPE, 3, 4>
 
 // Transpose the matrix using another matrix
-template<> inline
-ROTMAT &ROTMAT::TransposeTL2BR(const ROTMAT &mOther) {
+template<>
+inline ROTMAT &ROTMAT::TransposeTL2BR(const ROTMAT &mOther) {
   ROTMAT &m = *this;
 
   m(0, 0) = mOther(0, 0);
@@ -35,8 +35,8 @@ ROTMAT &ROTMAT::TransposeTL2BR(const ROTMAT &mOther) {
 };
 
 // Multiply by another matrix
-template<> inline
-ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
+template<>
+inline ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
   const ROTMAT &m = *this;
   ROTMAT mResult;
 

@@ -9,8 +9,8 @@
 #define ROTMAT TMatrix<MATRIX_TYPE, 3, 3>
 
 // Transpose the matrix using another matrix (top-left to bottom-right mirroring)
-template<> inline
-ROTMAT &ROTMAT::TransposeTL2BR(const ROTMAT &mOther) {
+template<>
+inline ROTMAT &ROTMAT::TransposeTL2BR(const ROTMAT &mOther) {
   ROTMAT &m = *this;
 
   // Mirror by | \.. |
@@ -32,8 +32,8 @@ ROTMAT &ROTMAT::TransposeTL2BR(const ROTMAT &mOther) {
 };
 
 // Transpose the matrix using another matrix (top-right to bottom-left mirroring)
-template<> inline
-ROTMAT &ROTMAT::TransposeTR2BL(const ROTMAT &mOther) {
+template<>
+inline ROTMAT &ROTMAT::TransposeTR2BL(const ROTMAT &mOther) {
   ROTMAT &m = *this;
 
   // Mirror by | ../ |
@@ -55,8 +55,8 @@ ROTMAT &ROTMAT::TransposeTR2BL(const ROTMAT &mOther) {
 };
 
 // Multiply by another matrix
-template<> inline
-ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
+template<>
+inline ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
   ROTMAT mResult;
 
   mResult(0, 0) = (*this)(0, 0) * mOther(0, 0) + (*this)(0, 1) * mOther(1, 0) + (*this)(0, 2) * mOther(2, 0);

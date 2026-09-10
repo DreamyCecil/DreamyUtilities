@@ -15,8 +15,7 @@
 
 NAMESPACE_DREAMY_OPEN
 
-// Vector template and type
-#define NUMVEC_TEMP template<typename Type, const u32 iDimensions>
+// Vector type
 #define NUMVEC TVector<Type, iDimensions>
 
 // Set all dimensions in the vector to a certain value
@@ -26,7 +25,8 @@ NAMESPACE_DREAMY_OPEN
 }
 
 // Fixed array of a certain number type
-NUMVEC_TEMP class TVector {
+template<typename Type, const u32 iDimensions>
+class TVector {
 
 public:
   typedef Type T; // Template type
@@ -188,8 +188,8 @@ public:
 };
 
 // Add another vector
-NUMVEC_TEMP inline
-NUMVEC NUMVEC::operator+(const NUMVEC &vOther) const {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC NUMVEC::operator+(const NUMVEC &vOther) const {
   NUMVEC v(*this);
 
   s32 i = iDimensions;
@@ -199,15 +199,15 @@ NUMVEC NUMVEC::operator+(const NUMVEC &vOther) const {
   return v;
 };
 
-NUMVEC_TEMP inline
-NUMVEC &NUMVEC::operator+=(const NUMVEC &vOther) {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC &NUMVEC::operator+=(const NUMVEC &vOther) {
   (*this) = (*this) + vOther;
   return *this;
 };
 
 // Subtract another vector
-NUMVEC_TEMP inline
-NUMVEC NUMVEC::operator-(const NUMVEC &vOther) const {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC NUMVEC::operator-(const NUMVEC &vOther) const {
   NUMVEC v(*this);
 
   s32 i = iDimensions;
@@ -217,15 +217,15 @@ NUMVEC NUMVEC::operator-(const NUMVEC &vOther) const {
   return v;
 };
 
-NUMVEC_TEMP inline
-NUMVEC &NUMVEC::operator-=(const NUMVEC &vOther) {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC &NUMVEC::operator-=(const NUMVEC &vOther) {
   (*this) = (*this) - vOther;
   return *this;
 };
 
 // Multiply by another vector
-NUMVEC_TEMP inline
-NUMVEC NUMVEC::operator*(const NUMVEC &vOther) const {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC NUMVEC::operator*(const NUMVEC &vOther) const {
   NUMVEC v(*this);
 
   s32 i = iDimensions;
@@ -235,15 +235,15 @@ NUMVEC NUMVEC::operator*(const NUMVEC &vOther) const {
   return v;
 };
 
-NUMVEC_TEMP inline
-NUMVEC &NUMVEC::operator*=(const NUMVEC &vOther) {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC &NUMVEC::operator*=(const NUMVEC &vOther) {
   (*this) = (*this) * vOther;
   return *this;
 };
 
 // Divide by another vector
-NUMVEC_TEMP inline
-NUMVEC NUMVEC::operator/(const NUMVEC &vOther) const {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC NUMVEC::operator/(const NUMVEC &vOther) const {
   NUMVEC v(*this);
 
   s32 i = iDimensions;
@@ -253,15 +253,15 @@ NUMVEC NUMVEC::operator/(const NUMVEC &vOther) const {
   return v;
 };
 
-NUMVEC_TEMP inline
-NUMVEC &NUMVEC::operator/=(const NUMVEC &vOther) {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC &NUMVEC::operator/=(const NUMVEC &vOther) {
   (*this) = (*this) / vOther;
   return *this;
 };
 
 // Negate the vector
-NUMVEC_TEMP inline
-NUMVEC NUMVEC::operator-(void) const {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC NUMVEC::operator-(void) const {
   NUMVEC v(*this);
 
   s32 i = iDimensions;
@@ -272,8 +272,8 @@ NUMVEC NUMVEC::operator-(void) const {
 };
 
 // Dot product between two vectors
-NUMVEC_TEMP inline
-Type NUMVEC::operator%(const NUMVEC &vOther) const {
+template<typename Type, const u32 iDimensions>
+inline Type NUMVEC::operator%(const NUMVEC &vOther) const {
   Type product = 0;
 
   s32 i = iDimensions;
@@ -285,8 +285,8 @@ Type NUMVEC::operator%(const NUMVEC &vOther) const {
 };
 
 // Multiply vector by a factor
-NUMVEC_TEMP inline
-NUMVEC NUMVEC::operator*(const Type factor) const {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC NUMVEC::operator*(const Type factor) const {
   NUMVEC v(*this);
 
   s32 i = iDimensions;
@@ -296,15 +296,15 @@ NUMVEC NUMVEC::operator*(const Type factor) const {
   return v;
 };
 
-NUMVEC_TEMP inline
-NUMVEC &NUMVEC::operator*=(const Type factor) {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC &NUMVEC::operator*=(const Type factor) {
   (*this) = (*this) * factor;
   return *this;
 };
 
 // Divide vector by a factor
-NUMVEC_TEMP inline
-NUMVEC NUMVEC::operator/(const Type factor) const {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC NUMVEC::operator/(const Type factor) const {
   NUMVEC v(*this);
 
   s32 i = iDimensions;
@@ -314,14 +314,13 @@ NUMVEC NUMVEC::operator/(const Type factor) const {
   return v;
 };
 
-NUMVEC_TEMP inline
-NUMVEC &NUMVEC::operator/=(const Type factor) {
+template<typename Type, const u32 iDimensions>
+inline NUMVEC &NUMVEC::operator/=(const Type factor) {
   (*this) = (*this) / factor;
   return *this;
 };
 
 #undef NUMVEC
-#undef NUMVEC_TEMP
 
 // 3D vector axis order
 struct VecAxes {

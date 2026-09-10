@@ -6,64 +6,64 @@
 #include "OpsDefine.inl"
 
 // Add another vector
-template<> inline
-NUMVEC NUMVEC::operator+(const NUMVEC &vOther) const {
+template<>
+inline NUMVEC NUMVEC::operator+(const NUMVEC &vOther) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, +=, vOther);
   return v;
 };
 
-template<> inline
-NUMVEC &NUMVEC::operator+=(const NUMVEC &vOther) {
+template<>
+inline NUMVEC &NUMVEC::operator+=(const NUMVEC &vOther) {
   DO_VECTOR_OPERATION(_values, +=, vOther);
   return *this;
 };
 
 // Subtract another vector
-template<> inline
-NUMVEC NUMVEC::operator-(const NUMVEC &vOther) const {
+template<>
+inline NUMVEC NUMVEC::operator-(const NUMVEC &vOther) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, -=, vOther);
   return v;
 };
 
-template<> inline
-NUMVEC &NUMVEC::operator-=(const NUMVEC &vOther) {
+template<>
+inline NUMVEC &NUMVEC::operator-=(const NUMVEC &vOther) {
   DO_VECTOR_OPERATION(_values, -=, vOther);
   return *this;
 };
 
 // Multiply by another vector
-template<> inline
-NUMVEC NUMVEC::operator*(const NUMVEC &vOther) const {
+template<>
+inline NUMVEC NUMVEC::operator*(const NUMVEC &vOther) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, *=, vOther);
   return v;
 };
 
-template<> inline
-NUMVEC &NUMVEC::operator*=(const NUMVEC &vOther) {
+template<>
+inline NUMVEC &NUMVEC::operator*=(const NUMVEC &vOther) {
   DO_VECTOR_OPERATION(_values, *=, vOther);
   return *this;
 };
 
 // Divide by another vector
-template<> inline
-NUMVEC NUMVEC::operator/(const NUMVEC &vOther) const {
+template<>
+inline NUMVEC NUMVEC::operator/(const NUMVEC &vOther) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, /=, vOther);
   return v;
 };
 
-template<> inline
-NUMVEC &NUMVEC::operator/=(const NUMVEC &vOther) {
+template<>
+inline NUMVEC &NUMVEC::operator/=(const NUMVEC &vOther) {
   DO_VECTOR_OPERATION(_values, /=, vOther);
   return *this;
 };
 
 // Negate the vector
-template<> inline
-NUMVEC NUMVEC::operator-(void) const {
+template<>
+inline NUMVEC NUMVEC::operator-(void) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, =, -v);
   return v;

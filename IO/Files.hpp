@@ -28,8 +28,8 @@ __forceinline error_t FileOpen(FILE **file, const c8 *strFilename, const c8 *str
 };
 
 // Simple file copying
-template<typename TypeSrc, typename TypeDst> inline
-void FileCopy(const TypeSrc fileSrc, const TypeDst fileDst) {
+template<typename TypeSrc, typename TypeDst>
+inline void FileCopy(const TypeSrc fileSrc, const TypeDst fileDst) {
   std::ifstream strmSrc(fileSrc, std::ios::binary);
   std::ofstream strmDst(fileDst, std::ios::binary);
 

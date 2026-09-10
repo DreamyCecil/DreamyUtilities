@@ -13,29 +13,29 @@
 
 NAMESPACE_DREAMY_OPEN
 
-#define MATH_TEMP template<typename Type>
-
 // Wrap angle to be between 0 and 360 degrees
-MATH_TEMP inline Type WrapAngle(Type angle) {
+template<typename Type>
+inline Type WrapAngle(Type angle) {
   return (Type)fmod(fmod((f64)angle, 360.0) + 360.0, 360.0);
 };
 
 // Normalize angle to be between -180 and +180 degrees
-MATH_TEMP inline Type NormalizeAngle(Type angle) {
+template<typename Type>
+inline Type NormalizeAngle(Type angle) {
   return Type(WrapAngle((f64)angle + 180.0) - 180.0);
 };
 
 // Convert radians to degrees
-MATH_TEMP inline Type RadToDeg(Type radians) {
+template<typename Type>
+inline Type RadToDeg(Type radians) {
   return Type((f64)radians * (f64(180.0) / dreamy::math::PI));
 };
 
 // Convert degrees to radians
-MATH_TEMP inline Type DegToRad(Type angle) {
+template<typename Type>
+inline Type DegToRad(Type angle) {
   return Type(WrapAngle((f64)angle) * (dreamy::math::PI / 180.0));
 };
-
-#undef MATH_TEMP
 
 NAMESPACE_DREAMY_CLOSE
 

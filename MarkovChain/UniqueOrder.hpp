@@ -16,7 +16,8 @@
 NAMESPACE_DREAMY_OPEN
 
 // Unique order of values (std::deque abstraction)
-template<typename Type> class CUniqueOrder {
+template<typename Type>
+class CUniqueOrder {
 
 public:
   typedef Type T; // Template type
@@ -67,7 +68,8 @@ public:
 };
 
 // Context for the value order
-template<typename Type> class CUniqueOrderContext {
+template<typename Type>
+class CUniqueOrderContext {
 
 public:
   typedef Type T; // Template type
@@ -116,7 +118,7 @@ namespace std {
 
 // Unique order hasher
 template<typename Type>
-struct hash<dreamy::CUniqueOrder<Type>>
+struct hash<dreamy::CUniqueOrder<Type> >
 {
   size_t operator()(const dreamy::CUniqueOrder<Type> &order) const {
     hash<Type> hasher;

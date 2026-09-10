@@ -16,8 +16,6 @@
 
 NAMESPACE_DREAMY_OPEN
 
-#define ANY_TEMP template<typename Type>
-
 // Type-safe container for single values of any type
 class CAny {
 
@@ -38,7 +36,8 @@ public:
   };
 
   // Value holder of a specific type
-  ANY_TEMP class CHolder : public CPlaceholder {
+  template<typename Type>
+  class CHolder : public CPlaceholder {
     public:
       Type _value;
 
@@ -64,17 +63,18 @@ public:
 
 public:
   // Default constructor
-  CAny() : _content(nullptr)
+  inline CAny() : _content(nullptr)
   {
   };
 
   // Constructor from a value of any type
-  ANY_TEMP CAny(const Type &valSet) : _content(new CHolder<Type>(valSet))
+  template<typename Type>
+  inline CAny(const Type &valSet) : _content(new CHolder<Type>(valSet))
   {
   };
 
   // Copy constructor
-  CAny(const CAny &other) : _content(!other.IsEmpty() ? other._content->Clone() : nullptr)
+  inline CAny(const CAny &other) : _content(!other.IsEmpty() ? other._content->Clone() : nullptr)
   {
   };
 
@@ -85,30 +85,31 @@ public:
 
 public:
   // Swap values
-  CAny &Swap(CAny &anyOther) {
+  inline CAny &Swap(CAny &anyOther) {
     std::swap(_content, anyOther._content);
     return *this;
   };
 
   // Assign a value of a new type
-  ANY_TEMP CAny &operator=(const Type &anyOther) {
+  template<typename Type>
+  inline CAny &operator=(const Type &anyOther) {
     CAny(anyOther).Swap(*this);
     return *this;
   };
 
   // Assign a value
-  CAny &operator=(const CAny &anyOther) {
+  inline CAny &operator=(const CAny &anyOther) {
     CAny(anyOther).Swap(*this);
     return *this;
   };
 
   // Check if value is empty
-  bool IsEmpty() const {
+  inline bool IsEmpty() const {
     return _content == nullptr;
   };
 
   // Get value type
-  const std::type_info &GetType() const {
+  inline const std::type_info &GetType() const {
     return !IsEmpty() ? _content->GetType() : typeid(void);
   };
 };
@@ -123,37 +124,33 @@ public:
 };
 
 // Cast any value into a pointer to a typed value
-ANY_TEMP Type *AnyCast(CAny *pValue) {
+template<typename Type>
+Type *AnyCast(CAny *pValue) {
   return (pValue != nullptr && pValue->GetType() == typeid(Type)) ?
           &static_cast<CAny::CHolder<Type> *>(pValue->_content)->_value : nullptr;
 };
 
 // Cast any value into a constant pointer to a typed value
-ANY_TEMP const Type *AnyCast(const CAny *pValue) {
+template<typename Type>
+const Type *AnyCast(const CAny *pValue) {
   return AnyCast<Type>(const_cast<CAny *>(pValue));
 };
 
 // Cast any value into a reference to a typed value
-ANY_TEMP Type &AnyCast(CAny &value) {
+template<typename Type>
+Type &AnyCast(CAny &value) {
   Type *pResult = AnyCast<Type>(&value);
-    
-  // Couldn't cast the pointer
   if (!pResult) throw CBadAnyCastException();
-
   return *pResult;
 };
-  
+
 // Cast any value into a constant reference to a typed value
-ANY_TEMP const Type &AnyCast(const CAny &value) {
+template<typename Type>
+const Type &AnyCast(const CAny &value) {
   const Type *pResult = AnyCast<Type>(&value);
-
-  // Couldn't cast the pointer
   if (!pResult) throw CBadAnyCastException();
-
   return *pResult;
 };
-
-#undef ANY_TEMP
 
 NAMESPACE_DREAMY_CLOSE
 

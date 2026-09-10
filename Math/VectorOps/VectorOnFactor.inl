@@ -6,29 +6,29 @@
 #include "OpsDefine.inl"
 
 // Multiply vector by a factor
-template<> inline
-NUMVEC NUMVEC::operator*(const VECTOR_TYPE factor) const {
+template<>
+inline NUMVEC NUMVEC::operator*(const VECTOR_TYPE factor) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, *=, factor);
   return v;
 };
 
-template<> inline
-NUMVEC &NUMVEC::operator*=(const VECTOR_TYPE factor) {
+template<>
+inline NUMVEC &NUMVEC::operator*=(const VECTOR_TYPE factor) {
   DO_VECTOR_OPERATION(_values, *=, factor);
   return *this;
 };
 
 // Divide vector by a factor
-template<> inline
-NUMVEC NUMVEC::operator/(const VECTOR_TYPE factor) const {
+template<>
+inline NUMVEC NUMVEC::operator/(const VECTOR_TYPE factor) const {
   NUMVEC v(*this);
   DO_VECTOR_OPERATION(v, /=, factor);
   return v;
 };
 
-template<> inline
-NUMVEC &NUMVEC::operator/=(const VECTOR_TYPE factor) {
+template<>
+inline NUMVEC &NUMVEC::operator/=(const VECTOR_TYPE factor) {
   DO_VECTOR_OPERATION(_values, /=, factor);
   return *this;
 };

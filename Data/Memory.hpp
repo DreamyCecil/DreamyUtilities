@@ -21,8 +21,8 @@
 NAMESPACE_DREAMY_OPEN
 
 // Invert bytes of any structure
-template<typename Type> inline
-Type ByteSwapT(const Type &valSrc)
+template<typename Type>
+inline Type ByteSwapT(const Type &valSrc)
 {
   typedef struct {
     union {
@@ -93,8 +93,8 @@ __forceinline u64 ByteSwap64(u64 i64)
 };
 
 // Resize array by constructing values in place and moving the data bytes
-template<typename Type> inline
-void ResizeBuffer_memcpy(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
+template<typename Type>
+inline void ResizeBuffer_memcpy(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
   Type *pNew = new Type[iNewSize];
   memcpy(pNew, *pBuffer, iOldSize * sizeof(Type));
 
@@ -103,8 +103,8 @@ void ResizeBuffer_memcpy(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
 };
 
 // Resize array by constructing and reassigning values in place
-template<typename Type> inline
-void ResizeBuffer_new(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
+template<typename Type>
+inline void ResizeBuffer_new(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
   Type *pNew = new Type[iNewSize];
 
   // Reassign old values
@@ -117,8 +117,8 @@ void ResizeBuffer_new(Type **pBuffer, size_t iOldSize, size_t iNewSize) {
 };
 
 // Resize array by reallocating C dynamic memory
-template<typename Type> inline
-void ResizeBuffer_realloc(Type **pBuffer, size_t iNewSize) {
+template<typename Type>
+inline void ResizeBuffer_realloc(Type **pBuffer, size_t iNewSize) {
   *pBuffer = (Type *)realloc(*pBuffer, iNewSize * sizeof(Type));
 };
 

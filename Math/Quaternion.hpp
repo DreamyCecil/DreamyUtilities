@@ -17,7 +17,8 @@ NAMESPACE_DREAMY_OPEN
 #define QUAT TQuaternion<Type>
 
 // Quaternion of a certain type
-template<typename Type> class TQuaternion {
+template<typename Type>
+class TQuaternion {
 
 public:
   typedef Type T; // Template type

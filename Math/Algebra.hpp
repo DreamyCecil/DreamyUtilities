@@ -21,12 +21,14 @@ static const f64 PI = 3.14159265359;
 #define MATH_TEMP template<typename Type>
 
 // Fast and type-safe sign function
-MATH_TEMP __forceinline s8 Sign(Type x) {
+template<typename Type>
+__forceinline s8 Sign(Type x) {
   return s8((Type(0) < x) - (x < Type(0)));
 };
 
 // Simple and compatible with C++98 copysign implementation
-MATH_TEMP __forceinline Type CopySign(Type x, Type y) {
+template<typename Type>
+__forceinline Type CopySign(Type x, Type y) {
   return Type(((x < 0 && y > 0) || (x > 0 && y < 0)) ? -x : x);
 };
 
@@ -93,8 +95,6 @@ __forceinline f64 Abs(f64 x) {
   i &= 0x7FFFFFFFFFFFFFFF;
   return *reinterpret_cast<f64 *>(&i);
 };
-
-#undef MATH_TEMP
 
 }; // namespace math
 

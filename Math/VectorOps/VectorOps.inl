@@ -16,16 +16,16 @@
 #include "OpsDefine.inl"
 
 // Dot product between two vectors
-template<> inline
-VECTOR_TYPE NUMVEC::operator%(const NUMVEC &vOther) const {
+template<>
+inline VECTOR_TYPE NUMVEC::operator%(const NUMVEC &vOther) const {
   // Compiles as "total = + (this[0] * other[0]) + (this[1] * other[1]) ..."
   VECTOR_TYPE total =  DO_VECTOR_OPERATION(_values, *, vOther);
   return total;
 };
 
 // Get length of the vector
-template<> inline
-VECTOR_TYPE NUMVEC::Length(void) const {
+template<>
+inline VECTOR_TYPE NUMVEC::Length(void) const {
   VECTOR_TYPE total = (*this) % (*this);
   return (VECTOR_TYPE)sqrt((f64)total);
 };
