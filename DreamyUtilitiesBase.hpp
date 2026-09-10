@@ -64,6 +64,7 @@
   // Typed enums
   #define DREAMY_ENUM(_Name, _Type) enum _Name : _Type
 
+  // FIXME: When using 'enum class', values may only be explicitly accessed via EnumName::EnumValue, which isn't supported in C++98!
   // Typed enum classes
   #define DREAMY_ENUM_CLASS(_Name, _Type) enum class _Name : _Type
 
@@ -154,6 +155,7 @@
 #endif
 
 #if !_DREAMY_UNIX && !_DREAMY_CPP11
+  #define snprintf  _snprintf
   #define vsnprintf _vsnprintf
   #define vswprintf _vsnwprintf
 #endif
