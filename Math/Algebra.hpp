@@ -9,6 +9,7 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
+#include <cfloat>
 #include <cmath>
 
 NAMESPACE_DREAMY_OPEN
@@ -17,8 +18,6 @@ namespace math {
 
 // Math constants
 static const f64 PI = 3.14159265359;
-
-#define MATH_TEMP template<typename Type>
 
 // Fast and type-safe sign function
 template<typename Type>
@@ -94,6 +93,26 @@ __forceinline f64 Abs(f64 x) {
   s64 i = *reinterpret_cast<s64 *>(&x);
   i &= 0x7FFFFFFFFFFFFFFF;
   return *reinterpret_cast<f64 *>(&i);
+};
+
+// Check if float is not a number
+__forceinline bool IsNaN(f64 x) {
+  #if !_DREAMY_UNIX
+    return _isnan(x) != 0;
+  #else
+    return __builtin_isnan(x) != 0;
+  #endif
+};
+
+// Return sign of infinite float or 0 if it's not infinity
+__forceinline s8 InfinitySign(f64 x) {
+  if (x == HUGE_VAL) {
+    return +1;
+  } else if (x == -HUGE_VAL) {
+    return -1;
+  } else {
+    return 0;
+  }
 };
 
 }; // namespace math
