@@ -66,32 +66,54 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &di
 };
 
 // Build a JSON array
-void BuildArray(CVariant &valArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd) {
-  // FIXME: This may be wrong if the array has other arrays or objects inside of it!
-  //        Iterate in the loop below the same way as for the objects!
-  CTokenList::const_iterator itClosing = std::find(itCurrent, itEnd, CParserToken(']'));
-
-  // Unclosed array
-  if (itClosing == itEnd) {
-    throw CTokenException(itCurrent->GetTokenPos(), "Unclosed array");
-  }
+void BuildArray(CVariant &valArray, const CTokenList &aTokens, CTokenList::const_iterator &it) {
+  const CTokenList::const_iterator itStart = it;
 
   // Create an empty array beforehand and retrieve it
   valArray.FromArray(CArray());
   CArray &aValues = valArray.AsArray();
 
+  // Array opening
+  (it++)->Verify('[');
+
+  // Empty array
+  if (it->GetType() == ']') {
+    ++it;
+    return;
+  }
+
   bool bNext = false; // Search for the next array entry
 
-  while (itCurrent != itClosing) {
-    const CParserToken &tkn = (*itCurrent)(bNext ? ',' : CParserToken::TKN_VALUE);
-
-    // Add one value
+  while (it != aTokens.end()) {
+    // The next token should be a value
     if (!bNext) {
-      aValues.push_back(tkn.GetValue());
+      // Add one value
+      CVariant val;
+      BuildValue(val, aTokens, it);
+      aValues.push_back(val);
+
+    // The next token could be a comma
+    } else if (it->GetType() == ',') {
+      (it++)->Verify(',');
+
+      // Reached the array end right after an optional comma
+      if (it->GetType() == ']') {
+        ++it;
+        return;
+      }
+
+    // If not, expect the array end
+    } else {
+      (it++)->Verify(']');
+      return;
     }
 
     bNext = !bNext;
-    ++itCurrent;
+  }
+
+  // Unclosed array
+  if (it == aTokens.end()) {
+    throw CTokenException(itStart->GetTokenPos(), "Unclosed array");
   }
 };
 
@@ -103,7 +125,16 @@ void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::con
   valObject.FromDictionary(CDictionary());
   CDictionary &dictValues = valObject.AsDictionary();
 
-  bool bNext = false; // Search for the next array entry
+  // Object opening
+  (it++)->Verify('{');
+
+  // Empty object
+  if (it->GetType() == '}') {
+    ++it;
+    return;
+  }
+
+  bool bNext = false; // Search for the next object entry
 
   while (it != aTokens.end()) {
     // The next token should be a key string
@@ -111,18 +142,22 @@ void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::con
       // Add one key-value pair
       CPair pair;
       BuildPair(pair, aTokens, it);
-
       dictValues.insert(pair);
-      ++it;
 
-    // The next token should be a comma
-    } else {
-      (*(it++))(',');
+    // The next token could be a comma
+    } else if (it->GetType() == ',') {
+      (it++)->Verify(',');
 
-      // Reached the block end right after a comma
+      // Reached the object end right after an optional comma
       if (it->GetType() == '}') {
-        break;
+        ++it;
+        return;
       }
+
+    // If not, expect the object end
+    } else {
+      (it++)->Verify('}');
+      return;
     }
 
     bNext = !bNext;
@@ -140,38 +175,43 @@ void BuildValue(CVariant &val, const CTokenList &aTokens, CTokenList::const_iter
 
   switch (iToken) {
     // Object with variables {}
-    case '{':
-      BuildObject(val, aTokens, ++it);
-      return;
+    case '{': {
+      BuildObject(val, aTokens, it);
+    } return;
 
     // Array of values []
-    case '[':
-      BuildArray(val, ++it, aTokens.end());
-      return;
+    case '[': {
+      BuildArray(val, aTokens, it);
+    } return;
 
     // Pure value
-    case CParserToken::TKN_VALUE:
+    case CParserToken::TKN_VALUE: {
       val = it->GetValue();
-      return;
+      ++it;
+    } return;
 
     // Value beginning with a unary operator
     case '+': case '-': {
+      (++it)->Verify(CParserToken::TKN_VALUE);
+
       switch (it->GetValue().GetType()) {
         case CVariant::VAL_INT: {
           s64 iNumber = it->GetValue().AsInt();
           val.FromInt(iToken == '-' ? -iNumber : iNumber);
-        }
+        } break;
 
         case CVariant::VAL_FLOAT: {
           f64 fNumber = it->GetValue().AsFloat();
           val.FromFloat(iToken == '-' ? -fNumber : fNumber);
-        }
+        } break;
 
         // Not a number
         default:
           throw CTokenException(it->GetTokenPos(), "Expected a number after the unary operator");
       }
-    }
+
+      ++it;
+    } return;
 
     // Invalid token
     default:
@@ -196,7 +236,7 @@ void BuildPair(CPair &pair, const CTokenList &aTokens, CTokenList::const_iterato
   }
 
   // Key assignment ("key" : )
-  (*(it++))(':');
+  (it++)->Verify(':');
 
   // Build the value and make the pair
   CVariant val;

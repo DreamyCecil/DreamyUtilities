@@ -34,7 +34,7 @@ extern const Constants _constants;
 void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &dictConstants = _constants.list);
 
 // Build a JSON array
-void BuildArray(CVariant &valArray, CTokenList::const_iterator &itCurrent, CTokenList::const_iterator itEnd);
+void BuildArray(CVariant &valArray, const CTokenList &aTokens, CTokenList::const_iterator &it);
 
 // Build a JSON object
 void BuildObject(CVariant &valObject, const CTokenList &aTokens, CTokenList::const_iterator &it);

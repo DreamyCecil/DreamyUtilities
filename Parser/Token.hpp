@@ -146,9 +146,24 @@ protected:
 
   // Make sure that it's an appropriate token type
   inline void AssertType(u32 iCheckType) const {
-    if (iCheckType != _type) {
-      CTokenException::Throw(GetTokenPos(), "Expected token under ID '%d' but got '%d'", iCheckType, _type);
+    if (iCheckType == _type) return;
+
+    bool bPrintableCheck = (iCheckType > 0x20 && iCheckType < 0x7F);
+    bool bPrintableType = (_type > 0x20 && _type < 0x7F);
+
+    const c8 *strError;
+
+    if (bPrintableCheck && bPrintableType) {
+      strError = "Expected token under ID '%c' but got '%c'";
+    } else if (bPrintableCheck) {
+      strError = "Expected token under ID '%c' but got %u";
+    } else if (bPrintableType) {
+      strError = "Expected token under ID %u but got '%c'";
+    } else {
+      strError = "Expected token under ID %u but got %u";
     }
+
+    CTokenException::Throw(GetTokenPos(), strError, iCheckType, _type);
   };
 
 public:
@@ -202,7 +217,7 @@ public:
   };
 
   // Only return this token if it matches the desired type
-  const CParserToken &operator()(u32 iCheckType) const {
+  inline const CParserToken &Verify(u32 iCheckType) const {
     AssertType(iCheckType);
     return *this;
   };
