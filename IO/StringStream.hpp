@@ -17,7 +17,7 @@ NAMESPACE_DREAMY_OPEN
 class CStringStream : public CDataStream {
 
 private:
-  CByteArray *_pbaString; // Buffer with characters
+  CByteArray *m_pbaString; // Buffer with characters
 
 public:
   // Default constructor
@@ -86,27 +86,22 @@ public:
   virtual CDataStream &operator<<(c8 src);
   virtual CDataStream &operator>>(c8 &dst);
 
-  // Declare method for printing a simple value into the stream
-  #define WRITE_VAL(_Type) virtual CDataStream &operator<<(_Type val)
-
   // Write methods for numbers
-  WRITE_VAL(u8);
-  WRITE_VAL(u16);
-  WRITE_VAL(u32);
-  WRITE_VAL(u64);
-  WRITE_VAL(s8);
-  WRITE_VAL(s16);
-  WRITE_VAL(s32);
-  WRITE_VAL(s64);
-  WRITE_VAL(f32);
-  WRITE_VAL(f64);
+  virtual CDataStream &operator<<(u8 src);
+  virtual CDataStream &operator<<(u16 src);
+  virtual CDataStream &operator<<(u32 src);
+  virtual CDataStream &operator<<(u64 src);
+  virtual CDataStream &operator<<(s8 src);
+  virtual CDataStream &operator<<(s16 src);
+  virtual CDataStream &operator<<(s32 src);
+  virtual CDataStream &operator<<(s64 src);
+  virtual CDataStream &operator<<(f32 src);
+  virtual CDataStream &operator<<(f64 src);
 
   // size_t is not the same as u32/u64 in Unix
   #if _DREAMY_UNIX
-    WRITE_VAL(size_t);
+  virtual CDataStream &operator<<(size_t src);
   #endif
-
-  #undef WRITE_VAL
 };
 
 NAMESPACE_DREAMY_CLOSE

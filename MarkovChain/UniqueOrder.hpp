@@ -23,47 +23,47 @@ public:
   typedef Type T; // Template type
 
 private:
-  std::deque<Type> aValues;
+  std::deque<Type> m_aValues;
 
 public:
   // Default constructor
-  __forceinline CUniqueOrder(s32 iSize) : aValues(iSize)
+  __forceinline CUniqueOrder(s32 iSize) : m_aValues(iSize)
   {
   };
 
   // Comparison for sorting within std::map
   __forceinline bool operator<(const CUniqueOrder<Type> &vOther) const {
-    return aValues < vOther.aValues;
+    return m_aValues < vOther.m_aValues;
   };
 
   // Comparison for sorting within std::unordered_map
   __forceinline bool operator==(const CUniqueOrder<Type> &vOther) const {
-    return aValues == vOther.aValues;
+    return m_aValues == vOther.m_aValues;
   };
 
   // Accessor
   __forceinline Type &operator[](size_t i) {
-    return aValues[i];
+    return m_aValues[i];
   };
 
   // Accessor
   __forceinline Type operator[](size_t i) const {
-    return aValues[i];
+    return m_aValues[i];
   };
 
   // Value count
   __forceinline size_t size(void) const {
-    return aValues.size();
+    return m_aValues.size();
   };
 
   // Remove from the end
   __forceinline void pop_back(void) {
-    aValues.pop_back();
+    m_aValues.pop_back();
   };
 
   // Insert in the beginning
   __forceinline void push_front(const Type &val) {
-    aValues.push_front(val);
+    m_aValues.push_front(val);
   };
 };
 
@@ -75,39 +75,39 @@ public:
   typedef Type T; // Template type
 
 private:
-  CUniqueOrder<Type> moc_order;
-  std::deque<bool> moc_abObserved;
+  CUniqueOrder<Type> m_order;
+  std::deque<bool> m_abObserved;
 
 public:
   // Default constructor
-  __forceinline CUniqueOrderContext(u32 iSize) : moc_order(iSize), moc_abObserved(iSize, false)
+  __forceinline CUniqueOrderContext(u32 iSize) : m_order(iSize), m_abObserved(iSize, false)
   {
   };
 
   // Get unique order
   __forceinline const CUniqueOrder<Type> &GetOrder(void) const {
-    return moc_order;
+    return m_order;
   };
 
   // Check if observed
   __forceinline bool IsObserved(size_t i) const {
-    return moc_abObserved[i];
+    return m_abObserved[i];
   };
 
   // Get context size
   __forceinline size_t GetSize(void) const {
-    return moc_order.size();
+    return m_order.size();
   };
 
   // Insert new observed value
   __forceinline void Observe(const Type &val) {
     // Remove last value
-    moc_order.pop_back();
-    moc_abObserved.pop_back();
+    m_order.pop_back();
+    m_abObserved.pop_back();
 
     // Observe new value
-    moc_order.push_front(val);
-    moc_abObserved.push_front(true);
+    m_order.push_front(val);
+    m_abObserved.push_front(true);
   };
 };
 

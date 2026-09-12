@@ -17,45 +17,45 @@ NAMESPACE_DREAMY_OPEN
 class CHashedString {
 
 private:
-  u64 _hash;
-  CString _string;
+  u64 m_iHash;
+  CString m_strValue;
 
 public:
   // Default constructor
-  __forceinline CHashedString() : _hash(0), _string("")
+  __forceinline CHashedString() : m_iHash(0), m_strValue("")
   {
   };
 
   // Generate a hash value from a string
   __forceinline CHashedString(const CString &str) {
-    _string = str;
+    m_strValue = str;
 
     CSimpleHasher hasher;
-    _hash = hasher(str.c_str(), str.length());
+    m_iHash = hasher(str.c_str(), str.length());
   };
 
   // Generate a hash value from an array of characters
   __forceinline CHashedString(const c8 *str) {
-    _string = str;
+    m_strValue = str;
 
     CSimpleHasher hasher;
-    _hash = hasher(str, strlen(str));
+    m_iHash = hasher(str, strlen(str));
   };
 
   // Copy constuctor
   __forceinline CHashedString(const CHashedString &hsOther) :
-    _hash(hsOther.GetHash()), _string(hsOther.GetString())
+    m_iHash(hsOther.GetHash()), m_strValue(hsOther.GetString())
   {
   };
 
   // Get pure string
   inline const CString &GetString(void) const {
-    return _string;
+    return m_strValue;
   };
 
   // Get hash value
   inline u64 GetHash(void) const {
-    return _hash;
+    return m_iHash;
   };
 
 public:
@@ -72,8 +72,8 @@ public:
 
   // Assignment operator
   inline CHashedString &operator=(const CHashedString &hsOther) {
-    _hash = hsOther.GetHash();
-    _string = hsOther.GetString();
+    m_iHash = hsOther.GetHash();
+    m_strValue = hsOther.GetString();
 
     return *this;
   };

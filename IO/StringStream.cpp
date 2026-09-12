@@ -10,37 +10,37 @@ NAMESPACE_DREAMY_OPEN
 
 CStringStream::CStringStream() : CDataStream()
 {
-  _pbaString = new CByteArray('\0', (1 << 16));
-  _pDevice = new CBufferDevice(_pbaString);
-  _pDevice->Open(IReadWriteDevice::OM_READWRITE);
+  m_pbaString = new CByteArray('\0', (1 << 16));
+  m_pDevice = new CBufferDevice(m_pbaString);
+  m_pDevice->Open(IReadWriteDevice::OM_READWRITE);
 
-  _bHasOwnDevice = true;
+  m_bHasOwnDevice = true;
 };
 
 CStringStream::CStringStream(IReadWriteDevice *d, IReadWriteDevice::EOpenMode om) :
-  CDataStream(d), _pbaString(nullptr)
+  CDataStream(d), m_pbaString(nullptr)
 {
-  _pDevice->Open(om);
+  m_pDevice->Open(om);
 };
 
 CStringStream::CStringStream(const c8 *str, size_t iSize) : CDataStream()
 {
   // Create enough bytes and copy the string to the beginning
-  _pbaString = new CByteArray('\0', (1 << 16));
-  memcpy(_pbaString->Data(), str, iSize);
+  m_pbaString = new CByteArray('\0', (1 << 16));
+  memcpy(m_pbaString->Data(), str, iSize);
 
-  _pDevice = new CBufferDevice(_pbaString);
-  _pDevice->Open(IReadWriteDevice::OM_WRITEONLY);
+  m_pDevice = new CBufferDevice(m_pbaString);
+  m_pDevice->Open(IReadWriteDevice::OM_WRITEONLY);
 
   // Go to the end of the string
   Seek(iSize);
 
-  _bHasOwnDevice = true;
+  m_bHasOwnDevice = true;
 };
 
 const c8 *CStringStream::GetString(void) const {
-  D_ASSERT(_pDevice->GetType() == IReadWriteDevice::TYPE_BUFFER);
-  return ((CBufferDevice *)_pDevice)->GetBuffer();
+  D_ASSERT(m_pDevice->GetType() == IReadWriteDevice::TYPE_BUFFER);
+  return ((CBufferDevice *)m_pDevice)->GetBuffer();
 };
 
 void CStringStream::PrintF(const c8 *strFormat, ...) {

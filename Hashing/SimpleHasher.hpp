@@ -17,8 +17,8 @@ NAMESPACE_DREAMY_OPEN
 class CSimpleHasher : public IHasher {
 
 protected:
-  u64 _result;
-  u64 _factor; // Multiplier for hash uniqueness
+  u64 m_iResult;
+  u64 m_iFactor; // Multiplier for hash uniqueness
 
 public:
   // Constructor with a hash factor (use prime numbers like 31 and 37)

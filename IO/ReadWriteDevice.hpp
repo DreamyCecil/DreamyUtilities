@@ -34,7 +34,7 @@ public:
   };
 
 protected:
-  EOpenMode _eOpenMode; // Which access mode the device is currently in
+  EOpenMode m_eOpenMode; // Which access mode the device is currently in
 
 public:
   // Destructor
@@ -48,7 +48,7 @@ public:
 
   // Return access mode
   inline EOpenMode GetOpenMode(void) const {
-    return _eOpenMode;
+    return m_eOpenMode;
   };
 
   // Checks if opened with any mode

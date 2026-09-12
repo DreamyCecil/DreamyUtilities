@@ -23,24 +23,24 @@ public:
   typedef Type T; // Template type
 
 public:
-  TVector<Type, 3> _pos;
-  TQuaternion<Type> _rot;
+  TVector<Type, 3> m_vPos;
+  TQuaternion<Type> m_qRot;
 
 public:
   // Convert from a 4x3 matrix (rotation with position)
   inline void FromMatrix12(const TMatrix<Type, 3, 4> &m12) {
     TMatrix<Type, 3, 3> m3D;
 
-    Mat12toMat3D(m12, m3D, _pos);
-    _rot.FromMatrix(m3D);
+    Mat12toMat3D(m12, m3D, m_vPos);
+    m_qRot.FromMatrix(m3D);
   };
 
   // Convert into a 4x3 matrix (rotation with position)
   inline void ToMatrix12(TMatrix<Type, 3, 4> &m12) {
     TMatrix<Type, 3, 3> m3D;
 
-    _rot.ToMatrix(m3D);
-    Mat3DtoMat12(m12, m3D, _pos);
+    m_qRot.ToMatrix(m3D);
+    Mat3DtoMat12(m12, m3D, m_vPos);
   };
 };
 

@@ -17,9 +17,9 @@ NAMESPACE_DREAMY_OPEN
 class CFileDevice : public IReadWriteDevice {
 
 protected:
-  FILE *_pFile;
-  size_t _iSize;
-  CString _strFilename;
+  FILE *m_pFile;
+  size_t m_iSize;
+  CString m_strFilename;
 
 public:
   // Default constructor

@@ -5,16 +5,16 @@
 
 NAMESPACE_DREAMY_OPEN
 
-CByteArray::CByteArray() : _pBuffer(nullptr), _iSize(0)
+CByteArray::CByteArray() : m_pBuffer(nullptr), m_iSize(0)
 {
 };
 
-CByteArray::CByteArray(const CByteArray &baOther) : _pBuffer(nullptr), _iSize(0)
+CByteArray::CByteArray(const CByteArray &baOther) : m_pBuffer(nullptr), m_iSize(0)
 {
   Copy(baOther);
 };
 
-CByteArray::CByteArray(const c8 *pData, size_t iSize) : _pBuffer(nullptr), _iSize(0)
+CByteArray::CByteArray(const c8 *pData, size_t iSize) : m_pBuffer(nullptr), m_iSize(0)
 {
   if (pData == nullptr) return;
 
@@ -25,15 +25,15 @@ CByteArray::CByteArray(const c8 *pData, size_t iSize) : _pBuffer(nullptr), _iSiz
 
   if (iSize != 0) {
     Resize(iSize);
-    memcpy(_pBuffer, pData, iSize);
+    memcpy(m_pBuffer, pData, iSize);
   }
 };
 
-CByteArray::CByteArray(c8 chByte, size_t iSize) : _pBuffer(nullptr), _iSize(0)
+CByteArray::CByteArray(c8 chByte, size_t iSize) : m_pBuffer(nullptr), m_iSize(0)
 {
   if (iSize != 0) {
     Resize(iSize);
-    memset(_pBuffer, chByte, iSize);
+    memset(m_pBuffer, chByte, iSize);
   }
 };
 
@@ -47,7 +47,7 @@ void CByteArray::Copy(const CByteArray &baOther) {
 
   if (!baOther.IsNull() && baOther.Size() != 0) {
     Resize(baOther.Size());
-    memcpy(_pBuffer, baOther.ConstData(), baOther.Size());
+    memcpy(m_pBuffer, baOther.ConstData(), baOther.Size());
   }
 };
 
@@ -82,8 +82,8 @@ CByteArray &CByteArray::Insert(size_t iPos, const c8 *pData, size_t iSize) {
   // Delete old buffer
   Clear();
 
-  _pBuffer = pNewData;
-  _iSize = iNewSize;
+  m_pBuffer = pNewData;
+  m_iSize = iNewSize;
 
   return *this;
 };
@@ -114,8 +114,8 @@ CByteArray &CByteArray::Insert(size_t iPos, size_t iCount, c8 chByte) {
   // Delete old buffer
   Clear();
 
-  _pBuffer = pNewData;
-  _iSize = iNewSize;
+  m_pBuffer = pNewData;
+  m_iSize = iNewSize;
 
   return *this;
 };
@@ -154,14 +154,14 @@ void CByteArray::Resize(size_t iNewSize) {
   if (Data()) {
     // Copy old data if enough space
     if (iNewSize > Size()) {
-      if (_iSize != 0) {
-        memcpy(&pNewData[0], _pBuffer, _iSize);
+      if (m_iSize != 0) {
+        memcpy(&pNewData[0], m_pBuffer, m_iSize);
       }
 
     // Copy reduced data
     } else {
       if (iNewSize != 0) {
-        memcpy(&pNewData[0], _pBuffer, iNewSize);
+        memcpy(&pNewData[0], m_pBuffer, iNewSize);
       }
     }
 
@@ -169,8 +169,8 @@ void CByteArray::Resize(size_t iNewSize) {
   }
 
   // Set new buffer
-  _pBuffer = pNewData;
-  _iSize = iNewSize;
+  m_pBuffer = pNewData;
+  m_iSize = iNewSize;
 };
 
 void CByteArray::Chop(size_t iSize) {
@@ -182,19 +182,19 @@ void CByteArray::Chop(size_t iSize) {
 };
 
 void CByteArray::Clear(void) {
-  if (_pBuffer != nullptr) {
-    delete[] _pBuffer;
+  if (m_pBuffer != nullptr) {
+    delete[] m_pBuffer;
 
-    _pBuffer = nullptr;
-    _iSize = 0;
+    m_pBuffer = nullptr;
+    m_iSize = 0;
   }
 };
 
 c8 CByteArray::At(size_t i) const {
-  D_ASSERT(_pBuffer != nullptr);
-  D_ASSERT(i < _iSize);
+  D_ASSERT(m_pBuffer != nullptr);
+  D_ASSERT(i < m_iSize);
 
-  return _pBuffer[i];
+  return m_pBuffer[i];
 };
 
 CByteArray &CByteArray::Fill(const c8 chByte, size_t iSize) {
@@ -206,7 +206,7 @@ CByteArray &CByteArray::Fill(const c8 chByte, size_t iSize) {
     iSize = Size();
   }
 
-  memset(_pBuffer, chByte, iSize);
+  memset(m_pBuffer, chByte, iSize);
 
   return *this;
 };
@@ -261,11 +261,11 @@ void CByteArray::Swap(CByteArray &baOther) {
   size_t iTempSize = Size();
   c8 *pTempData = Data();
 
-  _iSize = baOther.Size();
-  _pBuffer = baOther.Data();
+  m_iSize = baOther.Size();
+  m_pBuffer = baOther.Data();
 
-  baOther._iSize = iTempSize;
-  baOther._pBuffer = pTempData;
+  baOther.m_iSize = iTempSize;
+  baOther.m_pBuffer = pTempData;
 };
 
 bool CByteArray::StartsWith(const CByteArray &baOther) const {

@@ -48,16 +48,16 @@ public:
 class CMessageException : public CException {
 
 protected:
-  CString _message;
+  CString m_strMessage;
 
 public:
   // Default constructor
-  CMessageException(const c8 *strError = "") : _message(strError)
+  CMessageException(const c8 *strError = "") : m_strMessage(strError)
   {
   };
 
   // Constructor from a string
-  CMessageException(const CString &strError) : _message(strError)
+  CMessageException(const CString &strError) : m_strMessage(strError)
   {
   };
 
@@ -68,18 +68,18 @@ public:
 
   // Get error message
   virtual const c8 *What(void) const DREAMY_NOEXCEPT {
-    return _message.c_str();
+    return m_strMessage.c_str();
   };
 
   // Format an error message
   inline void PrintF(const c8 *strFormat, ...) {
-    DREAMY_PRINTF_INLINE(_message, strFormat);
+    DREAMY_PRINTF_INLINE(m_strMessage, strFormat);
   };
 
   // Quick function for throwing message exceptions
   static void Throw(const c8 *strFormat, ...) {
     CMessageException ex;
-    DREAMY_PRINTF_INLINE(ex._message, strFormat);
+    DREAMY_PRINTF_INLINE(ex.m_strMessage, strFormat);
 
     throw ex;
   };
@@ -89,18 +89,18 @@ public:
 class CFormattingException : public CMessageException {
 
 private:
-  size_t _char;
+  size_t m_iPos;
 
 public:
   // Default constructor
-  CFormattingException(size_t iSetChar) : _char(iSetChar)
+  CFormattingException(size_t iSetPos) : m_iPos(iSetPos)
   {
-    PrintF("Formatting exception at %ull", _char);
+    PrintF("Formatting exception at %ull", m_iPos);
   };
 
   // Get character position
   inline size_t GetCharacter(void) const {
-    return _char;
+    return m_iPos;
   };
 };
 

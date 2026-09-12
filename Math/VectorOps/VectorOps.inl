@@ -19,7 +19,7 @@
 template<>
 inline VECTOR_TYPE NUMVEC::operator%(const NUMVEC &vOther) const {
   // Compiles as "total = + (this[0] * other[0]) + (this[1] * other[1]) ..."
-  VECTOR_TYPE total =  DO_VECTOR_OPERATION(_values, *, vOther);
+  VECTOR_TYPE total =  DO_VECTOR_OPERATION(m_aValues, *, vOther);
   return total;
 };
 

@@ -9,7 +9,7 @@
 template<>
 inline NUMVEC NUMVEC::DegToRad(void) const {
   NUMVEC v(*this);
-  DO_VECTOR_OPERATION(v, =, _values);
+  DO_VECTOR_OPERATION(v, =, m_aValues);
   return v;
 };
 
@@ -23,7 +23,7 @@ inline NUMVEC NUMVEC::DegToRad(void) const {
 template<>
 inline NUMVEC NUMVEC::RadToDeg(void) const {
   NUMVEC v(*this);
-  DO_VECTOR_OPERATION(v, =, _values);
+  DO_VECTOR_OPERATION(v, =, m_aValues);
   return v;
 };
 

@@ -39,11 +39,11 @@ public:
   template<typename Type>
   class CHolder : public CPlaceholder {
     public:
-      Type _value;
+      Type m_value;
 
     public:
       // Default constructor
-      CHolder(const Type &valSet) : _value(valSet)
+      CHolder(const Type &valSet) : m_value(valSet)
       {
       };
 
@@ -54,39 +54,39 @@ public:
 
       // Clone the value
       virtual CPlaceholder *Clone() const {
-        return new CHolder(_value);
+        return new CHolder(m_value);
       };
   };
 
 public:
-  CPlaceholder *_content; // Currently held value
+  CPlaceholder *m_content; // Currently held value
 
 public:
   // Default constructor
-  inline CAny() : _content(nullptr)
+  inline CAny() : m_content(nullptr)
   {
   };
 
   // Constructor from a value of any type
   template<typename Type>
-  inline CAny(const Type &valSet) : _content(new CHolder<Type>(valSet))
+  inline CAny(const Type &valSet) : m_content(new CHolder<Type>(valSet))
   {
   };
 
   // Copy constructor
-  inline CAny(const CAny &other) : _content(!other.IsEmpty() ? other._content->Clone() : nullptr)
+  inline CAny(const CAny &other) : m_content(!other.IsEmpty() ? other.m_content->Clone() : nullptr)
   {
   };
 
   // Destructor
   ~CAny() {
-    delete _content;
+    delete m_content;
   };
 
 public:
   // Swap values
   inline CAny &Swap(CAny &anyOther) {
-    std::swap(_content, anyOther._content);
+    std::swap(m_content, anyOther.m_content);
     return *this;
   };
 
@@ -105,12 +105,12 @@ public:
 
   // Check if value is empty
   inline bool IsEmpty() const {
-    return _content == nullptr;
+    return m_content == nullptr;
   };
 
   // Get value type
   inline const std::type_info &GetType() const {
-    return !IsEmpty() ? _content->GetType() : typeid(void);
+    return !IsEmpty() ? m_content->GetType() : typeid(void);
   };
 };
 
@@ -127,7 +127,7 @@ public:
 template<typename Type>
 Type *AnyCast(CAny *pValue) {
   return (pValue != nullptr && pValue->GetType() == typeid(Type)) ?
-          &static_cast<CAny::CHolder<Type> *>(pValue->_content)->_value : nullptr;
+          &static_cast<CAny::CHolder<Type> *>(pValue->m_content)->m_value : nullptr;
 };
 
 // Cast any value into a constant pointer to a typed value

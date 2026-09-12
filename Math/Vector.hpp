@@ -21,7 +21,7 @@ NAMESPACE_DREAMY_OPEN
 // Set all dimensions in the vector to a certain value
 #define NUMVEC_SET_ALL(VecValue) { \
   s32 i = iDimensions; \
-  while (--i >= 0) _values[i] = VecValue; \
+  while (--i >= 0) m_aValues[i] = VecValue; \
 }
 
 // Fixed array of a certain number type
@@ -32,7 +32,7 @@ public:
   typedef Type T; // Template type
 
 protected:
-  Type _values[iDimensions];
+  Type m_aValues[iDimensions];
 
 public:
   // Default constructor
@@ -42,22 +42,22 @@ public:
 
   // 1-value constructor
   __forceinline TVector(const Type val1) {
-    _values[0] = val1;
+    m_aValues[0] = val1;
   };
 
   // 2-value constructor
   __forceinline TVector(const Type val1, const Type val2) {
-    _values[0] = val1; _values[1] = val2;
+    m_aValues[0] = val1; m_aValues[1] = val2;
   };
 
   // 3-value constructor
   __forceinline TVector(const Type val1, const Type val2, const Type val3) {
-    _values[0] = val1; _values[1] = val2; _values[2] = val3;
+    m_aValues[0] = val1; m_aValues[1] = val2; m_aValues[2] = val3;
   };
 
   // 4-value constructor
   __forceinline TVector(const Type val1, const Type val2, const Type val3, const Type val4) {
-    _values[0] = val1; _values[1] = val2; _values[2] = val3; _values[3] = val4;
+    m_aValues[0] = val1; m_aValues[1] = val2; m_aValues[2] = val3; m_aValues[3] = val4;
   };
 
   // Array constructor
@@ -77,22 +77,22 @@ public:
 
   // Get the value array
   __forceinline Type *Array(void) {
-    return _values;
+    return m_aValues;
   };
 
   // Get the value array (read-only)
   __forceinline const Type *Array(void) const {
-    return _values;
+    return m_aValues;
   };
 
   // Access value in the array
   __forceinline Type &operator[](s32 i) {
-    return _values[i];
+    return m_aValues[i];
   };
 
   // Access value in the array (read-only)
   __forceinline const Type &operator[](s32 i) const {
-    return _values[i];
+    return m_aValues[i];
   };
 
   // Assignment from a value
@@ -115,7 +115,7 @@ public:
 
     s32 i = iDimensions;
     while (--i >= 0) {
-      total = Type(total + _values[i] * _values[i]);
+      total = Type(total + m_aValues[i] * m_aValues[i]);
     }
 
     return (Type)sqrt(total);
@@ -138,7 +138,7 @@ public:
   __forceinline bool operator==(const NUMVEC &vOther) const {
     s32 i = iDimensions;
     while (--i >= 0) {
-      if (_values[i] != vOther[i]) {
+      if (m_aValues[i] != vOther[i]) {
         return false;
       }
     }
@@ -278,7 +278,7 @@ inline Type NUMVEC::operator%(const NUMVEC &vOther) const {
 
   s32 i = iDimensions;
   while (--i >= 0) {
-    product = Type(product + _values[i] * vOther[i]);
+    product = Type(product + m_aValues[i] * vOther[i]);
   }
 
   return product;
@@ -324,18 +324,18 @@ inline NUMVEC &NUMVEC::operator/=(const Type factor) {
 
 // 3D vector axis order
 struct VecAxes {
-  u8 _x : 2;
-  u8 _y : 2;
-  u8 _z : 2;
+  u8 x : 2;
+  u8 y : 2;
+  u8 z : 2;
 
   // Default constructor
-  VecAxes() : _x(0), _y(1), _z(2)
+  VecAxes() : x(0), y(1), z(2)
   {
   };
 
   // Order constructor
   VecAxes(u8 setX, u8 setY, u8 setZ)
-  : _x(setX & 3), _y(setY & 3), _z(setZ & 3)
+  : x(setX & 3), y(setY & 3), z(setZ & 3)
   {
   };
 };

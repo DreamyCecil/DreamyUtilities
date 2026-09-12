@@ -17,7 +17,7 @@ NAMESPACE_DREAMY_OPEN
 class CCRC32Hasher : public IHasher {
 
 protected:
-  u32 _result;
+  u32 m_iResult;
 
 public:
   // Default constructor

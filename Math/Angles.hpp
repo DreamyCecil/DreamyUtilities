@@ -30,34 +30,34 @@ public:
 
   // 1-value constructor
   __forceinline TAngles(const Type val1) {
-    this->_values[0] = val1;
+    this->m_aValues[0] = val1;
   };
 
   // 2-value constructor
   __forceinline TAngles(const Type val1, const Type val2) {
-    this->_values[0] = val1; this->_values[1] = val2;
+    this->m_aValues[0] = val1; this->m_aValues[1] = val2;
   };
 
   // 3-value constructor
   __forceinline TAngles(const Type val1, const Type val2, const Type val3) {
-    this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
+    this->m_aValues[0] = val1; this->m_aValues[1] = val2; this->m_aValues[2] = val3;
   };
 
   // 4-value constructor
   __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4) {
-    this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3; this->_values[3] = val4;
+    this->m_aValues[0] = val1; this->m_aValues[1] = val2; this->m_aValues[2] = val3; this->m_aValues[3] = val4;
   };
 
   // 5-value constructor
   __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4, const Type val5) {
-    this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
-    this->_values[3] = val4; this->_values[4] = val5;
+    this->m_aValues[0] = val1; this->m_aValues[1] = val2; this->m_aValues[2] = val3;
+    this->m_aValues[3] = val4; this->m_aValues[4] = val5;
   };
 
   // 6-value constructor
   __forceinline TAngles(const Type val1, const Type val2, const Type val3, const Type val4, const Type val5, const Type val6) {
-    this->_values[0] = val1; this->_values[1] = val2; this->_values[2] = val3;
-    this->_values[3] = val4; this->_values[4] = val5; this->_values[5] = val6;
+    this->m_aValues[0] = val1; this->m_aValues[1] = val2; this->m_aValues[2] = val3;
+    this->m_aValues[3] = val4; this->m_aValues[4] = val5; this->m_aValues[5] = val6;
   };
 
 public:
@@ -137,7 +137,7 @@ inline ANGLES ANGLES::DegToRad(void) const {
 
   s32 i = iDimensions;
   while (--i >= 0) {
-    v[i] = dreamy::DegToRad(this->_values[i]);
+    v[i] = dreamy::DegToRad(this->m_aValues[i]);
   }
   return v;
 };
@@ -149,7 +149,7 @@ inline ANGLES ANGLES::RadToDeg(void) const {
 
   s32 i = iDimensions;
   while (--i >= 0) {
-    v[i] = dreamy::RadToDeg(this->_values[i]);
+    v[i] = dreamy::RadToDeg(this->m_aValues[i]);
   }
   return v;
 };

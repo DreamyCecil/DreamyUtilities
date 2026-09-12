@@ -35,11 +35,11 @@ public:
   };
 
 protected:
-  IReadWriteDevice *_pDevice; // Device that's being used for serialization
-  EByteOrder _eByteOrder;     // Current byte order for writing and reading
-  EStatus _eStatus;           // Current stream status
-  bool _bExceptionMode;       // Throw exceptions on stream errors
-  bool _bHasOwnDevice;        // Stream owns the pointer to the device
+  IReadWriteDevice *m_pDevice; // Device that's being used for serialization
+  EByteOrder m_eByteOrder;     // Current byte order for writing and reading
+  EStatus m_eStatus;           // Current stream status
+  bool m_bExceptionMode;       // Throw exceptions on stream errors
+  bool m_bHasOwnDevice;        // Stream owns the pointer to the device
 
 public:
   // Default constructor
@@ -59,12 +59,12 @@ public:
 
   // Returns current byte order used for writing and reading
   inline EByteOrder GetByteOrder(void) const {
-    return _eByteOrder;
+    return m_eByteOrder;
   };
 
   // Change byte order used for writing and reading
   void SetByteOrder(EByteOrder bo) {
-    _eByteOrder = bo;
+    m_eByteOrder = bo;
   };
 
   // Wrapper for IReadWriteDevice::AtEnd()
@@ -72,12 +72,12 @@ public:
 
   // Return used device
   inline IReadWriteDevice *Device(void) {
-    return _pDevice;
+    return m_pDevice;
   };
 
   // Return current status
   inline EStatus GetStatus(void) {
-    return _eStatus;
+    return m_eStatus;
   };
 
   // Change active device
@@ -88,12 +88,12 @@ public:
 
   // Toggle the exception mode
   void SetExceptionMode(bool bState) {
-    _bExceptionMode = bState;
+    m_bExceptionMode = bState;
   };
 
   // Change status to STATUS_OK
   void ResetStatus(void) {
-    _eStatus = STATUS_OK;
+    m_eStatus = STATUS_OK;
   };
 
   // Read from the device

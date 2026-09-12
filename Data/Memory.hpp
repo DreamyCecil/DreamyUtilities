@@ -26,21 +26,21 @@ inline Type ByteSwapT(const Type &valSrc)
 {
   typedef struct {
     union {
-      Type _val;
-      c8 _bytes[sizeof(Type)];
+      Type val;
+      c8 bytes[sizeof(Type)];
     };
   } SwapData;
 
   SwapData src;
   SwapData dst;
-  src._val = valSrc;
+  src.val = valSrc;
 
   for (u32 i = 0; i < sizeof(Type); ++i)
   {
-    dst._bytes[i] = src._bytes[sizeof(Type) - i - 1];
+    dst.bytes[i] = src.bytes[sizeof(Type) - i - 1];
   }
 
-  return dst._val;
+  return dst.val;
 };
 
 // Byte-swapping functions for old MSVC compilers

@@ -46,25 +46,25 @@ CCRC32Hasher::CCRC32Hasher() {
 };
 
 void CCRC32Hasher::Reset(void) {
-  _result = 0;
+  m_iResult = 0;
 };
 
 void CCRC32Hasher::AddData(const c8 *pData, size_t iSize)
 {
   for (size_t i = 0; i < iSize; ++i)
   {
-    const u8 iLookupIndex = u8(_result ^ pData[i]);
-    _result = (_result >> 8) ^ _aCRC32Table[iLookupIndex];
+    const u8 iLookupIndex = u8(m_iResult ^ pData[i]);
+    m_iResult = (m_iResult >> 8) ^ _aCRC32Table[iLookupIndex];
   }
 };
 
 CByteArray CCRC32Hasher::GetBytes(void) const
 {
-  return CByteArray(reinterpret_cast<const c8 *>(&_result), sizeof(_result));
+  return CByteArray(reinterpret_cast<const c8 *>(&m_iResult), sizeof(m_iResult));
 };
 
 u32 CCRC32Hasher::GetResult(void) const {
-  return _result;
+  return m_iResult;
 };
 
 u32 CCRC32Hasher::operator()(const c8 *pData, size_t iSize) {
@@ -72,16 +72,16 @@ u32 CCRC32Hasher::operator()(const c8 *pData, size_t iSize) {
   AddData(pData, iSize);
   Finish();
 
-  return _result;
+  return m_iResult;
 };
 
 void CCRC32Hasher::Begin(u32 iHash) {
-  _result = iHash ^ 0xFFFFFFFF;
+  m_iResult = iHash ^ 0xFFFFFFFF;
 };
 
 void CCRC32Hasher::Finish(void) {
   // Invert the bits
-  _result ^= 0xFFFFFFFF;
+  m_iResult ^= 0xFFFFFFFF;
 };
 
 NAMESPACE_DREAMY_CLOSE

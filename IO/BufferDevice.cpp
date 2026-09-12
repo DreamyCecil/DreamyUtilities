@@ -6,31 +6,31 @@
 
 NAMESPACE_DREAMY_OPEN
 
-CBufferDevice::CBufferDevice() : _pData(nullptr), _iPos(0)
+CBufferDevice::CBufferDevice() : m_pData(nullptr), m_iPos(0)
 {
 };
 
-CBufferDevice::CBufferDevice(CByteArray *pByteArray) : _pData(pByteArray), _iPos(0)
+CBufferDevice::CBufferDevice(CByteArray *pByteArray) : m_pData(pByteArray), m_iPos(0)
 {
 };
 
 bool CBufferDevice::Open(EOpenMode eOpenMode) {
-  if (_pData == nullptr) {
+  if (m_pData == nullptr) {
     return false;
   }
 
-  _eOpenMode = eOpenMode;
-  _iPos = 0;
+  m_eOpenMode = eOpenMode;
+  m_iPos = 0;
   return IsOpen();
 };
 
 void CBufferDevice::Close(void) {
-  _eOpenMode = OM_UNOPEN;
-  _iPos = 0;
+  m_eOpenMode = OM_UNOPEN;
+  m_iPos = 0;
 };
 
 size_t CBufferDevice::Pos(void) const {
-  return IsOpen() ? _iPos : NULL_POS;
+  return IsOpen() ? m_iPos : NULL_POS;
 };
 
 bool CBufferDevice::AtEnd(void) const {
@@ -38,11 +38,11 @@ bool CBufferDevice::AtEnd(void) const {
 };
 
 size_t CBufferDevice::Size(void) const {
-  return _pData->Size();
+  return m_pData->Size();
 };
 
 bool CBufferDevice::Seek(size_t iOffset) {
-  if (_pData == nullptr || IsOpen()) {
+  if (m_pData == nullptr || IsOpen()) {
     return false;
   }
 
@@ -50,28 +50,28 @@ bool CBufferDevice::Seek(size_t iOffset) {
   if (iOffset >= Size()) return false;
 
   // Set new position
-  _iPos = iOffset;
+  m_iPos = iOffset;
   return true;
 };
 
 size_t CBufferDevice::Skip(size_t iMaxSize) {
-  size_t iLastPos = _iPos;
+  size_t iLastPos = m_iPos;
 
   // Don't go past the size
-  _iPos = dreamy::math::Min(_iPos + iMaxSize, Size());
+  m_iPos = dreamy::math::Min(m_iPos + iMaxSize, Size());
 
   // Results in less than iMaxSize if limited by size
-  return _iPos - iLastPos;
+  return m_iPos - iLastPos;
 };
 
 size_t CBufferDevice::Read(c8 *pData, size_t iMaxSize) {
-  if (pData == nullptr || _pData == nullptr || _pData->IsNull()) {
+  if (pData == nullptr || m_pData == nullptr || m_pData->IsNull()) {
     return NULL_POS;
   }
 
   if (AtEnd()) return 0;
 
-  size_t iExpectedPos = _iPos + iMaxSize;
+  size_t iExpectedPos = m_iPos + iMaxSize;
 
   // Past the limit
   if (iExpectedPos > Size()) {
@@ -79,8 +79,8 @@ size_t CBufferDevice::Read(c8 *pData, size_t iMaxSize) {
     iMaxSize -= iNotEnough;
   }
 
-  memcpy(pData, &_pData->ConstData()[_iPos], iMaxSize);
-  _iPos += iMaxSize;
+  memcpy(pData, &m_pData->ConstData()[m_iPos], iMaxSize);
+  m_iPos += iMaxSize;
 
   return iMaxSize;
 };
@@ -94,28 +94,28 @@ size_t CBufferDevice::Peek(c8 *pData, size_t iMaxSize) {
 };
 
 size_t CBufferDevice::Write(const c8 *pData, size_t iMaxSize) {
-  if (pData == nullptr || _pData == nullptr || !IsWritable()) {
+  if (pData == nullptr || m_pData == nullptr || !IsWritable()) {
     return NULL_POS;
   }
 
-  if (_iPos + iMaxSize >= Size()) {
-    _pData->Resize(Size() + iMaxSize);
+  if (m_iPos + iMaxSize >= Size()) {
+    m_pData->Resize(Size() + iMaxSize);
   }
 
-  memcpy(&_pData->Data()[_iPos], pData, iMaxSize);
-  _iPos += iMaxSize;
+  memcpy(&m_pData->Data()[m_iPos], pData, iMaxSize);
+  m_iPos += iMaxSize;
 
   return iMaxSize;
 };
 
 void CBufferDevice::SetBuffer(CByteArray *pData) {
   if (IsOpen()) return;
-  _pData = pData;
+  m_pData = pData;
 };
 
 const c8 *CBufferDevice::GetBuffer(void) const {
-  D_ASSERT(_pData != nullptr);
-  return _pData->ConstData();
+  D_ASSERT(m_pData != nullptr);
+  return m_pData->ConstData();
 };
 
 NAMESPACE_DREAMY_CLOSE

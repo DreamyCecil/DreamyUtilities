@@ -16,8 +16,8 @@ NAMESPACE_DREAMY_OPEN
 class CBufferDevice : public IReadWriteDevice {
 
 protected:
-  CByteArray *_pData;
-  size_t _iPos;
+  CByteArray *m_pData;
+  size_t m_iPos;
 
 public:
   // Default constructor

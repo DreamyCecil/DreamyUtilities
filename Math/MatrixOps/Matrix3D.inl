@@ -75,14 +75,14 @@ inline ROTMAT ROTMAT::operator*(const ROTMAT &mOther) const {
 // Make 3D rotation matrix out of euler angles (H, P, B) in radians
 inline void Mat3DFromAngles(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
   // Heading
-  MATRIX_TYPE sinH = (MATRIX_TYPE)sin(vAngles[axes._x]);
-  MATRIX_TYPE cosH = (MATRIX_TYPE)cos(vAngles[axes._x]);
+  MATRIX_TYPE sinH = (MATRIX_TYPE)sin(vAngles[axes.x]);
+  MATRIX_TYPE cosH = (MATRIX_TYPE)cos(vAngles[axes.x]);
   // Pitch
-  MATRIX_TYPE sinP = (MATRIX_TYPE)sin(vAngles[axes._y]);
-  MATRIX_TYPE cosP = (MATRIX_TYPE)cos(vAngles[axes._y]);
+  MATRIX_TYPE sinP = (MATRIX_TYPE)sin(vAngles[axes.y]);
+  MATRIX_TYPE cosP = (MATRIX_TYPE)cos(vAngles[axes.y]);
   // Banking
-  MATRIX_TYPE sinB = (MATRIX_TYPE)sin(vAngles[axes._z]);
-  MATRIX_TYPE cosB = (MATRIX_TYPE)cos(vAngles[axes._z]);
+  MATRIX_TYPE sinB = (MATRIX_TYPE)sin(vAngles[axes.z]);
+  MATRIX_TYPE cosB = (MATRIX_TYPE)cos(vAngles[axes.z]);
 
   m(0, 0) = cosH * cosB + sinP * sinH * sinB;
   m(0, 1) = sinP * sinH * cosB - cosH * sinB;
@@ -98,14 +98,14 @@ inline void Mat3DFromAngles(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAngles, c
 // Make inverted 3D rotation matrix out of euler angles (H, P, B) in radians
 inline void Mat3DFromAnglesInverse(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
   // Heading
-  MATRIX_TYPE sinH = (MATRIX_TYPE)sin(vAngles[axes._x]);
-  MATRIX_TYPE cosH = (MATRIX_TYPE)cos(vAngles[axes._x]);
+  MATRIX_TYPE sinH = (MATRIX_TYPE)sin(vAngles[axes.x]);
+  MATRIX_TYPE cosH = (MATRIX_TYPE)cos(vAngles[axes.x]);
   // Pitch
-  MATRIX_TYPE sinP = (MATRIX_TYPE)sin(vAngles[axes._y]);
-  MATRIX_TYPE cosP = (MATRIX_TYPE)cos(vAngles[axes._y]);
+  MATRIX_TYPE sinP = (MATRIX_TYPE)sin(vAngles[axes.y]);
+  MATRIX_TYPE cosP = (MATRIX_TYPE)cos(vAngles[axes.y]);
   // Banking
-  MATRIX_TYPE sinB = (MATRIX_TYPE)sin(vAngles[axes._z]);
-  MATRIX_TYPE cosB = (MATRIX_TYPE)cos(vAngles[axes._z]);
+  MATRIX_TYPE sinB = (MATRIX_TYPE)sin(vAngles[axes.z]);
+  MATRIX_TYPE cosB = (MATRIX_TYPE)cos(vAngles[axes.z]);
 
   m(0, 0) = cosH * cosB + sinP * sinH * sinB;
   m(1, 0) = sinP * sinH * cosB - cosH * sinB;
@@ -120,9 +120,9 @@ inline void Mat3DFromAnglesInverse(ROTMAT &m, const TVector<MATRIX_TYPE, 3> &vAn
 
 // Convert rotation matrix into euler angles (H, P, B) in radians
 inline void Mat3DToAngles(const ROTMAT &m, TVector<MATRIX_TYPE, 3> &vAngles, const VecAxes axes = VecAxes()) {
-  MATRIX_TYPE &h = vAngles[axes._x];
-  MATRIX_TYPE &p = vAngles[axes._y];
-  MATRIX_TYPE &b = vAngles[axes._z];
+  MATRIX_TYPE &h = vAngles[axes.x];
+  MATRIX_TYPE &p = vAngles[axes.y];
+  MATRIX_TYPE &b = vAngles[axes.z];
 
   // Calculate pitch
   MATRIX_TYPE f23 = m(1, 2);

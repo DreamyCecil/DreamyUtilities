@@ -9,62 +9,62 @@
 
 NAMESPACE_DREAMY_OPEN
 
-CDataStream::CDataStream() : _pDevice(nullptr),
-  _eByteOrder(BO_PLATFORM), _eStatus(STATUS_OK),
-  _bExceptionMode(false), _bHasOwnDevice(false)
+CDataStream::CDataStream() : m_pDevice(nullptr),
+  m_eByteOrder(BO_PLATFORM), m_eStatus(STATUS_OK),
+  m_bExceptionMode(false), m_bHasOwnDevice(false)
 {
 };
 
-CDataStream::CDataStream(IReadWriteDevice *d) : _pDevice(d),
-  _eByteOrder(BO_PLATFORM), _eStatus(STATUS_OK),
-  _bExceptionMode(false), _bHasOwnDevice(false)
+CDataStream::CDataStream(IReadWriteDevice *d) : m_pDevice(d),
+  m_eByteOrder(BO_PLATFORM), m_eStatus(STATUS_OK),
+  m_bExceptionMode(false), m_bHasOwnDevice(false)
 {
 };
 
 CDataStream::CDataStream(const CByteArray &ba) :
-  _eByteOrder(BO_PLATFORM), _eStatus(STATUS_OK),
-  _bExceptionMode(false), _bHasOwnDevice(true)
+  m_eByteOrder(BO_PLATFORM), m_eStatus(STATUS_OK),
+  m_bExceptionMode(false), m_bHasOwnDevice(true)
 {
-  _pDevice = new CBufferDevice(const_cast<CByteArray *>(&ba));
-  _pDevice->Open(IReadWriteDevice::OM_READONLY);
+  m_pDevice = new CBufferDevice(const_cast<CByteArray *>(&ba));
+  m_pDevice->Open(IReadWriteDevice::OM_READONLY);
 };
 
 CDataStream::CDataStream(CByteArray *pba, IReadWriteDevice::EOpenMode om) :
-  _eByteOrder(BO_PLATFORM), _eStatus(STATUS_OK),
-  _bExceptionMode(false), _bHasOwnDevice(true)
+  m_eByteOrder(BO_PLATFORM), m_eStatus(STATUS_OK),
+  m_bExceptionMode(false), m_bHasOwnDevice(true)
 {
-  _pDevice = new CBufferDevice(pba);
-  _pDevice->Open(om);
+  m_pDevice = new CBufferDevice(pba);
+  m_pDevice->Open(om);
 };
 
 CDataStream::~CDataStream()
 {
-  if (_bHasOwnDevice) {
-    delete _pDevice;
+  if (m_bHasOwnDevice) {
+    delete m_pDevice;
   }
 };
 
 bool CDataStream::AtEnd(void) const {
-  return (_eStatus == STATUS_READPASTEND || _pDevice == nullptr || _pDevice->AtEnd());
+  return (m_eStatus == STATUS_READPASTEND || m_pDevice == nullptr || m_pDevice->AtEnd());
 };
 
 void CDataStream::SetDevice(IReadWriteDevice *d) {
-  if (_bHasOwnDevice) {
-    delete _pDevice;
-    _bHasOwnDevice = false;
+  if (m_bHasOwnDevice) {
+    delete m_pDevice;
+    m_bHasOwnDevice = false;
   }
 
-  _pDevice = d;
+  m_pDevice = d;
 };
 
 void CDataStream::SetStatus(const EStatus eStatus) {
   // Not OK
-  if (_eStatus != STATUS_OK) return;
+  if (m_eStatus != STATUS_OK) return;
 
-  _eStatus = eStatus;
+  m_eStatus = eStatus;
 
   // Don't throw exceptions
-  if (!_bExceptionMode) return;
+  if (!m_bExceptionMode) return;
 
   switch (eStatus) {
     case STATUS_READPASTEND: throw CMessageException("STATUS_READPASTEND"); break;
@@ -74,7 +74,7 @@ void CDataStream::SetStatus(const EStatus eStatus) {
 };
 
 size_t CDataStream::Read(void *pBuffer, size_t iLength) {
-  if (_eStatus != STATUS_OK || pBuffer == nullptr || Device() == nullptr) {
+  if (m_eStatus != STATUS_OK || pBuffer == nullptr || Device() == nullptr) {
     return NULL_POS;
   }
 
@@ -97,7 +97,7 @@ CByteArray CDataStream::Read(size_t iLength) {
 };
 
 size_t CDataStream::Write(const void *pData, size_t iLength) {
-  if (_eStatus != STATUS_OK || pData == nullptr || Device() == nullptr) {
+  if (m_eStatus != STATUS_OK || pData == nullptr || Device() == nullptr) {
     return NULL_POS;
   }
 
@@ -111,11 +111,11 @@ size_t CDataStream::Write(const CByteArray &baData) {
 };
 
 size_t CDataStream::Pos(void) const {
-  return _pDevice->Pos();
+  return m_pDevice->Pos();
 };
 
 bool CDataStream::Seek(size_t iOffset) {
-  if (_eStatus != STATUS_OK) return false;
+  if (m_eStatus != STATUS_OK) return false;
 
   bool bResult = Device()->Seek(iOffset);
 
@@ -127,7 +127,7 @@ bool CDataStream::Seek(size_t iOffset) {
 };
 
 size_t CDataStream::Skip(size_t iLength) {
-  if (_eStatus != STATUS_OK) return NULL_POS;
+  if (m_eStatus != STATUS_OK) return NULL_POS;
 
   const size_t iResult = Device()->Skip(iLength);
 
@@ -139,7 +139,7 @@ size_t CDataStream::Skip(size_t iLength) {
 };
 
 size_t CDataStream::Peek(void *pBuffer, size_t iLength) {
-  if (_eStatus != STATUS_OK) return NULL_POS;
+  if (m_eStatus != STATUS_OK) return NULL_POS;
 
   const size_t iResult = Device()->Peek((c8 *)pBuffer, iLength);
 

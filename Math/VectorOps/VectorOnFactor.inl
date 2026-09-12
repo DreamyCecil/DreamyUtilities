@@ -15,7 +15,7 @@ inline NUMVEC NUMVEC::operator*(const VECTOR_TYPE factor) const {
 
 template<>
 inline NUMVEC &NUMVEC::operator*=(const VECTOR_TYPE factor) {
-  DO_VECTOR_OPERATION(_values, *=, factor);
+  DO_VECTOR_OPERATION(m_aValues, *=, factor);
   return *this;
 };
 
@@ -29,7 +29,7 @@ inline NUMVEC NUMVEC::operator/(const VECTOR_TYPE factor) const {
 
 template<>
 inline NUMVEC &NUMVEC::operator/=(const VECTOR_TYPE factor) {
-  DO_VECTOR_OPERATION(_values, /=, factor);
+  DO_VECTOR_OPERATION(m_aValues, /=, factor);
   return *this;
 };
 

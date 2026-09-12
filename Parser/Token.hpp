@@ -89,27 +89,27 @@ public:
 class CTokenException : public CMessageException {
 
 protected:
-  CTokenPos _pos;
+  CTokenPos m_pos;
 
 public:
   // Default constructor
-  CTokenException(const CTokenPos &pos, const c8 *strError = "") : _pos(pos)
+  CTokenException(const CTokenPos &pos, const c8 *strError = "") : m_pos(pos)
   {
     u32 iLine, iCol;
-    _pos.GetPos(iLine, iCol);
+    m_pos.GetPos(iLine, iCol);
 
     PrintF("%s at line %u, col %u", strError, iLine, iCol);
   };
 
   // Get error position
   const CTokenPos GetPos(void) const {
-    return _pos;
+    return m_pos;
   };
 
   // Quick function for throwing token exceptions
   static void Throw(const CTokenPos &pos, const c8 *strFormat, ...) {
     CTokenException ex(pos);
-    DREAMY_PRINTF_INLINE(ex._message, strFormat);
+    DREAMY_PRINTF_INLINE(ex.m_strMessage, strFormat);
 
     throw ex;
   };
@@ -140,16 +140,16 @@ public:
   };
 
 protected:
-  u32 _type;      // Token type
-  CTokenPos _pos; // Token position
-  CVariant _val;  // Token value
+  u32 m_iType;      // Token type
+  CTokenPos m_pos; // Token position
+  CVariant m_val;  // Token value
 
   // Make sure that it's an appropriate token type
   inline void AssertType(u32 iCheckType) const {
-    if (iCheckType == _type) return;
+    if (iCheckType == m_iType) return;
 
     bool bPrintableCheck = (iCheckType > 0x20 && iCheckType < 0x7F);
-    bool bPrintableType = (_type > 0x20 && _type < 0x7F);
+    bool bPrintableType = (m_iType > 0x20 && m_iType < 0x7F);
 
     const c8 *strError;
 
@@ -163,45 +163,45 @@ protected:
       strError = "Expected token under ID %u but got %u";
     }
 
-    CTokenException::Throw(GetTokenPos(), strError, iCheckType, _type);
+    CTokenException::Throw(GetTokenPos(), strError, iCheckType, m_iType);
   };
 
 public:
   // Default constructor
   CParserToken(u32 iSetType = TKN_INVALID) :
-    _type(iSetType), _pos(), _val()
+    m_iType(iSetType), m_pos(), m_val()
   {
   };
 
   // Constructor with a value
   CParserToken(u32 iSetType, CTokenPos posSet, const CVariant &valSet)
-    : _type(iSetType), _pos(posSet), _val(valSet)
+    : m_iType(iSetType), m_pos(posSet), m_val(valSet)
   {
   };
 
   // Get token type
   inline u32 GetType(void) const {
-    return _type;
+    return m_iType;
   };
 
   // Get token position
   inline CTokenPos &GetTokenPos(void) {
-    return _pos;
+    return m_pos;
   };
 
   // Get token position (read-only)
   inline const CTokenPos &GetTokenPos(void) const {
-    return _pos;
+    return m_pos;
   };
 
   // Get token value
   inline CVariant &GetValue(void) {
-    return _val;
+    return m_val;
   };
 
   // Get token value (read-only)
   inline const CVariant &GetValue(void) const {
-    return _val;
+    return m_val;
   };
 
   // Get position string

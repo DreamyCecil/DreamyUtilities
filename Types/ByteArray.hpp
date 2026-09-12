@@ -15,8 +15,8 @@ NAMESPACE_DREAMY_OPEN
 class CByteArray {
 
 private:
-  c8 *_pBuffer;
-  size_t _iSize;
+  c8 *m_pBuffer;
+  size_t m_iSize;
 
 public:
   // Default constructor
@@ -39,12 +39,12 @@ public:
 
   // Return read-only array of data
   const c8 *ConstData(void) const {
-    return _pBuffer;
+    return m_pBuffer;
   };
 
   // Return array of data
   c8 *Data(void) {
-    return _pBuffer;
+    return m_pBuffer;
   };
 
   // Insert another byte array at a specified position
@@ -79,12 +79,12 @@ public:
 
   // Return length of the byte array
   inline size_t Size(void) const {
-    return _iSize;
+    return m_iSize;
   };
 
   // Check if memory for the array hasn't been allocated
   inline bool IsNull(void) const {
-    return (_pBuffer == nullptr);
+    return (m_pBuffer == nullptr);
   };
 
   // Random access operator

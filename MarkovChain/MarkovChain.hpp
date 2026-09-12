@@ -38,18 +38,18 @@ public:
   #endif
 
 public:
-  CNextValueCounts mch_counts;
-  CNextValueChances mch_chances;
+  CNextValueCounts m_counts;
+  CNextValueChances m_chances;
 
 #if defined(_DREAMY_BOOST_RANDOM_DEVICE)
 
 private:
-  RandomSeed mch_seed; // Seed sequence for randomization
-  boost::mt19937 mch_rng; // Random number generator
+  RandomSeed m_seed; // Seed sequence for randomization
+  boost::mt19937 m_rng; // Random number generator
 
 public:
   // Default constructor
-  CMarkovChain() : mch_seed("/dev/random"), mch_rng(mch_seed.begin(), mch_seed.end())
+  CMarkovChain() : m_seed("/dev/random"), m_rng(m_seed.begin(), m_seed.end())
   {
   };
 
@@ -57,21 +57,21 @@ public:
 
 private:
   #if _DREAMY_UNIX
-    std::random_device mch_rd;
+    std::random_device m_rd;
   #endif
-  std::seed_seq mch_seed; // Seed sequence for randomization
-  std::mt19937 mch_rng; // Random number generator
+  std::seed_seq m_seed; // Seed sequence for randomization
+  std::mt19937 m_rng; // Random number generator
 
 public:
   // Default constructor
   CMarkovChain() :
     #if !_DREAMY_UNIX
-      mch_seed(GenerateSeedSeq("/dev/random")),
+      m_seed(GenerateSeedSeq("/dev/random")),
     #else
-      mch_rd("/dev/random"),
-      mch_seed({mch_rd(), mch_rd(), mch_rd(), mch_rd(), mch_rd(), mch_rd(), mch_rd(), mch_rd()}),
+      m_rd("/dev/random"),
+      m_seed({m_rd(), m_rd(), m_rd(), m_rd(), m_rd(), m_rd(), m_rd(), m_rd()}),
     #endif
-    mch_rng(mch_seed)
+    m_rng(m_seed)
   {
   };
 
@@ -88,8 +88,8 @@ public:
 
   // Clear markov chain
   void Clear(void) {
-    mch_counts.clear();
-    mch_chances.clear();
+    m_counts.clear();
+    m_chances.clear();
   };
 
   // Learn a new value
@@ -97,7 +97,7 @@ public:
     // If this order has a full set of observed data
     if (moc.IsObserved(moc.GetSize() - 1)) {
       // Count it
-      CValueCounts &mapCounts = mch_counts[moc.GetOrder()];
+      CValueCounts &mapCounts = m_counts[moc.GetOrder()];
       ++mapCounts[valNext];
     }
 
@@ -110,7 +110,7 @@ public:
     // Go through chances of next values of each value order
     typename CNextValueCounts::const_iterator itOrder;
 
-    for (itOrder = mch_counts.begin(); itOrder != mch_counts.end(); ++itOrder)
+    for (itOrder = m_counts.begin(); itOrder != m_counts.end(); ++itOrder)
     {
       u32 iSum = 0;
 
@@ -126,7 +126,7 @@ public:
 
       for (itNext = itOrder->second.begin(); itNext != itOrder->second.end(); ++itNext) {
         fNextChance += f32(itNext->second) / f32(iSum);
-        mch_chances[itOrder->first][itNext->first] = fNextChance;
+        m_chances[itOrder->first][itNext->first] = fNextChance;
       }
     }
   };
@@ -140,20 +140,20 @@ public:
 
     #if defined(_DREAMY_BOOST_RANDOM_DEVICE)
       // Boost randomization algorithm
-      boost::uniform_int<size_t> dist(0, mch_chances.size());
-      iObs = dist(mch_rng);
+      boost::uniform_int<size_t> dist(0, m_chances.size());
+      iObs = dist(m_rng);
 
     #elif _DREAMY_CPP11
       // STL randomization algorithm
-      std::uniform_int_distribution<size_t> dist(0, mch_chances.size());
-      iObs = dist(mch_rng);
+      std::uniform_int_distribution<size_t> dist(0, m_chances.size());
+      iObs = dist(m_rng);
 
     #else
       // Simple randomization
-      iObs = rand() % mch_chances.size();
+      iObs = rand() % m_chances.size();
     #endif
 
-    typename CMarkovChain<Type>::CNextValueChances::const_iterator it = mch_chances.begin();
+    typename CMarkovChain<Type>::CNextValueChances::const_iterator it = m_chances.begin();
     std::advance(it, iObs);
 
     return it->first;
@@ -161,7 +161,7 @@ public:
 
   // Get next state by picking a random weighted value
   bool GetNextOrder(CUniqueOrder<Type> &order) {
-    const CMarkovChain<Type>::CValueChances &aChances = mch_chances[order];
+    const CMarkovChain<Type>::CValueChances &aChances = m_chances[order];
 
     // No further observations for this order; causes infinite repetition upon calling GetNextOrder() again
     if (aChances.size() == 0) {
@@ -173,12 +173,12 @@ public:
     #if defined(_DREAMY_BOOST_RANDOM_DEVICE)
       // Boost randomization algorithm
       boost::uniform_real<f32> distRatio(0.0f, 1.0f);
-      fNextValChance = distRatio(mch_rng);
+      fNextValChance = distRatio(m_rng);
 
     #elif _DREAMY_CPP11
       // STL randomization algorithm
       std::uniform_real_distribution<f32> distRatio(0.0f, 1.0f);
-      fNextValChance = distRatio(mch_rng);
+      fNextValChance = distRatio(m_rng);
 
     #else
       // Simple randomization

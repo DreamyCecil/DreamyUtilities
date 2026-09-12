@@ -15,7 +15,7 @@ inline NUMVEC NUMVEC::operator+(const NUMVEC &vOther) const {
 
 template<>
 inline NUMVEC &NUMVEC::operator+=(const NUMVEC &vOther) {
-  DO_VECTOR_OPERATION(_values, +=, vOther);
+  DO_VECTOR_OPERATION(m_aValues, +=, vOther);
   return *this;
 };
 
@@ -29,7 +29,7 @@ inline NUMVEC NUMVEC::operator-(const NUMVEC &vOther) const {
 
 template<>
 inline NUMVEC &NUMVEC::operator-=(const NUMVEC &vOther) {
-  DO_VECTOR_OPERATION(_values, -=, vOther);
+  DO_VECTOR_OPERATION(m_aValues, -=, vOther);
   return *this;
 };
 
@@ -43,7 +43,7 @@ inline NUMVEC NUMVEC::operator*(const NUMVEC &vOther) const {
 
 template<>
 inline NUMVEC &NUMVEC::operator*=(const NUMVEC &vOther) {
-  DO_VECTOR_OPERATION(_values, *=, vOther);
+  DO_VECTOR_OPERATION(m_aValues, *=, vOther);
   return *this;
 };
 
@@ -57,7 +57,7 @@ inline NUMVEC NUMVEC::operator/(const NUMVEC &vOther) const {
 
 template<>
 inline NUMVEC &NUMVEC::operator/=(const NUMVEC &vOther) {
-  DO_VECTOR_OPERATION(_values, /=, vOther);
+  DO_VECTOR_OPERATION(m_aValues, /=, vOther);
   return *this;
 };
 

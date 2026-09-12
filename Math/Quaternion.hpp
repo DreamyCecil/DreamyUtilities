@@ -26,8 +26,8 @@ public:
 
 public:
   union {
-    Type _values[4];
-    struct { Type _w, _x, _y, _z; };
+    Type m_aValues[4];
+    struct { Type m_w, m_x, m_y, m_z; };
   };
 
 public:
@@ -38,19 +38,19 @@ public:
 
   // Value constructor
   __forceinline TQuaternion(Type wSet, Type xSet, Type ySet, Type zSet) :
-    _w(wSet), _x(xSet), _y(ySet), _z(zSet)
+    m_w(wSet), m_x(xSet), m_y(ySet), m_z(zSet)
   {
   };
 
   // Vector constructor
   __forceinline TQuaternion(const Vector &v) :
-    _w(v[0]), _x(v[1]), _y(v[2]), _z(v[3])
+    m_w(v[0]), m_x(v[1]), m_y(v[2]), m_z(v[3])
   {
   };
 
   // Convert into a vector
   __forceinline Vector ToVector(void) const {
-    return Vector(_w, _x, _y, _z);
+    return Vector(m_w, m_x, m_y, m_z);
   };
 
   // Convert from euler angles (H, P, B) in radians
@@ -62,34 +62,34 @@ public:
     Type cosB = (Type)cos(vAngles[2] * Type(0.5));
     Type sinB = (Type)sin(vAngles[2] * Type(0.5));
 
-    _w = cosB * cosP * cosH + sinB * sinP * sinH;
+    m_w = cosB * cosP * cosH + sinB * sinP * sinH;
 
     // From Wikipedia, offsetted for 3D space with upward Z axis
-    //_x = sinB * cosP * cosH - cosB * sinP * sinH;
-    //_y = cosB * sinP * cosH + sinB * cosP * sinH;
-    //_z = cosB * cosP * sinH - sinB * sinP * cosH;
+    //m_x = sinB * cosP * cosH - cosB * sinP * sinH;
+    //m_y = cosB * sinP * cosH + sinB * cosP * sinH;
+    //m_z = cosB * cosP * sinH - sinB * sinP * cosH;
 
     // ZXY/201 order by default for 3D space with upward Y axis
-    (&_x)[axes._x] = sinB * cosP * cosH - cosB * sinP * sinH;
-    (&_x)[axes._y] = cosB * sinP * cosH + sinB * cosP * sinH;
-    (&_x)[axes._z] = cosB * cosP * sinH - sinB * sinP * cosH;
+    (&m_x)[axes.x] = sinB * cosP * cosH - cosB * sinP * sinH;
+    (&m_x)[axes.y] = cosB * sinP * cosH + sinB * cosP * sinH;
+    (&m_x)[axes.z] = cosB * cosP * sinH - sinB * sinP * cosH;
   };
 
   // Convert to euler angles (H, P, B) in radians
   void ToEuler(TVector<Type, 3> &vAngles, const VecAxes axes = _DREAMY_DEFAULT_AXES) {
     // From Wikipedia, offsetted for 3D space with upward Z axis
-    //Type axisValue[3] = { _x, _y, _z };
+    //Type axisValue[3] = { m_x, m_y, m_z };
 
     // ZXY/201 order by default for 3D space with upward Y axis
-    Type axisValue[3] = { (&_x)[axes._x], (&_x)[axes._y], (&_x)[axes._z] };
+    Type axisValue[3] = { (&m_x)[axes.x], (&m_x)[axes.y], (&m_x)[axes.z] };
 
     // Heading
-    Type sinH_cosP = 2 * (_w * axisValue[2] + axisValue[0] * axisValue[1]);
+    Type sinH_cosP = 2 * (m_w * axisValue[2] + axisValue[0] * axisValue[1]);
     Type cosH_cosP = 1 - 2 * (axisValue[1] * axisValue[1] + axisValue[2] * axisValue[2]);
     vAngles[0] = (Type)atan2(sinH_cosP, cosH_cosP);
 
     // Pitch
-    Type sinP = 2 * (_w * axisValue[1] - axisValue[2] * axisValue[0]);
+    Type sinP = 2 * (m_w * axisValue[1] - axisValue[2] * axisValue[0]);
 
     if (dreamy::math::Abs(sinP) >= 1) {
       vAngles[1] = dreamy::math::CopySign(Type(dreamy::math::PI / 2), sinP); // Use 90 degrees if out of range
@@ -98,24 +98,24 @@ public:
     }
 
     // Banking
-    Type sinB_cosP = 2 * (_w * axisValue[0] + axisValue[1] * axisValue[2]);
+    Type sinB_cosP = 2 * (m_w * axisValue[0] + axisValue[1] * axisValue[2]);
     Type cosB_cosP = 1 - 2 * (axisValue[0] * axisValue[0] + axisValue[1] * axisValue[1]);
     vAngles[2] = (Type)atan2(sinB_cosP, cosB_cosP);
   };
 
   // Convert to a rotation matrix
   void ToMatrix(TMatrix<Type, 3, 3> &matrix) const {
-    Type wx = 2 * _w * _x;
-    Type wy = 2 * _w * _y;
-    Type wz = 2 * _w * _z;
+    Type wx = 2 * m_w * m_x;
+    Type wy = 2 * m_w * m_y;
+    Type wz = 2 * m_w * m_z;
 
-    Type xx = 2 * _x * _x;
-    Type xy = 2 * _x * _y;
-    Type xz = 2 * _x * _z;
+    Type xx = 2 * m_x * m_x;
+    Type xy = 2 * m_x * m_y;
+    Type xz = 2 * m_x * m_z;
 
-    Type yy = 2 * _y * _y;
-    Type yz = 2 * _y * _z;
-    Type zz = 2 * _z * _z;
+    Type yy = 2 * m_y * m_y;
+    Type yz = 2 * m_y * m_z;
+    Type zz = 2 * m_z * m_z;
 
     matrix(0, 0) = Type(1.0) - (yy + zz);
     matrix(0, 1) = xy - wz;
@@ -138,13 +138,13 @@ public:
     if (trace > 0.0) {
       // abs(w) > 1/2 or w > 1/2
       root = (Type)sqrt(trace + Type(1.0)); // 2w
-      _w = Type(0.5) * root;
+      m_w = Type(0.5) * root;
       root = Type(0.5) / root; // 1/(4w)
 
       // ZXY/201 order by default for 3D space with upward Y axis
-      _x = (matrix(2, 1) - matrix(1, 2)) * root;
-      _y = (matrix(0, 2) - matrix(2, 0)) * root;
-      _z = (matrix(1, 0) - matrix(0, 1)) * root;
+      m_x = (matrix(2, 1) - matrix(1, 2)) * root;
+      m_y = (matrix(0, 2) - matrix(2, 0)) * root;
+      m_z = (matrix(1, 0) - matrix(0, 1)) * root;
 
     } else {
       // abs(w) <= 1/2
@@ -164,11 +164,11 @@ public:
 
       root = (Type)sqrt(matrix(i, i) - matrix(j, j) - matrix(k, k) + Type(1.0));
 
-      Type *quat[3] = { &_x, &_y, &_z };
+      Type *quat[3] = { &m_x, &m_y, &m_z };
       *quat[i] = Type(0.5) * root;
 
       root = Type(0.5) / root;
-      _w = (matrix(k, j) - matrix(j, k)) * root;
+      m_w = (matrix(k, j) - matrix(j, k)) * root;
 
       *quat[j] = (matrix(j, i) + matrix(i, j)) * root;
       *quat[k] = (matrix(k, i) + matrix(i, k)) * root;
@@ -179,39 +179,39 @@ public:
   void FromAxisAngle(const TVector<Type, 3> &vAngles, const Type angle, const VecAxes axes = VecAxes()) {
     Type sinAngle = (Type)sin(angle / 2);
 
-    _w = (Type)cos(angle / 2);
-    _x = vAngles[axes._x] * sinAngle;
-    _y = vAngles[axes._y] * sinAngle;
-    _z = vAngles[axes._z] * sinAngle;
+    m_w = (Type)cos(angle / 2);
+    m_x = vAngles[axes.x] * sinAngle;
+    m_y = vAngles[axes.y] * sinAngle;
+    m_z = vAngles[axes.z] * sinAngle;
   };
 
   // Convert to axis angle (in radians)
   void ToAxisAngle(TVector<Type, 3> &vAngles, Type &angle, const VecAxes axes = VecAxes()) {
-    Type sinAngle = (Type)sqrt(Type(1) - _w * _w);
-    angle = 2 * (Type)acos(_w);
+    Type sinAngle = (Type)sqrt(Type(1) - m_w * m_w);
+    angle = 2 * (Type)acos(m_w);
 
     // Angle isn't zero
     if (dreamy::math::Abs(sinAngle) >= 0.001) {
-      vAngles[axes._x] = _x / sinAngle;
-      vAngles[axes._y] = _y / sinAngle;
-      vAngles[axes._z] = _z / sinAngle;
+      vAngles[axes.x] = m_x / sinAngle;
+      vAngles[axes.y] = m_y / sinAngle;
+      vAngles[axes.z] = m_z / sinAngle;
 
     // Angle is zero
     } else {
-      vAngles[axes._x] = Type(1);
-      vAngles[axes._y] = Type(0);
-      vAngles[axes._z] = Type(0);
+      vAngles[axes.x] = Type(1);
+      vAngles[axes.y] = Type(0);
+      vAngles[axes.z] = Type(0);
     }
   };
 
   // Negation
   __forceinline QUAT operator-(void) const {
-    return QUAT(-_w, -_x, -_y, -_z);
+    return QUAT(-m_w, -m_x, -m_y, -m_z);
   };
 
   // Conjugation
   __forceinline QUAT operator~(void) const {
-    return QUAT(_w, -_x, -_y, -_z);
+    return QUAT(m_w, -m_x, -m_y, -m_z);
   };
 
   // Inversion
@@ -228,19 +228,19 @@ public:
   __forceinline QUAT &operator=(const QUAT &qOther) {
     if (&qOther == this) return *this;
 
-    _w = qOther._w;
-    _x = qOther._x;
-    _y = qOther._y;
-    _z = qOther._z;
+    m_w = qOther.m_w;
+    m_x = qOther.m_x;
+    m_y = qOther.m_y;
+    m_z = qOther.m_z;
     return *this;
   };
 
   // Assignment from a vector
   __forceinline QUAT &operator=(const Vector &vOther) {
-    _w = vOther[0];
-    _x = vOther[1];
-    _y = vOther[2];
-    _z = vOther[3];
+    m_w = vOther[0];
+    m_x = vOther[1];
+    m_y = vOther[2];
+    m_z = vOther[3];
     return *this;
   };
 
