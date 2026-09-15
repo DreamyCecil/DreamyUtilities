@@ -5,415 +5,645 @@
 
 namespace dreamy {
 
-bool CCLikeParser::ParseComments(CTokenList &aTokens, bool bTokenize) {
-  if (*pchCur != '/') {
-    return false;
-  }
+bool CCLikeParser::ParseComment(CString *pstr)
+{
+  if (Cur() != '/') return false;
 
-  switch (*pchNext) {
-    // Single-line comment
-    case '/': {
-      // Skip until the line break
-      while (!AtEnd()) {
-        SetToCurrent();
+  // Single-line comment
+  if (Next() == '/') {
+    // Skip until a line break
+    do {
+      Advance(1);
+      if (Cur() == '\r' || Cur() == '\n') break;
+    } while (!AtEnd());
 
-        if (*pchCur == '\r' || *pchCur == '\n') {
-          break;
-        }
+    // Skip comment opening
+    if (pstr != nullptr) *pstr = ExtractString(2);
 
-        Advance(1);
-      }
+    return true;
 
-      // Parse but don't tokenize
-      if (!bTokenize) {
-        return true;
-      }
+  // Multi-line comment
+  } else if (Next() == '*') {
+    // Skip until the comment closing
+    do {
+      Advance(1);
+      if (Cur() == '*' && Next() == '/') break;
 
-      // Skip comment opening
-      CString strComment = ExtractString(2);
-      AddToken(aTokens, CParserToken::TKN_COMMENT, pos, strComment);
-    } return true;
+      // Count lines
+      if (Cur() == '\n') CountLine();
+    } while (!AtEnd());
 
-    // Multi-line comment
-    case '*': {
-      // Skip until the comment closing
-      while (!AtEnd()) {
-        if (str[pos.iLast + 0] == '*'
-          && str[pos.iLast + 1] == '/') {
-          break;
+    // Skip comment opening
+    if (pstr != nullptr) *pstr = ExtractString(2);
 
-        // Count lines
-        } else if (str[pos.iLast] == '\n') {
-          CountLine();
-        }
+    // Comment closing
+    Advance(2);
 
-        Advance(1);
-      }
-
-      // Parse but don't tokenize
-      if (!bTokenize) {
-        Advance(2);
-        return true;
-      }
-
-      // Skip comment opening
-      CString strComment = ExtractString(2);
-
-      // Count comment closing
-      pos.iLast += 2;
-
-      AddToken(aTokens, CParserToken::TKN_COMMENT, pos, strComment);
-    } return true;
+    return true;
   }
 
   return false;
 };
 
-bool CCLikeParser::ParseOperators(CTokenList &aTokens) {
-  switch (*pchCur) {
-    // Operators
+bool CCLikeParser::TokenizeComment(CTokenList *paTokens) {
+  if (paTokens == nullptr) return ParseComment();
+
+  CString str;
+  if (!ParseComment(&str)) return false;
+  AddToken(*paTokens, CParserToken::TKN_COMMENT, m_pos, str);
+  return true;
+};
+
+bool CCLikeParser::ParseOperator(CString *pstr) {
+  const c8 chType = Cur();
+  const c8 chNext = Next();
+  c8 chSubType = '\0';
+
+  switch (chType) {
+    // Arithmetic operators
     case '+': {
-      switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // +=
-        case '+': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // ++
-        default: AddToken(aTokens, *pchCur, pos, 0); // +
-      }
-    } return true;
+      // +=  ++
+      if (chNext == '=' || chNext == '+') chSubType = chNext;
+    } break;
 
     case '-': {
-      switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // -=
-        case '-': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // --
-        default: AddToken(aTokens, *pchCur, pos, 0); // -
-      }
-    } return true;
+      // -=  --
+      if (chNext == '=' || chNext == '-') chSubType = chNext;
+    } break;
 
     case '*': {
-      if (*pchNext == '=') {
-        Advance(1);
-        AddToken(aTokens, *pchCur, pos, *pchNext); // *=
-      } else {
-        AddToken(aTokens, *pchCur, pos, 0); // *
-      }
-    } return true;
+      // *=
+      if (chNext == '=') chSubType = chNext;
+    } break;
 
     case '/': {
-      if (*pchNext == '=') {
-        Advance(1);
-        AddToken(aTokens, *pchCur, pos, *pchNext); // /=
-      } else {
-        AddToken(aTokens, *pchCur, pos, 0); // /
-      }
-    } return true;
+      // /=
+      if (chNext == '=') chSubType = chNext;
+    } break;
 
     // Bitwise operators
     case '|': {
-      switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // |=
-        case '|': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // ||
-        default: AddToken(aTokens, *pchCur, pos, 0); // |
-      }
-    } return true;
+      // |=  ||
+      if (chNext == '=' || chNext == '|') chSubType = chNext;
+    } break;
 
     case '&': {
-      switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // &=
-        case '&': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // &&
-        default: AddToken(aTokens, *pchCur, pos, 0); // &
-      }
-    } return true;
+      // &=  &&
+      if (chNext == '=' || chNext == '&') chSubType = chNext;
+    } break;
 
     case '^': {
-      switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // ^=
-        case '^': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // ^^
-        default: AddToken(aTokens, *pchCur, pos, 0); // ^
-      }
-    } return true;
+      // ^=  ^^
+      if (chNext == '=' || chNext == '^') chSubType = chNext;
+    } break;
 
     // Other operators
     case '>': {
-      switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // >=
-        case '>': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // >>
-        default: AddToken(aTokens, *pchCur, pos, 0); // >
-      }
-    } return true;
+      // >=  >>
+      if (chNext == '=' || chNext == '>') chSubType = chNext;
+    } break;
 
     case '<': {
-      switch (*pchNext) {
-        case '=': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // <=
-        case '<': Advance(1); AddToken(aTokens, *pchCur, pos, *pchNext); break; // <<
-        default: AddToken(aTokens, *pchCur, pos, 0); // <
-      }
-    } return true;
+      // <=  <<
+      if (chNext == '=' || chNext == '<') chSubType = chNext;
+    } break;
 
     case '=': {
-      if (*pchNext == '=') {
-        Advance(1);
-        AddToken(aTokens, *pchCur, pos, *pchNext); // ==
-      } else {
-        AddToken(aTokens, *pchCur, pos, 0); // =
-      }
-    } return true;
+      // ==
+      if (chNext == '=') chSubType = chNext;
+    } break;
 
     case '!': {
-      if (*pchNext == '=') {
-        Advance(1);
-        AddToken(aTokens, *pchCur, pos, *pchNext); // !=
-      } else {
-        AddToken(aTokens, *pchCur, pos, 0); // !
-      }
-    } return true;
+      // !=
+      if (chNext == '=') chSubType = chNext;
+    } break;
 
     // Other symbols
-    case '#': case '$': case '@': case '`': case '~': case '%': case '?': {
-      AddToken(aTokens, *pchCur, pos, 0);
-    } return true;
+    case '#': case '$': case '@': case '`': case '~': case '%': case '?':
+      break;
+
+    // Invalid symbol
+    default: return false;
   }
 
-  return false;
+  if (pstr != nullptr) {
+    CString &str = *pstr;
+    str = "  ";
+    str[0] = chType;
+    str[1] = chSubType;
+  }
+
+  Advance((chSubType != '\0') ? 2 : 1);
+  return true;
 };
 
-bool CCLikeParser::ParseString(CString &str, const c8 chEnclosed) {
-  if (*pchCur != chEnclosed) {
-    return false;
-  }
+bool CCLikeParser::TokenizeOperator(CTokenList *paTokens) {
+  if (paTokens == nullptr) return ParseOperator();
 
-  u8 iEscapeChar = 0; // 1 - unmarked escape character, 2 - marked
+  CString str;
+  if (!ParseOperator(&str)) return false;
 
-  // Go through characters
-  while (!AtEnd()) {
-    // Current character
-    SetToCurrent();
+  // Returned operator string should be at least one character long and the subtype
+  // can either be the second character or 0 for none (from the null terminator)
+  D_ASSERT(str[0] != '\0');
+  AddToken(*paTokens, static_cast<u8>(str[0]), m_pos, static_cast<u8>(str[1]));
+  return true;
+};
+
+bool CCLikeParser::ParseString(const c8 chEnclosed, CString *pstr)
+{
+  if (Cur() != chEnclosed) return false;
+
+  bool bHasEscSeq = false; // Whether the string contains any escape sequences
+  bool bEscSeq = false; // Whether parsing an escape sequence
+
+  do {
+    // Get next character (or first one after the opening character)
+    Advance(1);
 
     // Sequence end
-    if (*pchCur == chEnclosed) {
-      if (!(iEscapeChar & 2)) {
-        break;
-      }
+    if (Cur() == chEnclosed) {
+      if (!bEscSeq) break;
 
     // Line break
-    } else if (*pchCur == '\n') {
+    } else if (Cur() == '\n') {
       CountLine();
 
-    // Mark escape characters
-    } else if (*pchCur == '\\') {
-      iEscapeChar = (iEscapeChar & 2 ? 1 : 2);
-      Advance(1);
+    // Parse escape sequences after a backslash
+    } else if (Cur() == '\\') {
+      bEscSeq = !bEscSeq;
+      bHasEscSeq = true;
       continue;
     }
 
-    // Unmark escape character
-    if (iEscapeChar & 2) {
-      iEscapeChar = 1;
-    }
+    // Parsed an escape sequence
+    bEscSeq = false;
+  } while (!AtEnd());
 
-    Advance(1);
+  // Parsed past the limit
+  if (AtEnd()) {
+    throw CTokenException(m_pos, "Unclosed character sequence");
   }
 
-  // Didn't parse past the limit
-  if (!AtEnd()) {
+  if (pstr != nullptr) {
     // Skip opening character
-    str = ExtractString(1);
+    *pstr = ExtractString(1);
 
     // Convert character escape sequences
-    if (iEscapeChar != 0) {
+    if (bHasEscSeq) {
       try {
-        str.ConvertEscapeChars();
+        pstr->ConvertEscapeChars();
 
       // Couldn't convert some sequence
       } catch (CFormattingException &ex) {
-        SetPosition(pos.iFirst + (u32)ex.GetCharacter());
-        throw CTokenException(pos, "Unrecognized character escape sequence");
+        UpdateTokenPlace(m_pos.GetStart() + (u32)ex.GetPos());
+        throw CTokenException(m_pos, "Unrecognized character escape sequence");
       }
     }
-
-    // Count closing character
-    ++pos.iLast;
-
-  } else {
-    throw CTokenException(pos, "Unclosed character sequence");
   }
+
+  // Closing character
+  Advance(1);
 
   return true;
 };
 
-bool CCLikeParser::ParseCharSequences(CTokenList &aTokens, const c8 chString, const c8 chCharSeq) {
+bool CCLikeParser::TokenizeCharSequence(const c8 chString, const c8 chLiteral, CTokenList *paTokens) {
   CString str;
 
   // Add string
-  if (chString != '\0' && ParseString(str, chString)) {
-    AddToken(aTokens, CParserToken::TKN_VALUE, pos, str);
+  if (chString != '\0' && ParseString(chString, &str)) {
+    if (paTokens != nullptr) {
+      AddToken(*paTokens, CParserToken::TKN_VALUE, m_pos, str);
+    }
     return true;
 
   // Add character sequence
-  } else if (chCharSeq != '\0' && ParseString(str, chCharSeq)) {
+  } else if (chLiteral != '\0' && ParseString(chLiteral, &str)) {
     if (str[0] == '\0') {
-      throw CTokenException(pos, "Character sequence cannot be empty");
+      throw CTokenException(m_pos, "Character sequence cannot be empty");
     } else if (str[1] != '\0') {
-      throw CTokenException(pos, "Character sequence is too long");
+      throw CTokenException(m_pos, "Character sequence is too long");
     }
 
-    AddToken(aTokens, CParserToken::TKN_VALUE, pos, static_cast<s64>(str[0]));
+    if (paTokens != nullptr) {
+      AddToken(*paTokens, CParserToken::TKN_VALUE, m_pos, static_cast<u8>(str[0]));
+    }
     return true;
   }
 
   return false;
 };
 
-bool CCLikeParser::ParseNumbers(CTokenList &aTokens) {
-  if (*pchCur < '0' || *pchCur > '9') {
-    return false;
+bool CCLikeParser::ParseKey(CString *pstr) {
+  // Start identifier names with an underscore or letters
+  if (Cur() == '_'
+  || (Cur() >= 'a' && Cur() <= 'z')
+  || (Cur() >= 'A' && Cur() <= 'Z')) {
+    // Parse name symbols until any invalid character
+    do {
+      Advance(1);
+
+      // Allow underscore, letters and numbers
+      if (Cur() != '_'
+      && (Cur() < '0' || Cur() > '9')
+      && (Cur() < 'a' || Cur() > 'z')
+      && (Cur() < 'A' || Cur() > 'Z')) {
+        break;
+      }
+    } while (!AtEnd());
+
+    if (pstr != nullptr) *pstr = ExtractString();
+    return true;
   }
 
-  u8 ubType = 0; // 1 - hex, 2 - real, 3 - scientific notation
-  bool bHexCheck = (*pchCur == '0');
+  return false;
+};
 
-  // Parse through numbers
-  while (!AtEnd()) {
-    SetToCurrent();
+bool CCLikeParser::TokenizeKey(CTokenList *paTokens) {
+  if (paTokens == nullptr) return ParseKey();
 
-    // Change type
-    if (*pchCur == 'x' || *pchCur == 'X') {
-      // Can't be a hexadecimal number anymore
-      if (!bHexCheck) {
-        break;
-      }
+  CString str;
+  if (!ParseKey(&str)) return false;
+  AddToken(*paTokens, CParserToken::TKN_KEY, m_pos, str);
+  return true;
+};
 
-      // Register as a hexadecimal number
-      ubType = 1;
-      Advance(1);
+u32 CCLikeParser::ParseHexInteger(s64 *piValue, bool bHexPrefix) {
+  if (bHexPrefix) {
+    // Must start with "0x"
+    if (Cur() != '0' || (Next() != 'x' && Next() != 'X')) return 0;
+    Advance(2);
 
-    // Encountered a dot
-    } else if (*pchCur == '.') {
-      // Already changed type
-      if (ubType != 0) {
-        break;
-      }
+  } else {
+    // Must start with at least one digit
+    u8 ch = Cur();
+    if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'f') && (ch < 'A' || ch > 'F')) return 0;
+  }
 
-      // Register as a real number
-      ubType = 2;
-      Advance(1);
+  const u32 iTokenOffset = GetTokenLength(); // Position of the first real digit
+  u64 iValue = 0;
 
-    // Encountered scientific notation for a non-hexadecimal
-    } else if (ubType != 1 && (*pchCur == 'e' || *pchCur == 'E')) {
-      // Already changed type
-      if (ubType == 3) {
-        break;
-      }
+  // Go through hexadecimal digits until there are no more
+  for (; !AtEnd(); Advance(1)) {
+    u8 ch = Cur();
 
-      // Not followed by a unary operator or a number
-      if (*pchNext != '+' && *pchNext != '-'
-        && (*pchNext < '0' || *pchNext > '9')) {
-        break;
-      }
-
-      // Register as a scientific notation
-      ubType = 3;
-
-      // Skip scientific notation with a following character
-      Advance(2);
-
-    // Copy other numbers
-    } else if (*pchCur >= '0' && *pchCur <= '9') {
-      Advance(1);
-
-    // Hexadecimal numbers
-    } else if (ubType == 1) { 
-      if ((*pchCur >= 'a' && *pchCur <= 'f')
-       || (*pchCur >= 'A' && *pchCur <= 'F')) {
-        Advance(1);
-      } else {
-        break;
-      }
-
-    // Invalid symbol
+    if (ch >= '0' && ch <= '9') {
+      iValue = (iValue << 4) + (ch - '0');
+    } else if (ch >= 'a' && ch <= 'f') {
+      iValue = (iValue << 4) + (ch - 'a' + 10);
+    } else if (ch >= 'A' && ch <= 'F') {
+      iValue = (iValue << 4) + (ch - 'A' + 10);
     } else {
       break;
     }
-
-    // Stop checking for hexadecimal numbers
-    bHexCheck = false;
   }
 
-  // Save the number
-  CString strString = ExtractString(0);
+  // Save the integer value
+  if (piValue != nullptr) *piValue = static_cast<s64>(iValue);
 
-  switch (ubType) {
-    case 0: { // Integer
-      s64 iValue = strString.ToS64();
-      AddToken(aTokens, CParserToken::TKN_VALUE, pos, iValue);
-    } break;
+  return GetTokenLength() - iTokenOffset;
+};
 
-    case 1: { // Hexadecimal integer
-      s64 iHexValue = 0;
-      sscanf_s(strString.c_str(), "%llx", &iHexValue);
-      AddToken(aTokens, CParserToken::TKN_VALUE, pos, iHexValue);
-    } break;
+u32 CCLikeParser::ParseOctInteger(s64 *piValue, bool bOctPrefix) {
+  if (bOctPrefix) {
+    // Must start with 0 and at least one octal digit (don't advance here like with "0x")
+    //if (Cur() != '0' || (Next() < '0' || Next() > '7')) return 0;
 
-    default: { // Real number
-      f64 fValue = atof(strString.c_str());
-      AddToken(aTokens, CParserToken::TKN_VALUE, pos, fValue);
-    } break;
+    // Must start with "0o"
+    if (Cur() != '0' || (Next() != 'o' && Next() != 'O')) return 0;
+    Advance(2);
+
+  } else {
+    // Must start with at least one digit
+    if (Cur() < '0' || Cur() > '7') return 0;
+  }
+
+  const u32 iTokenOffset = GetTokenLength(); // Position of the first real digit
+  u64 iValue = 0;
+
+  // Go through octal digits until there are no more
+  for (; !AtEnd(); Advance(1)) {
+    u8 ch = Cur();
+
+    if (ch >= '0' && ch <= '7') {
+      iValue = (iValue << 3) + (ch - '0');
+    } else {
+      break;
+    }
+  }
+
+  // Save the integer value
+  if (piValue != nullptr) *piValue = static_cast<s64>(iValue);
+
+  return GetTokenLength() - iTokenOffset;
+};
+
+u32 CCLikeParser::ParseBinInteger(s64 *piValue, bool bBinPrefix) {
+  if (bBinPrefix) {
+    // Must start with "0b"
+    if (Cur() != '0' || (Next() != 'b' && Next() != 'B')) return 0;
+    Advance(2);
+
+  } else {
+    // Must start with at least one digit
+    if (Cur() != '0' && Cur() != '1') return 0;
+  }
+
+  const u32 iTokenOffset = GetTokenLength(); // Position of the first real digit
+  u64 iValue = 0;
+
+  // Go through binary digits until there are no more
+  for (; !AtEnd(); Advance(1)) {
+    u8 ch = Cur();
+
+    if (ch == '0') {
+      iValue <<= 1;
+    } else if (ch == '1') {
+      iValue = (iValue << 1) | 1;
+    } else {
+      break;
+    }
+  }
+
+  // Save the integer value
+  if (piValue != nullptr) *piValue = static_cast<s64>(iValue);
+
+  return GetTokenLength() - iTokenOffset;
+};
+
+u32 CCLikeParser::ParseDecInteger(s64 *piValue) {
+  // Must start with at least one digit
+  if (Cur() < '0' || Cur() > '9') return 0;
+
+  const u32 iTokenOffset = GetTokenLength(); // Position of the first real digit
+  u64 iValue = 0;
+
+  // Go through digits until there are no more
+  for (; !AtEnd(); Advance(1)) {
+    u8 ch = Cur();
+
+    if (ch >= '0' && ch <= '9') {
+      iValue = (iValue * 10) + (ch - '0');
+    } else {
+      break;
+    }
+  }
+
+  // Save the integer value
+  if (piValue != nullptr) *piValue = static_cast<s64>(iValue);
+
+  return GetTokenLength() - iTokenOffset;
+};
+
+bool CCLikeParser::ParseHexFloat(f64 *pfValue, s64 *piInteger) {
+  // Must start with "0x"
+  if (Cur() != '0' || (Next() != 'x' && Next() != 'X')) return 0;
+  Advance(2);
+
+  bool bFloat = false;
+  s64 iWhole = 0;
+  s64 iFraction = 0;
+  u32 iFracCount = 0;
+  s64 iExponent = 0;
+
+  // Try parsing the part before a decimal point
+  bool bPreDot = (ParseHexInteger(&iWhole, false) != 0);
+
+  // Then the part after the decimal point
+  if (Cur() == '.') {
+    bFloat = true;
+    Advance(1);
+
+    iFracCount = ParseHexInteger(&iFraction, false);
+
+    // Should have at least one of the decimal sides
+    if (!bPreDot && iFracCount == 0) {
+      Rewind();
+      return false;
+    }
+  }
+
+  // Finally, try the exponent
+  if (Cur() == 'p' || Cur() == 'P') {
+    bFloat = true;
+    Advance(1);
+
+    // Optional sign
+    bool bNegative = false;
+    c8 chSign = Cur();
+
+    if (chSign == '+' || chSign == '-') {
+      bNegative = (chSign == '-');
+      Advance(1);
+    }
+
+    // Parse required exponent (must still be decimal)
+    if (!ParseDecInteger(&iExponent)) {
+      Rewind();
+      return false;
+    }
+
+    // Negate the exponent
+    if (bNegative) iExponent = -iExponent;
+  }
+
+  // Save the integer value
+  if (piInteger != nullptr) {
+    *piInteger = (bFloat ? 0 : iWhole);
+  }
+
+  // Assemble and save the float value
+  if (pfValue != nullptr) {
+    f64 fFinal = static_cast<f64>(iWhole);
+
+    if (iFracCount != 0) {
+      fFinal += static_cast<f64>(iFraction) * std::pow(16.0, -static_cast<f64>(iFracCount));
+    }
+
+    if (iExponent != 0) {
+      fFinal *= std::pow(2.0, static_cast<f64>(iExponent));
+    }
+
+    *pfValue = fFinal;
   }
 
   return true;
 };
 
-bool CCLikeParser::ParseKeys(CTokenList &aTokens) {
-  // Start identifier names with an underscore or letters
-  if (*pchCur == '_'
-  || (*pchCur >= 'a' && *pchCur <= 'z')
-  || (*pchCur >= 'A' && *pchCur <= 'Z')) {
-    // Parse name symbols
-    while (!AtEnd()) {
-      SetToCurrent();
+bool CCLikeParser::ParseHexIntegerOrFloat(CVariant *pval) {
+  // Parse the float without returning it
+  if (pval == nullptr) return ParseHexFloat();
 
-      // Allow underscore, letters and numbers
-      if (*pchCur == '_'
-      || (*pchCur >= '0' && *pchCur <= '9')
-      || (*pchCur >= 'a' && *pchCur <= 'z')
-      || (*pchCur >= 'A' && *pchCur <= 'Z')) {
-        Advance(1);
+  // Parse any valid float value and then distinguish it from an integer
+  f64 fValue;
+  s64 iValue;
+  if (!ParseHexFloat(&fValue, &iValue)) return false;
 
-      // Invalid symbol
-      } else {
-        break;
-      }
+  // Set integer if it's non-zero or both of them are zero
+  if (iValue != 0 || fValue == 0.0) {
+    pval->FromInt(iValue);
+
+  // Otherwise set float if it's non-zero and integer is zero
+  } else {
+    pval->FromFloat(fValue);
+  }
+
+  return true;
+};
+
+bool CCLikeParser::ParseDecFloat(f64 *pfValue, s64 *piInteger) {
+  // Must start with at least one digit or a decimal point
+  if (Cur() != '.' && (Cur() < '0' || Cur() > '9')) return false;
+
+  bool bFloat = false;
+  s64 iWhole = 0;
+  s64 iFraction = 0;
+  u32 iFracCount = 0;
+  s64 iExponent = 0;
+
+  // Try parsing the part before a decimal point
+  bool bPreDot = (ParseDecInteger(&iWhole) != 0);
+
+  // Then the part after the decimal point
+  if (Cur() == '.') {
+    bFloat = true;
+    Advance(1);
+
+    iFracCount = ParseDecInteger(&iFraction);
+
+    // Should have at least one of the decimal sides
+    if (!bPreDot && iFracCount == 0) {
+      Rewind();
+      return false;
+    }
+  }
+
+  // Finally, try the exponent
+  if (Cur() == 'e' || Cur() == 'E') {
+    bFloat = true;
+    Advance(1);
+
+    // Optional sign
+    bool bNegative = false;
+    c8 chSign = Cur();
+
+    if (chSign == '+' || chSign == '-') {
+      bNegative = (chSign == '-');
+      Advance(1);
     }
 
-    CString strName = ExtractString(0);
-    AddToken(aTokens, CParserToken::TKN_KEY, pos, strName);
+    // Parse required exponent
+    if (!ParseDecInteger(&iExponent)) {
+      Rewind();
+      return false;
+    }
 
+    // Negate the exponent
+    if (bNegative) iExponent = -iExponent;
+  }
+
+  // Save the integer value
+  if (piInteger != nullptr) {
+    *piInteger = (bFloat ? 0 : iWhole);
+  }
+
+  // Assemble and save the float value
+  if (pfValue != nullptr) {
+    f64 fFinal = static_cast<f64>(iWhole);
+
+    if (iFracCount != 0) {
+      fFinal += static_cast<f64>(iFraction) * std::pow(10.0, -static_cast<f64>(iFracCount));
+    }
+
+    if (iExponent != 0) {
+      fFinal *= std::pow(10.0, static_cast<f64>(iExponent));
+    }
+
+    *pfValue = fFinal;
+  }
+
+  return true;
+};
+
+bool CCLikeParser::ParseDecIntegerOrFloat(CVariant *pval) {
+  // Parse the float without returning it
+  if (pval == nullptr) return ParseDecFloat();
+
+  // Parse any valid float value and then distinguish it from an integer
+  f64 fValue;
+  s64 iValue;
+  if (!ParseDecFloat(&fValue, &iValue)) return false;
+
+  // Set integer if it's non-zero or both of them are zero
+  if (iValue != 0 || fValue == 0.0) {
+    pval->FromInt(iValue);
+
+  // Otherwise set float if it's non-zero and integer is zero
+  } else {
+    pval->FromFloat(fValue);
+  }
+
+  return true;
+};
+
+bool CCLikeParser::TokenizeNumber(CTokenList *paTokens) {
+  if (paTokens == nullptr) {
+    // Non-decimal numbers first due to special prefixes, then decimal ones
+    return (ParseOctInteger() || ParseBinInteger()
+      || ParseHexIntegerOrFloat() || ParseDecIntegerOrFloat());
+  }
+
+  s64 iValue;
+
+  // Non-hexadecimal & non-decimal integers first
+  if (ParseOctInteger(&iValue) || ParseBinInteger(&iValue)) {
+    AddToken(*paTokens, CParserToken::TKN_VALUE, m_pos, iValue);
     return true;
+
+  // Then the rest of the integers + floats
+  } else {
+    CVariant val;
+
+    // Non-decimal first due to special prefixes
+    if (ParseHexIntegerOrFloat(&val) || ParseDecIntegerOrFloat(&val)) {
+      AddToken(*paTokens, CParserToken::TKN_VALUE, m_pos, val);
+      return true;
+    }
   }
 
   return false;
 };
 
-void CCLikeParser::TokenizeString(CTokenList &aTokens, const CString &str, bool bTokenizeComments) {
+void CCLikeParser::Tokenize(CTokenList &aTokens, const CString &str, bool bTokenizeComments) {
   CCLikeParser data(str);
 
-  while (data.CanParse()) {
-    switch (*data.GetCurrentChar()) {
+  DREAMY_PARSE_FOR(data) {
+    switch (data.Cur()) {
       // Skip spaces
-      case ' ': case '\t': case '\r': break;
+      case ' ': case '\t': case '\r': {
+        data.Advance(1);
+      } break;
 
       // Line break
-      case '\n': data.CountLine(); break;
+      case '\n': {
+        data.Advance(1);
+        data.CountLine();
+      } break;
 
       default: {
         // Special tokenizers
-        bool bTokenized = data.ParseComments(aTokens, bTokenizeComments)
-          || data.ParseKeys(aTokens)
-          || data.ParseNumbers(aTokens)
-          || data.ParseOperators(aTokens)
-          || data.ParseCharSequences(aTokens, '"', '\'');
+        bool bTokenized = data.TokenizeComment(bTokenizeComments ? &aTokens : nullptr)
+          || data.TokenizeKey(&aTokens)
+          || data.TokenizeNumber(&aTokens)
+          || data.TokenizeOperator(&aTokens)
+          || data.TokenizeCharSequence('\"', '\'', &aTokens);
 
         if (!bTokenized) {
           // Tokenize every other character
-          AddToken(aTokens, (u32)*data.GetCurrentChar(), data.GetTokenPos(), *data.GetCurrentChar());
+          u8 ch = static_cast<u8>(data.Cur());
+          AddToken(aTokens, ch, data.GetTokenPos(), ch);
+          data.Advance(1);
         }
       } break;
     }

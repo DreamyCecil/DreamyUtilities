@@ -19,60 +19,82 @@ class CGenericParser {
 
 protected:
   // String data
-  const CString str;
+  const CString m_str;
 
-  const c8 *pchCur; // Current character
-  const c8 *pchNext; // Next character
+  const c8 *m_pchCur; // Current character
+  const c8 *m_pchNext; // Next character
 
   // Parser position
-  u32 iLineCur; // Current line (from 0)
-  u32 iLineBeg; // Line start position character-wise
+  u32 m_iLineCur; // Current line starting from 1 (with 0 being invalid)
+  u32 m_iLineBeg; // Line start position character-wise
 
-  CTokenPos pos; // Token beginning and end positions
+  CTokenPos m_pos; // Token beginning and end positions
 
 public:
   // Default constructor
   CGenericParser(const CString &strSet);
 
   // Get current character
-  inline const c8 *GetCurrentChar(void) const {
-    return pchCur;
+  inline c8 Cur(void) const {
+    return *m_pchCur;
   };
 
-  // Get next character
-  inline const c8 *GetNextChar(void) const {
-    return pchNext;
+  // Get the next character, ahead of the current one
+  inline c8 Next(void) const {
+    return *m_pchNext;
   };
 
   // Get the current token position
   inline const CTokenPos &GetTokenPos(void) const {
-    return pos;
+    return m_pos;
   };
 
+// Token parsing cycle
 public:
-  // Start from a new character
-  void Start(void);
 
-  // Check if parser is at the end of the string
+  // Begin parsing the first token from the beginning of the string
+  void Initialize(void);
+
+  // Check if the parser has reached the end of the string
   bool AtEnd(void);
 
-  // Set to the current character
-  void SetToCurrent(void);
+  // Begin parsing a new token from the current position
+  void StartToken(void);
 
-  // Advance character index forward
-  void Advance(u32 iOffset);
+  // Convenience macro for parsing until the end
+  // After manually tokenizing a part of the string, the parsed token must be skipped by advancing the
+  // current character index in order to begin parsing a new token on the next loop cycle, otherwise it
+  // may lead to an infinite loop by trying to tokenize the exact same part of the string over and over
+  #define DREAMY_PARSE_FOR(_Parser) \
+    for ((_Parser).Initialize(); !(_Parser).AtEnd(); (_Parser).StartToken())
 
-  // Parse another character, if possible (for tokenizers)
-  bool CanParse(void);
+protected:
+  // Update the current character based on the current position
+  void SetCurrentChar(void);
 
-  // Count one line
+public:
+  // Rewind the character index to the beginning of the token
+  void Rewind(void);
+
+  // Set character index to a specific position relative to the beginning of the token
+  void SetPos(u32 iFromTokenStart);
+
+  // Advance character index in either direction
+  void Advance(s32 iOffset);
+
+  // Count one line and set new line beginning to the current token end
   void CountLine(void);
 
-  // Set line and character position based on a character index
-  void SetPosition(u32 iPos);
+  // Set line and column based on absolute character position
+  void UpdateTokenPlace(u32 iPos);
 
-  // Extract a part of the string within the [begin - current character] range
-  CString ExtractString(u32 iBeginOffset);
+  // Get current token length (i.e. amount of parsed characters since the token start)
+  inline u32 GetTokenLength(void) const {
+    return m_pos.Length();
+  };
+
+  // Extract a part of the string within the [token start + offset .. current character] range
+  CString ExtractString(u32 iBeginOffset = 0);
 
   // Add end-of-file token at the very end
   void AddEOF(CTokenList &aTokens);

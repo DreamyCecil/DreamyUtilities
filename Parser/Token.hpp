@@ -18,22 +18,25 @@ NAMESPACE_DREAMY_OPEN
 // Token position within the string
 class CTokenPos {
 
-public:
-  u32 iFirst; // First character index
-  u32 iLast; // Last character index
+private:
+  // Token "range" from the starting character until the ending character, i.e. the last character
+  // of the token itself is "iEnd - 1" with "iEnd" being the first character right after the token
+  u32 iStart, iEnd;
 
-  u32 iLine; // Line index (from 0)
-  u32 iCol; // Column index (from 0)
+  // Token "place" in text as line and column starting from 1 (with 0 being invalid)
+  u32 iLine, iCol;
+
+  friend class CGenericParser;
 
 public:
-  // Default constructor
-  CTokenPos() : iFirst(-1), iLast(-1), iLine(-1), iCol(-1)
+  // Default constructor with invalid state
+  CTokenPos() : iStart(0), iEnd(0), iLine(0), iCol(0)
   {
   };
 
-  // Constructor with positions
-  CTokenPos(u32 iSetFirst, u32 iSetLast, u32 iSetLine, u32 iSetCol) :
-    iFirst(iSetFirst), iLast(iSetLast), iLine(iSetLine), iCol(iSetCol)
+  // Constructor with range and place
+  CTokenPos(u32 iSetStart, u32 iSetEnd, u32 iSetLine, u32 iSetCol) :
+    iStart(iSetStart), iEnd(iSetEnd), iLine(iSetLine), iCol(iSetCol)
   {
   };
 
@@ -42,46 +45,74 @@ public:
     operator=(posOther);
   };
 
+  // Get starting token character
+  inline u32 GetStart(void) const {
+    return iStart;
+  };
+
+  // Get ending token character
+  inline u32 GetEnd(void) const {
+    return iEnd;
+  };
+
+  // Get token line
+  inline u32 GetLine(void) const {
+    return iLine;
+  };
+
+  // Get token column
+  inline u32 GetCol(void) const {
+    return iCol;
+  };
+
   // Get token length
   inline u32 Length(void) const {
-    return iLast - iFirst;
+    return iEnd - iStart;
   };
 
-  // Shift token position (doesn't affect formatted position)
-  inline void ShiftPos(s32 iOffset) {
-    iFirst += iOffset;
-    iLast += iOffset;
+  // Check if this position is invalid
+  inline bool IsInvalid(void) const {
+    return (iLine == 0 || iCol == 0);
   };
 
-  // Format token position relative to the line
-  inline void FormatPos(u32 iCurrentPos, u32 iCurrentLine, u32 iLineBeginning) {
-    iLine = iCurrentLine;
-    iCol = iCurrentPos - iLineBeginning;
+  // Set this position to invalid state with optional zero-length token position
+  inline void SetInvalid(u32 iPos = 0) {
+    iStart = iEnd = iPos;
+    iLine = iCol = 0;
+  };
+
+  // Shift token range, leaving the line and the column where they are
+  inline void ShiftRange(s32 iOffset) {
+    iStart += iOffset;
+    iEnd += iOffset;
+  };
+
+  // Set token line and column
+  inline void SetPlace(u32 iSetLine, u32 iSetCol) {
+    iLine = iSetLine;
+    iCol = iSetCol;
   };
 
   // Assignment
   inline CTokenPos &operator=(const CTokenPos &posOther) {
-    iFirst = posOther.iFirst;
-    iLast  = posOther.iLast;
+    iStart = posOther.iStart;
+    iEnd   = posOther.iEnd;
     iLine  = posOther.iLine;
     iCol   = posOther.iCol;
-
     return *this;
   };
 
-  // Compare positions
+  // Check for equality
   inline bool operator==(const CTokenPos &posOther) const {
-    return (iFirst == posOther.iFirst
-         && iLast  == posOther.iLast
+    return (iStart == posOther.iStart
+         && iEnd   == posOther.iEnd
          && iLine  == posOther.iLine
          && iCol   == posOther.iCol);
   };
 
-  // Retrieve token line and column
-  inline void GetPos(u32 &iGetLine, u32 &iGetCol) const {
-    // Start from 1
-    iGetLine = iLine + 1;
-    iGetCol = iCol + 1;
+  // Check for inequality
+  __forceinline bool operator!=(const CTokenPos &posOther) const {
+    return !operator==(posOther);
   };
 };
 
@@ -89,29 +120,31 @@ public:
 class CTokenException : public CMessageException {
 
 protected:
-  CTokenPos m_pos;
+  u32 m_iLine, m_iCol;
 
 public:
   // Default constructor
-  CTokenException(const CTokenPos &pos, const c8 *strError = "") : m_pos(pos)
+  CTokenException(const CTokenPos &pos, const c8 *strError) : m_iLine(pos.GetLine()), m_iCol(pos.GetCol())
   {
-    u32 iLine, iCol;
-    m_pos.GetPos(iLine, iCol);
-
-    PrintF("%s at line %u, col %u", strError, iLine, iCol);
+    PrintF("%s at line %u, col %u", strError, m_iLine, m_iCol);
   };
 
-  // Get error position
-  const CTokenPos GetPos(void) const {
-    return m_pos;
+  // Get error line
+  inline u32 GetLine(void) const {
+    return m_iLine;
+  };
+
+  // Get error column
+  inline u32 GetCol(void) const {
+    return m_iCol;
   };
 
   // Quick function for throwing token exceptions
   static void Throw(const CTokenPos &pos, const c8 *strFormat, ...) {
-    CTokenException ex(pos);
-    DREAMY_PRINTF_INLINE(ex.m_strMessage, strFormat);
+    CString strError;
+    DREAMY_PRINTF_INLINE(strError, strFormat);
 
-    throw ex;
+    throw CTokenException(pos, strError.c_str());
   };
 };
 
@@ -206,13 +239,9 @@ public:
 
   // Get position string
   const CString PrintPos(void) const {
-    u32 iLine, iCol;
-    GetTokenPos().GetPos(iLine, iCol);
-
     // Print a line and a column
     CString str;
-    str.PrintF("line %u, col %u", iLine, iCol);
-
+    str.PrintF("line %u, col %u", GetTokenPos().GetLine(), GetTokenPos().GetCol());
     return str;
   };
 
@@ -225,7 +254,7 @@ public:
   // Compare tokens
   bool operator==(const CParserToken &tokenOther) const {
     // Compare types if the position is invalid
-    if (tokenOther.GetTokenPos() == CTokenPos()) {
+    if (tokenOther.GetTokenPos().IsInvalid()) {
       return GetType() == tokenOther.GetType();
     }
 

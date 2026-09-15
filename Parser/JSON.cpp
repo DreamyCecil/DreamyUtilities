@@ -16,27 +16,31 @@ const Constants _constants;
 void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &dictConstants) {
   CCLikeParser data(strJSON);
 
-  while (data.CanParse()) {
-    const c8 ch = *data.GetCurrentChar();
-
-    switch (ch) {
+  DREAMY_PARSE_FOR(data) {
+    switch (data.Cur()) {
       // Skip spaces
-      case ' ': case '\t': case '\r': break;
+      case ' ': case '\t': case '\r': {
+        data.Advance(1);
+      } break;
 
       // Line break
-      case '\n': data.CountLine(); break;
+      case '\n': {
+        data.Advance(1);
+        data.CountLine();
+      } break;
 
       case ':': // Key-value assignment
       case ',': // Next value
       case '{': case '}': // Object block
       case '[': case ']': // Array block
-      case '+': case '-': // Unary operators
-        AddToken(aTokens, ch, data.GetTokenPos(), 0);
-        break;
+      case '+': case '-': { // Unary operators
+        AddToken(aTokens, data.Cur(), data.GetTokenPos(), 0);
+        data.Advance(1);
+      } break;
 
       default: {
         // Keywords
-        if (data.ParseKeys(aTokens)) {
+        if (data.TokenizeKey(&aTokens)) {
           // Assume it's an identifier
           CParserToken &tkn = aTokens[aTokens.size() - 1];
           const CVariant &valIdentifier = tkn.GetValue();
@@ -52,9 +56,9 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &di
 
         // Special tokenizers
         } else {
-          bool bTokenized = data.ParseComments(aTokens, false)
-            || data.ParseNumbers(aTokens)
-            || data.ParseCharSequences(aTokens, '"', '\'');
+          bool bTokenized = data.ParseComment()
+            || data.TokenizeNumber(&aTokens)
+            || data.TokenizeCharSequence('\"', '\'', &aTokens);
 
           if (!bTokenized) {
             throw CTokenException(data.GetTokenPos(), "Invalid character for tokenization");

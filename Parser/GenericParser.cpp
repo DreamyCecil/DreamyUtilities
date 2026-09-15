@@ -5,66 +5,73 @@
 
 namespace dreamy {
 
-CGenericParser::CGenericParser(const CString &strSet) : str(strSet), pchCur(&strSet[0]), pchNext(&strSet[1]),
-  iLineCur(0), iLineBeg(0), pos(0, 0, 0, 0)
+CGenericParser::CGenericParser(const CString &strSet) : m_str(strSet), m_pchCur(&strSet[0]), m_pchNext(&strSet[1]),
+  m_iLineCur(1), m_iLineBeg(0), m_pos(0, 0, 1, 1)
 {
 };
 
-void CGenericParser::Start(void) {
-  // Starting position
-  pos.iFirst = pos.iLast;
-
-  SetToCurrent();
-
-  // Current line and character position (relative to the line)
-  SetPosition(pos.iLast);
+void CGenericParser::Initialize(void) {
+  m_iLineCur = 1;
+  m_iLineBeg = 0;
+  m_pos = CTokenPos(0, 0, 1, 1);
+  StartToken();
 };
 
 bool CGenericParser::AtEnd(void) {
-  return pos.iLast >= (u32)str.length();
+  return m_pos.iEnd >= (u32)m_str.length();
 };
 
-void CGenericParser::SetToCurrent(void) {
-  pchCur = &str[pos.iLast];
-  pchNext = pchCur + 1;
+void CGenericParser::StartToken(void) {
+  // Start new token from the current end position
+  m_pos.iStart = m_pos.iEnd;
+  SetCurrentChar();
+
+  // Set current line and column
+  UpdateTokenPlace(m_pos.iEnd);
 };
 
-void CGenericParser::Advance(u32 iOffset) {
-  pos.iLast += iOffset;
+void CGenericParser::SetCurrentChar(void) {
+  m_pchCur = &m_str[m_pos.iEnd];
+  m_pchNext = m_pchCur + 1;
 };
 
-bool CGenericParser::CanParse(void) {
-  // Already at the end
-  if (AtEnd()) return false;
+void CGenericParser::Rewind(void) {
+  m_pos.iEnd = m_pos.iStart;
+  SetCurrentChar();
+};
 
-  // Parse a new character
-  Start();
-  Advance(1);
+void CGenericParser::SetPos(u32 iFromTokenStart) {
+  m_pos.iEnd = m_pos.iStart + iFromTokenStart;
+  SetCurrentChar();
+};
 
-  return true;
+void CGenericParser::Advance(s32 iOffset) {
+  m_pos.iEnd += iOffset;
+  SetCurrentChar();
 };
 
 void CGenericParser::CountLine(void) {
-  ++iLineCur;
-  iLineBeg = pos.iLast;
+  ++m_iLineCur;
+  m_iLineBeg = m_pos.iEnd;
 };
 
-void CGenericParser::SetPosition(u32 iPos) {
-  pos.FormatPos(iPos, iLineCur, iLineBeg);
+void CGenericParser::UpdateTokenPlace(u32 iPos) {
+  m_pos.SetPlace(m_iLineCur, iPos - m_iLineBeg + 1);
 };
 
 CString CGenericParser::ExtractString(u32 iBeginOffset) {
-  iBeginOffset += pos.iFirst;
-  return str.substr(iBeginOffset, pos.iLast - iBeginOffset);
+  D_ASSERT(iBeginOffset <= m_pos.Length());
+  iBeginOffset += m_pos.iStart;
+  return m_str.substr(iBeginOffset, m_pos.iEnd - iBeginOffset);
 };
 
 void CGenericParser::AddEOF(CTokenList &aTokens) {
-  const u32 iEndPos = (u32)str.length();
+  const u32 iEndPos = (u32)m_str.length();
 
-  pos = CTokenPos(iEndPos, iEndPos, -1, -1);
-  SetPosition(pos.iLast);
+  m_pos.SetInvalid(iEndPos);
+  UpdateTokenPlace(iEndPos);
 
-  AddToken(aTokens, CParserToken::TKN_EOF, pos);
+  AddToken(aTokens, CParserToken::TKN_EOF, m_pos);
 };
 
 }; // namespace dreamy

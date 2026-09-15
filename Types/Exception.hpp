@@ -93,14 +93,22 @@ private:
 
 public:
   // Default constructor
-  CFormattingException(size_t iSetPos) : m_iPos(iSetPos)
+  CFormattingException(size_t iSetPos, const c8 *strError = "Formatting exception") : m_iPos(iSetPos)
   {
-    PrintF("Formatting exception at %ull", m_iPos);
+    PrintF("%s at %ull", strError, m_iPos);
   };
 
   // Get character position
-  inline size_t GetCharacter(void) const {
+  inline size_t GetPos(void) const {
     return m_iPos;
+  };
+
+  // Quick function for throwing token exceptions
+  static void Throw(size_t iSetPos, const c8 *strFormat, ...) {
+    CString strError;
+    DREAMY_PRINTF_INLINE(strError, strFormat);
+
+    throw CFormattingException(iSetPos, strError.c_str());
   };
 };
 
