@@ -5,6 +5,49 @@
 
 NAMESPACE_DREAMY_OPEN
 
+inline void PrintFloat(CStringStream &strm, const f64 f) {
+  if (dreamy::math::IsNaN(f)) {
+    strm << "NaN";
+    return;
+  }
+
+  s8 iInf = dreamy::math::InfinitySign(f);
+
+  if (iInf == +1) {
+    strm << "Infinity";
+  } else if (iInf == -1) {
+    strm << "-Infinity";
+  } else {
+    strm << f;
+  }
+};
+
+inline void PrintCommaSeparator(CStringStream &strm, const ValPrintOpts &opts) {
+  if (opts.IsInline() && opts.IsCompact()) {
+    strm << ',';
+  } else {
+    strm << ", ";
+  }
+};
+
+inline void PrintVec2(CStringStream &strm, const ValPrintOpts &opts, const vec2d &v) {
+  strm << '[';
+  PrintFloat(strm, v[0]);
+  PrintCommaSeparator(strm, opts);
+  PrintFloat(strm, v[1]);
+  strm << ']';
+};
+
+inline void PrintVec3(CStringStream &strm, const ValPrintOpts &opts, const vec3d &v) {
+  strm << '[';
+  PrintFloat(strm, v[0]);
+  PrintCommaSeparator(strm, opts);
+  PrintFloat(strm, v[1]);
+  PrintCommaSeparator(strm, opts);
+  PrintFloat(strm, v[2]);
+  strm << ']';
+};
+
 // Print variant value into a string stream
 void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts) const {
   switch (GetType()) {
@@ -13,7 +56,7 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts) const {
     } break;
 
     case VAL_FLOAT: {
-      strm << AsFloat();
+      PrintFloat(strm, AsFloat());
     } break;
 
     case VAL_INT: {
@@ -25,53 +68,52 @@ void CVariant::Print(CStringStream &strm, const ValPrintOpts &opts) const {
     } break;
 
     case VAL_VEC2: {
-      const vec2d &v = AsVec2();
-
-      if (opts.IsInline() && opts.IsCompact()) {
-        strm << '[' << v[0] << ',' << v[1] << ']';
-      } else {
-        strm << '[' << v[0] << ", " << v[1] << ']';
-      }
+      PrintVec2(strm, opts, AsVec2());
     } break;
 
     case VAL_VEC3: {
-      const vec3d &v = AsVec3();
-
-      if (opts.IsInline() && opts.IsCompact()) {
-        strm << '[' << v[0] << ',' << v[1] << ',' << v[2] << ']';
-      } else {
-        strm << '[' << v[0] << ", " << v[1] << ", " << v[2] << ']';
-      }
+      PrintVec3(strm, opts, AsVec3());
     } break;
 
     case VAL_MAT2: {
       const mat2d &m = AsMat2();
-      const vec2d &v0 = m[0];
-      const vec2d &v1 = m[1];
 
       if (opts.IsInline() && opts.IsCompact()) {
-        strm << "[[" << v0[0] << ',' << v0[1] << "],["
-                     << v1[0] << ',' << v1[1] << "]]";
+        strm << '[';
       } else {
-        strm << "[ [" << v0[0] << ", " << v0[1] << "], ["
-                      << v1[0] << ", " << v1[1] << "] ]";
+        strm << "[ ";
+      }
+
+      PrintVec2(strm, opts, m[0]);
+      PrintCommaSeparator(strm, opts);
+      PrintVec2(strm, opts, m[1]);
+
+      if (opts.IsInline() && opts.IsCompact()) {
+        strm << ']';
+      } else {
+        strm << " ]";
       }
     } break;
 
     case VAL_MAT3: {
       const mat3d &m = AsMat3();
-      const vec3d &v0 = m[0];
-      const vec3d &v1 = m[1];
-      const vec3d &v2 = m[2];
 
       if (opts.IsInline() && opts.IsCompact()) {
-        strm << "[[" << v0[0] << ',' << v0[1] << ',' << v0[2] << "],["
-                     << v1[0] << ',' << v1[1] << ',' << v1[2] << "],["
-                     << v2[0] << ',' << v2[1] << ',' << v2[2] << "]]";
+        strm << '[';
       } else {
-        strm << "[ [" << v0[0] << ", " << v0[1] << ", " << v0[2] << "], ["
-                      << v1[0] << ", " << v1[1] << ", " << v1[2] << "], ["
-                      << v2[0] << ", " << v2[1] << ", " << v2[2] << "] ]";
+        strm << "[ ";
+      }
+
+      PrintVec3(strm, opts, m[0]);
+      PrintCommaSeparator(strm, opts);
+      PrintVec3(strm, opts, m[1]);
+      PrintCommaSeparator(strm, opts);
+      PrintVec3(strm, opts, m[2]);
+
+      if (opts.IsInline() && opts.IsCompact()) {
+        strm << ']';
+      } else {
+        strm << " ]";
       }
     } break;
 
