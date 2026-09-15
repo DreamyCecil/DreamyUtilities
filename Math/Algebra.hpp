@@ -19,6 +19,9 @@ namespace math {
 // Math constants
 static const f64 PI = 3.14159265359;
 
+static const f64 Infinity = HUGE_VAL;
+static const f64 NaN = Infinity * 0.0;
+
 // Fast and type-safe sign function
 template<typename Type>
 __forceinline s8 Sign(Type x) {
@@ -106,9 +109,9 @@ __forceinline bool IsNaN(f64 x) {
 
 // Return sign of infinite float or 0 if it's not infinity
 __forceinline s8 InfinitySign(f64 x) {
-  if (x == HUGE_VAL) {
+  if (x == Infinity) {
     return +1;
-  } else if (x == -HUGE_VAL) {
+  } else if (x == -Infinity) {
     return -1;
   } else {
     return 0;

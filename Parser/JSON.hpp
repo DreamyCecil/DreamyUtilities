@@ -16,22 +16,21 @@ NAMESPACE_DREAMY_OPEN
 
 namespace json {
 
-// Default JSON constants created at runtime
+// Default JSON constants
 struct Constants {
-  CDictionary list;
-
-  // Default constructor
-  inline Constants(void) {
-    list["null"] = CVariant();
-    list["true"] = true;
-    list["false"] = false;
+  static __forceinline CDictionary Default(void) {
+    CDictionary dict;
+    dict["null"] = CVariant();
+    dict["true"] = true;
+    dict["false"] = false;
+    dict["Infinity"] = dreamy::math::Infinity;
+    dict["NaN"] = dreamy::math::NaN;
+    return dict;
   };
 };
 
-extern const Constants _constants;
-
 // Tokenize JSON file contents
-void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &dictConstants = _constants.list);
+void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &dictConstants = Constants::Default());
 
 // Build a JSON array
 void BuildArray(CVariant &valArray, const CTokenList &aTokens, CTokenList::const_iterator &it);
@@ -49,7 +48,7 @@ void BuildPair(CPair &pair, const CTokenList &aTokens, CTokenList::const_iterato
 void Build(CVariant &valJSON, const CTokenList &aTokens);
 
 // Parse JSON string and output it in a variant with optional token list
-void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CDictionary &dictConstants = _constants.list);
+void Parse(CVariant &valJSON, CTokenList *paTokens, const CString &strJSON, const CDictionary &dictConstants = Constants::Default());
 
 }; // namespace json
 
