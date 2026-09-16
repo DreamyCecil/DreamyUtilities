@@ -59,6 +59,21 @@ void CString::ConvertEscapeChars(void) {
       case '\\':
         break;
 
+      // Check carriage returns
+      case '\r': {
+        // If followed by a line break, erase both
+        if (str[iEscapeSeq + 1] == '\n') {
+          erase(iEscapeSeq, 2);
+          --iEscapeSeq;
+        }
+      } break;
+
+      // Erase line breaks
+      case '\n': {
+        erase(iEscapeSeq, 1);
+        --iEscapeSeq;
+      } break;
+
       // Replace special characters with escape characters
       case 'a': ch = '\a'; break;
       case 'b': ch = '\b'; break;

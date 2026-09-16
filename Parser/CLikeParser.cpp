@@ -167,7 +167,19 @@ bool CCLikeParser::ParseString(const c8 chEnclosed, CString *pstr)
 
     // Line break
     } else if (Cur() == '\n') {
+      // If not escaped, the string was not closed
+      if (!bEscSeq) {
+        throw CTokenException(m_pos, "Unclosed character sequence");
+      }
+
       CountLine();
+
+    // Carriage return
+    } else if (Cur() == '\r') {
+      // If escaping, let the line break go through on the next cycle
+      if (bEscSeq && Next() == '\n') {
+        continue;
+      }
 
     // Parse escape sequences after a backslash
     } else if (Cur() == '\\') {
