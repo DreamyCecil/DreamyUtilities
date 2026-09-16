@@ -38,6 +38,17 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &di
         data.Advance(1);
       } break;
 
+      // String literals (character literals not supported)
+      case '\"': case '\'': {
+        CString str;
+        if (data.ParseString(data.Cur(), &str)) {
+          AddToken(aTokens, CParserToken::TKN_VALUE, data.GetTokenPos(), str);
+        } else {
+          // Normally, ParseString() throws exceptions on any error, so this shouldn't happen
+          throw CTokenException(data.GetTokenPos(), "Invalid string literal");
+        }
+      } break;
+
       default: {
         // Keywords
         if (data.TokenizeKey(&aTokens)) {
@@ -56,9 +67,7 @@ void Tokenize(CTokenList &aTokens, const CString &strJSON, const CDictionary &di
 
         // Special tokenizers
         } else {
-          bool bTokenized = data.ParseComment()
-            || data.TokenizeNumber(&aTokens)
-            || data.TokenizeCharSequence('\"', '\'', &aTokens);
+          bool bTokenized = data.ParseComment() || data.TokenizeNumber(&aTokens);
 
           if (!bTokenized) {
             throw CTokenException(data.GetTokenPos(), "Invalid character for tokenization");
