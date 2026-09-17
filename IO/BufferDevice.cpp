@@ -20,7 +20,7 @@
  */
 
 #include "BufferDevice.hpp"
-#include "../Math/Algorithm.hpp"
+#include "../Math/Math.hpp"
 
 NAMESPACE_DREAMY_OPEN
 

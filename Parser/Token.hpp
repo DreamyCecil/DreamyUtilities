@@ -27,7 +27,7 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
-#include "../Math/Algorithm.hpp"
+#include "../Math/Math.hpp"
 #include "../Types/Exception.hpp"
 #include "../Types/Variant.hpp"
 

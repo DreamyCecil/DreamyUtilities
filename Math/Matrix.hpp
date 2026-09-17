@@ -27,8 +27,8 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
+#include "Math.hpp"
 #include "Vector.hpp"
-#include "Trigonometry.hpp"
 
 NAMESPACE_DREAMY_OPEN
 

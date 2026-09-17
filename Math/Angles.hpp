@@ -27,9 +27,9 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
+#include "Math.hpp"
 #include "Matrix.hpp"
 #include "Vector.hpp"
-#include "Trigonometry.hpp"
 
 NAMESPACE_DREAMY_OPEN
 
@@ -155,7 +155,7 @@ inline ANGLES ANGLES::DegToRad(void) const {
 
   s32 i = iDimensions;
   while (--i >= 0) {
-    v[i] = dreamy::DegToRad(this->m_aValues[i]);
+    v[i] = dreamy::math::DegToRad(this->m_aValues[i]);
   }
   return v;
 };
@@ -167,7 +167,7 @@ inline ANGLES ANGLES::RadToDeg(void) const {
 
   s32 i = iDimensions;
   while (--i >= 0) {
-    v[i] = dreamy::RadToDeg(this->m_aValues[i]);
+    v[i] = dreamy::math::RadToDeg(this->m_aValues[i]);
   }
   return v;
 };

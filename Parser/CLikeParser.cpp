@@ -488,11 +488,11 @@ bool CCLikeParser::ParseHexFloat(f64 *pfValue, s64 *piInteger) {
     f64 fFinal = static_cast<f64>(iWhole);
 
     if (iFracCount != 0) {
-      fFinal += static_cast<f64>(iFraction) * std::pow(16.0, -static_cast<f64>(iFracCount));
+      fFinal += static_cast<f64>(iFraction) * pow(16.0, -static_cast<f64>(iFracCount));
     }
 
     if (iExponent != 0) {
-      fFinal *= std::pow(2.0, static_cast<f64>(iExponent));
+      fFinal *= pow(2.0, static_cast<f64>(iExponent));
     }
 
     *pfValue = fFinal;
@@ -583,11 +583,11 @@ bool CCLikeParser::ParseDecFloat(f64 *pfValue, s64 *piInteger) {
     f64 fFinal = static_cast<f64>(iWhole);
 
     if (iFracCount != 0) {
-      fFinal += static_cast<f64>(iFraction) * std::pow(10.0, -static_cast<f64>(iFracCount));
+      fFinal += static_cast<f64>(iFraction) * pow(10.0, -static_cast<f64>(iFracCount));
     }
 
     if (iExponent != 0) {
-      fFinal *= std::pow(10.0, static_cast<f64>(iExponent));
+      fFinal *= pow(10.0, static_cast<f64>(iExponent));
     }
 
     *pfValue = fFinal;

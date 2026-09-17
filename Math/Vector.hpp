@@ -27,7 +27,7 @@
 
 #include "../DreamyUtilitiesBase.hpp"
 
-#include "Trigonometry.hpp"
+#include "Math.hpp"
 
 #include <cmath>
 

@@ -30,7 +30,7 @@
 #include "Any.hpp"
 #include "Arrays.hpp"
 #include "HashedString.hpp"
-#include "../Math/Algorithm.hpp"
+#include "../Math/Math.hpp"
 
 // Extra types
 #include "../IO/StringStream.hpp"

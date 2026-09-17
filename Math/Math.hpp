@@ -34,11 +34,43 @@ NAMESPACE_DREAMY_OPEN
 
 namespace math {
 
-// Math constants
-static const f64 PI = 3.14159265359;
+// Numeric limits
+static const s8  S8_MIN  = (-127 - 1);
+static const s16 S16_MIN = (-32767 - 1);
+static const s32 S32_MIN = (-2147483647 - 1);
+static const s64 S64_MIN = (-9223372036854775807 - 1);
+static const s8  S8_MAX  = 127;
+static const s16 S16_MAX = 32767;
+static const s32 S32_MAX = 2147483647;
+static const s64 S64_MAX = 9223372036854775807;
+static const u8  U8_MAX  = 0xFF;
+static const u16 U16_MAX = 0xFFFF;
+static const u32 U32_MAX = 0xFFFFFFFF;
+static const u64 U64_MAX = 0xFFFFFFFFFFFFFFFF;
 
-static const f64 Infinity = HUGE_VAL;
-static const f64 NaN = Infinity * 0.0;
+// Math constants
+static const f64 PI = 3.1415926535897932384626433833;
+
+static const f64 INF = HUGE_VAL;
+static const f64 NaN = INF * 0.0;
+
+// Return smaller of two values
+template<typename Type1, typename Type2>
+__forceinline Type1 Min(Type1 x, Type2 y) {
+  return (x < y) ? x : y;
+};
+
+// Return larger of two values
+template<typename Type1, typename Type2>
+__forceinline Type1 Max(Type1 x, Type2 y) {
+  return (x < y) ? y : x;
+};
+
+// Clamp value between certain boundaries
+template<typename Type1, typename Type2, typename Type3>
+__forceinline Type1 Clamp(Type1 x, Type2 min, Type3 max) {
+  return (x < min) ? min : (max < x) ? max : x;
+};
 
 // Fast and type-safe sign function
 template<typename Type>
@@ -127,13 +159,37 @@ __forceinline bool IsNaN(f64 x) {
 
 // Return sign of infinite float or 0 if it's not infinity
 __forceinline s8 InfinitySign(f64 x) {
-  if (x == Infinity) {
+  if (x == dreamy::math::INF) {
     return +1;
-  } else if (x == -Infinity) {
+  } else if (x == -dreamy::math::INF) {
     return -1;
   } else {
     return 0;
   }
+};
+
+// Wrap angle to be between 0 and 360 degrees
+template<typename Type>
+inline Type WrapAngle(Type angle) {
+  return (Type)fmod(fmod((f64)angle, 360.0) + 360.0, 360.0);
+};
+
+// Normalize angle to be between -180 and +180 degrees
+template<typename Type>
+inline Type NormalizeAngle(Type angle) {
+  return Type(WrapAngle((f64)angle + 180.0) - 180.0);
+};
+
+// Convert radians to degrees
+template<typename Type>
+inline Type RadToDeg(Type radians) {
+  return Type((f64)radians * (f64(180.0) / dreamy::math::PI));
+};
+
+// Convert degrees to radians
+template<typename Type>
+inline Type DegToRad(Type angle) {
+  return Type(WrapAngle((f64)angle) * (dreamy::math::PI / 180.0));
 };
 
 }; // namespace math

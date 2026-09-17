@@ -71,7 +71,7 @@ struct Constants {
     dict["null"] = CVariant();
     dict["true"] = true;
     dict["false"] = false;
-    dict["Infinity"] = dreamy::math::Infinity;
+    dict["Infinity"] = dreamy::math::INF;
     dict["NaN"] = dreamy::math::NaN;
     return dict;
   };

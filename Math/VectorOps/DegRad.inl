@@ -20,7 +20,7 @@
  */
 
 // Define operations for degree to radian conversion
-#define DO_DIMENSION_OPERATION(VecIndex, ThisVec, Operation, Other) ThisVec[VecIndex] Operation dreamy::DegToRad(Other[VecIndex]);
+#define DO_DIMENSION_OPERATION(VecIndex, ThisVec, Operation, Other) ThisVec[VecIndex] Operation dreamy::math::DegToRad(Other[VecIndex]);
 #include "OpsDefine.inl"
 
 // Convert values from degrees to radians
@@ -34,7 +34,7 @@ inline NUMVEC NUMVEC::DegToRad(void) const {
 #include "OpsUndef.inl"
 
 // Define operations for radian to degree conversion
-#define DO_DIMENSION_OPERATION(VecIndex, ThisVec, Operation, Other) ThisVec[VecIndex] Operation dreamy::RadToDeg(Other[VecIndex]);
+#define DO_DIMENSION_OPERATION(VecIndex, ThisVec, Operation, Other) ThisVec[VecIndex] Operation dreamy::math::RadToDeg(Other[VecIndex]);
 #include "OpsDefine.inl"
 
 // Convert values from radians to degrees
